@@ -11,6 +11,7 @@ out/
 !**/src/test/**/out/
 node_modules
 HELP.md
+package-lock.json
 
 # Resources
 src/main/resources/static/docs
