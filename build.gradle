@@ -4,6 +4,9 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.12.RELEASE'
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
 //    id 'com.vaadin' version '23.1.2'
+    // testCoverage
+    id 'jacoco'
+    id 'org.sonarqube' version '3.3'
 }
 
 group = 'com'
@@ -75,11 +78,100 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.0'
     implementation 'javax.xml.bind:jaxb-api'
 
+    // Test Coverage
+    implementation 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.3'
+
     // REST DOC
     asciidoctorExt "org.springframework.restdocs:spring-restdocs-asciidoctor:${restdocVersion}"
     testImplementation "org.springframework.restdocs:spring-restdocs-mockmvc:${restdocVersion}"
 }
 
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+task copyPrivate(type: Copy) {
+    copy {
+        from './backend-privates'
+        include "*.yaml"
+        into 'src/main/resources'
+    }
+}
+
+test {
+    outputs.dir snippetsDir
+    finalizedBy 'jacocoTestReport'
+}
+
+jacoco {
+    toolVersion = "0.8.7"
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        csv.enabled true
+        html.enabled true
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(
+                files(classDirectories.files.collect {
+                    fileTree(dir: it, excludes: [
+                            '**/MealfitApplication*',
+                            '**/*Request*',
+                            '**/*Response*',
+                            '**/*Dto*',
+                            '**/*Exception*',
+                    ])
+                })
+        )
+    }
+
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+
+sonarqube {
+    properties {
+        property "sonar.sources", "src"
+        property "sonar.language", "java"
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.profile", "Sonar way"
+        property "sonar.java.binaries", "${buildDir}/classes"
+        property "sonar.test.inclusions", "**/*Test.java"
+        property "sonar.exclusions", "**/resources/static/**, **/Q*.class, **/test/**"
+        property "sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            enabled = true
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.00
+            }
+
+            limit {
+                counter = 'METHOD'
+                value = 'COVEREDRATIO'
+                minimum = 0.00
+            }
+
+            excludes = [
+                    '**.*Request*',
+                    '**.*Response*',
+                    '**.*Dto*',
+                    '**.*Exception*',
+                    '**.*Storage*',
+            ]
+        }
+    }
+}
 
 //vaadin {
 //    optimizeBundle = false
@@ -92,13 +184,7 @@ dependencies {
 //    }
 //}
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
 
-test {
-    outputs.dir snippetsDir
-}
 
 //asciidoctor {
 //    inputs.dir snippetsDir

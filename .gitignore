@@ -14,6 +14,7 @@ package-lock.json
 HELP.md
 
 # Resources
+src/main/resources/privates/
 src/main/resources/static/docs
 src/main/resources/application-*.yaml
 !src/main/resources/application-DEV.yaml

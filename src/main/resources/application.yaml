@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: DB, KEY, OAUTH2
+    include: DB, KEY, OAUTH2
   main:
     allow-bean-definition-overriding: true
 
@@ -26,3 +26,4 @@ management:
 vaadin:
   servlet:
     productionMode: true
+

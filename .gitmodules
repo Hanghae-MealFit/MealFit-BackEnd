@@ -1,0 +1,4 @@
+[submodule "backend-privates"]
+	path = backend-privates
+	url = https://github.com/Hanghae-MealFit/backend-privates.git
+    branch = main
