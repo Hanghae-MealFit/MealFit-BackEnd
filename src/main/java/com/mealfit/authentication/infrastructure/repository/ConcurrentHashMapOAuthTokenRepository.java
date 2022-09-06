@@ -1,7 +1,7 @@
-package com.mealfit.authentication.infrastructure.dao;
+package com.mealfit.authentication.infrastructure.repository;
 
 import com.mealfit.authentication.domain.JwtToken;
-import com.mealfit.authentication.domain.OAuthTokenDao;
+import com.mealfit.authentication.domain.OAuthTokenRepository;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.context.annotation.Profile;
@@ -9,15 +9,15 @@ import org.springframework.stereotype.Component;
 
 @Profile("!prod")
 @Component
-public class ConcurrentHashMapOAuthTokenDao implements OAuthTokenDao {
+public class ConcurrentHashMapOAuthTokenRepository implements OAuthTokenRepository {
 
     private final ConcurrentHashMap<String, String> storage;
 
-    public ConcurrentHashMapOAuthTokenDao() {
+    public ConcurrentHashMapOAuthTokenRepository() {
         this(new ConcurrentHashMap<>());
     }
 
-    private ConcurrentHashMapOAuthTokenDao(ConcurrentHashMap<String, String> storage) {
+    private ConcurrentHashMapOAuthTokenRepository(ConcurrentHashMap<String, String> storage) {
         this.storage = storage;
     }
 

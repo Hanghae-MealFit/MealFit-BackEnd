@@ -2,7 +2,7 @@ package com.mealfit.authentication.domain;
 
 import java.util.Optional;
 
-public interface OAuthTokenDao {
+public interface OAuthTokenRepository {
 
     void insert(JwtToken jwtToken);
 
