@@ -14,10 +14,19 @@ public enum ErrorCode implements ErrorModel {
     // TOKEN
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "A001", "잘못된 토큰입니다."),
 
-    // User
-    DUPLICATE_SIGNUP_INPUT(HttpStatus.BAD_GATEWAY, "U001", "이미 해당 값이 존재합니다."),
+    // USER
+    DUPLICATE_SIGNUP_INPUT(HttpStatus.BAD_REQUEST, "U001", "이미 해당 값이 존재합니다."),
     WRONG_SIGNUP_PASSWORD(HttpStatus.BAD_REQUEST, "U002", "비밀번호와 비밀번호 재확인을 확인해주세요."),
     BAD_LOGIN_INFO(HttpStatus.BAD_GATEWAY, "U003", "잘못된 로그인 정보입니다."),
+
+    // POST
+    NO_POST_CONTENT(HttpStatus.INTERNAL_SERVER_ERROR, "P001", "Content 값이 비어있습니다."),
+    NO_IMAGE(HttpStatus.INTERNAL_SERVER_ERROR, "P002", "이미지 업로드에 실패했습니다."),
+    NOT_POST_WRITER(HttpStatus.UNAUTHORIZED, "P003", "게시글을 수정 및 삭제할 권한이 없습니다."),
+    POST_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "P004", "찾고자 하는 게시글이 없습니다."),
+
+    // COMMENT
+
 
     // COMMON
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "C001", "서버 내부 에러"),

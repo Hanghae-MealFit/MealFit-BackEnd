@@ -10,32 +10,22 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 public class PostCreateRequestDto {
 
-    private Long postId;
-
     private Long userId;
-
-    private String nickname;
-
-    private String profileImage;
 
     private String content;
 
     private List<MultipartFile> postImageList;
 
     @Builder
-    public PostCreateRequestDto(Long postId, Long userId, String nickname, String profileImage,
-          String content, List<MultipartFile> postImageList) {
-        this.postId = postId;
+    public PostCreateRequestDto(Long userId, String content, List<MultipartFile> postImageList) {
         this.userId = userId;
-        this.nickname = nickname;
-        this.profileImage = profileImage;
         this.content = content;
         this.postImageList = postImageList;
     }
 
     public Post toEntity() {
         Post post = new Post(content);
-        post.settingUserInfo(userId, profileImage, nickname);
+        post.settingUserInfo(userId);
         return post;
     }
 }
