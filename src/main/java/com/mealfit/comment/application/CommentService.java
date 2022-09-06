@@ -3,11 +3,15 @@ package com.mealfit.comment.application;
 import com.mealfit.comment.application.dto.request.CreateCommentRequestDto;
 import com.mealfit.comment.application.dto.request.UpdateCommentRequestDto;
 import com.mealfit.comment.domain.Comment;
+import com.mealfit.comment.domain.CommentLike;
+import com.mealfit.comment.domain.CommentLikeRepository;
 import com.mealfit.comment.domain.CommentRepository;
 import com.mealfit.comment.presentation.dto.response.CommentResponse;
+import com.mealfit.post.domain.PostLike;
 import com.mealfit.post.domain.PostRepository;
 import com.mealfit.user.domain.User;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +26,7 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+    private final CommentLikeRepository commentLikeRepository;
 
     //작성하기
     public Long createComment(CreateCommentRequestDto dto) {
@@ -75,5 +80,22 @@ public class CommentService {
         return commentRepository.findByPostIdOrderByCreatedAt(postId).stream()
         .map(CommentResponse::new)
         .collect(Collectors.toList());
+    }
+
+    public boolean saveLike (Long commentId, User user){
+        Optional<CommentLike> findLike = commentLikeRepository.findByCommentIdAndUserId(commentId, user.getId());
+        if(findLike.isEmpty()){
+            CommentLike commentLike = CommentLike.builder()
+                    .commentId(commentId)
+                    .userId(user.getId())
+                    .build();
+            commentLikeRepository.save(commentLike);
+            commentRepository.plusLike(commentId);
+            return true;
+        }else {
+            commentLikeRepository.deleteByCommentIdAndUserId(commentId, user.getId());
+            commentRepository.minusLike(commentId);
+            return false;
+        }
     }
 }
