@@ -1,17 +1,19 @@
 package com.mealfit.food.domain;
 
 import com.mealfit.common.baseEntity.BaseEntity;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
 
 // 영양성분은 100g당 단위임.
 @Getter
 @Entity
 @NoArgsConstructor
-@Builder
 public class Food extends BaseEntity {
 
     @Id
@@ -36,8 +38,9 @@ public class Food extends BaseEntity {
     @Column(columnDefinition = "double default 0")
     private double fat; // 지방
 
-    private String madeBy;
+    private String madeBy; // 동일 제품명을 구분할 제조사
 
+    @Builder
     public Food(Long id, String foodName, double oneServing, double kcal, double carbs, double protein, double fat, String madeBy) {
         this.id = id;
         this.oneServing = oneServing;
