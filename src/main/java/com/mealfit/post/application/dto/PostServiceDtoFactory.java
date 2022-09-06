@@ -1,6 +1,7 @@
 package com.mealfit.post.application.dto;
 
 import com.mealfit.post.application.dto.request.PostCreateRequestDto;
+import com.mealfit.post.application.dto.request.PostDeleteReqeustDto;
 import com.mealfit.post.application.dto.request.PostUpdateRequestDto;
 import com.mealfit.post.presentation.dto.request.PostRequest;
 import com.mealfit.user.domain.User;
@@ -12,8 +13,6 @@ public class PostServiceDtoFactory {
               .content(request.getContent())
               .postImageList(request.getPostImageList())
               .userId(user.getId())
-              .nickname(user.getUserProfile().getNickname())
-              .profileImage(user.getUserProfile().getProfileImage())
               .build();
     }
 
@@ -24,5 +23,9 @@ public class PostServiceDtoFactory {
               .postImageList(request.getPostImageList())
               .userId(user.getId())
               .build();
+    }
+
+    public static PostDeleteReqeustDto postDeleteReqeustDto(Long postId, User user) {
+        return new PostDeleteReqeustDto(postId, user.getId());
     }
 }

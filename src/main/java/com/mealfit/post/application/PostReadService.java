@@ -1,6 +1,8 @@
 package com.mealfit.post.application;
 
 
+import com.mealfit.exception.post.PostNotFoundException;
+import com.mealfit.exception.user.UserNotFoundException;
 import com.mealfit.post.domain.Post;
 import com.mealfit.post.domain.PostReadRepository;
 import com.mealfit.post.presentation.dto.response.PostResponse;
@@ -26,10 +28,10 @@ public class PostReadService {
     //상세 게시글 조회
     public PostResponse getReadOne(Long postId) {
         Post post = postReadRepository.findById(postId)
-              .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다."));
+              .orElseThrow(() -> new PostNotFoundException("게시글이 없습니다."));
 
         User user = userRepository.findById(post.getUserId())
-              .orElseThrow(() -> new IllegalArgumentException("없는 회원정보입니다."));
+              .orElseThrow(() -> new UserNotFoundException("없는 회원정보입니다."));
 
         return PostResponse.builder()
               .postId(post.getId())
@@ -37,7 +39,7 @@ public class PostReadService {
               .images(post.getImageUrls())
               .nickname(user.getUserProfile().getNickname())
               .profileImage(user.getUserProfile().getProfileImage())
-//                .like(likeItRepository.likes(postId,user.getId()))
+              .like(post.getLikeIt())
               .view(postReadRepository.updateView(postId))
               .view(post.getView())
               .createdAt(post.getCreatedAt())
@@ -45,7 +47,7 @@ public class PostReadService {
     }
 
     //전체 게시물 조회
-    public Page<PostResponse> getReadAll(Pageable pageable, Long lastId) {
+    public List<PostResponse> getReadAll(Pageable pageable, Long lastId) {
 
         log.info("pageable -> {} ", pageable);
         log.info("lastId -> {} ", lastId);
@@ -60,20 +62,22 @@ public class PostReadService {
     }
     //전체 게시물 조회
 
-    private Page<PostResponse> postToPostsResponseDtos(Page<Post> postSlice) {
-        List<Post> posts = postSlice.getContent();
+    private List<PostResponse> postToPostsResponseDtos(Page<Post> postSlice) {
+        return postSlice.map(post -> {
+                  User user = userRepository.findById(post.getUserId())
+                        .orElseThrow(() -> new UserNotFoundException("없는 회원입니다."));
 
-        return postSlice.map(post ->
-              PostResponse.builder()
-                    .postId(post.getId())
-                    .nickname(post.getNickname())
-                    .profileImage(post.getProfileImage())
-                    .content(post.getContent())
-                    .images(post.getImageUrls())
-                    .view(post.getView())
-                    .like(post.getLikeIt())
-                    .createdAt(post.getCreatedAt())
-                    .build()
-        );
+                  return PostResponse.builder()
+                        .postId(post.getId())
+                        .content(post.getContent())
+                        .images(post.getImageUrls())
+                        .nickname(user.getUserProfile().getNickname())
+                        .profileImage(user.getUserProfile().getProfileImage())
+                        .view(post.getView())
+                        .like(post.getLikeIt())
+                        .createdAt(post.getCreatedAt())
+                        .build();
+              }
+        ).toList();
     }
 }

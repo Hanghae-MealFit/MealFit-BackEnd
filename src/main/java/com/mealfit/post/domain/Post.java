@@ -1,8 +1,8 @@
 package com.mealfit.post.domain;
 
 
-import com.mealfit.comment.domain.Comment;
 import com.mealfit.common.baseEntity.BaseEntity;
+import com.mealfit.exception.user.UserNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,7 +14,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Generated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -23,7 +25,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 @ToString
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
 @Entity
 public class Post extends BaseEntity {
@@ -34,11 +36,6 @@ public class Post extends BaseEntity {
 
     @Column(nullable = false)
     private Long userId;
-
-    private String profileImage;
-
-    @Column(nullable = false)
-    private String nickname;
 
     @Column
     private String content;
@@ -51,7 +48,9 @@ public class Post extends BaseEntity {
     private int likeIt;
 
     @Exclude
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY,
+          cascade = CascadeType.PERSIST,
+          orphanRemoval = true)
     private List<PostImage> images = new ArrayList<>();
 
     public Post(String content) {
@@ -60,13 +59,16 @@ public class Post extends BaseEntity {
         this.view = 0;
     }
 
-    public void settingUserInfo(Long userId, String profileImage, String nickname) {
+    public void settingUserInfo(Long userId) {
+        if (userId == null) {
+            throw new UserNotFoundException("회원이 없습니다.");
+        }
+
         this.userId = userId;
-        this.profileImage = profileImage;
-        this.nickname = nickname;
     }
 
     public void addPostImages(List<PostImage> images) {
+
         for (PostImage postImage : images) {
             addPostImage(postImage);
         }
@@ -89,6 +91,7 @@ public class Post extends BaseEntity {
         this.content = content;
     }
 
+    @Generated
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -101,19 +104,17 @@ public class Post extends BaseEntity {
         return Objects.equals(id, post.id);
     }
 
+    @Generated
     @Override
     public int hashCode() {
         return Objects.hash(id);
     }
 
     @Builder
-    public Post(Long id, Long userId, String profileImage, String nickname, String content,
-                int view,
-                int likeIt, List<PostImage> images) {
+    public Post(Long id, Long userId, String content, int view,
+          int likeIt, List<PostImage> images) {
         this.id = id;
         this.userId = userId;
-        this.profileImage = profileImage;
-        this.nickname = nickname;
         this.content = content;
         this.view = view;
         this.likeIt = likeIt;
