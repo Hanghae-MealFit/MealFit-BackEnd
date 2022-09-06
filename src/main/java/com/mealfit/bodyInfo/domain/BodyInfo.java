@@ -25,8 +25,6 @@ public class BodyInfo {
 
     private double weight;
 
-    private double bodyFat;
-
     @Column(name = "user_id")
     private Long userId;
 
@@ -36,14 +34,13 @@ public class BodyInfo {
         this.weight = weight;
     }
 
-    private BodyInfo(Long userId, double weight, double bodyFat, LocalDate savedDate) {
+    private BodyInfo(Long userId, double weight, LocalDate savedDate) {
         this.userId = userId;
         this.weight = weight;
-        this.bodyFat = bodyFat;
         this.savedDate = savedDate;
     }
 
-    public static BodyInfo createBodyInfo(Long userId, double weight, double bodyFat, LocalDate savedDate) {
-        return new BodyInfo(userId, weight, bodyFat, savedDate);
+    public static BodyInfo createBodyInfo(Long userId, double weight, LocalDate savedDate) {
+        return new BodyInfo(userId, weight, savedDate);
     }
 }

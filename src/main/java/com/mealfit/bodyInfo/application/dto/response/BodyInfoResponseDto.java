@@ -1,12 +1,11 @@
-package com.mealfit.bodyInfo.dto.response;
+package com.mealfit.bodyInfo.application.dto.response;
 
 import com.mealfit.bodyInfo.domain.BodyInfo;
-import java.io.Serializable;
 import java.time.LocalDate;
 import lombok.Data;
 
 @Data
-public class BodyInfoResponseDto implements Serializable {
+public class BodyInfoResponseDto {
 
     private Long id;
     private double weight;

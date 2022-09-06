@@ -1,4 +1,4 @@
-package com.mealfit.bodyInfo.repository;
+package com.mealfit.bodyInfo.domain;
 
 import com.mealfit.bodyInfo.domain.BodyInfo;
 import java.util.List;
