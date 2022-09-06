@@ -72,7 +72,7 @@ public class FormLoginFilter extends UsernamePasswordAuthenticationFilter {
           HttpServletResponse response,
           AuthenticationException failed) throws IOException, ServletException {
         log.info(failed.getMessage());
-        response.setStatus(403);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setCharacterEncoding("utf-8");
         response.getWriter().write(failed.getMessage());
     }

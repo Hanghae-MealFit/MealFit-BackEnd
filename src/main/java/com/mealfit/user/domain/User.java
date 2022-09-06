@@ -1,7 +1,7 @@
 package com.mealfit.user.domain;
 
 import com.mealfit.common.baseEntity.BaseEntity;
-import com.mealfit.exception.user.NoUserException;
+import com.mealfit.exception.user.UserNotFoundException;
 import java.util.Objects;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -177,12 +177,6 @@ public class User extends BaseEntity {
     }
 
     @Generated
-    private void checkUserDeleted() {
-        if (userStatusInfo.getUserStatus() == UserStatus.DELETE) {
-            throw new NoUserException("이미 회원탈퇴한 회원입니다. userId = " + this.id);
-        }
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -195,6 +189,14 @@ public class User extends BaseEntity {
         return Objects.equals(id, user.id);
     }
 
+    @Generated
+    private void checkUserDeleted() {
+        if (userStatusInfo.getUserStatus() == UserStatus.DELETE) {
+            throw new UserNotFoundException("이미 회원탈퇴한 회원입니다. userId = " + this.id);
+        }
+    }
+
+    @Generated
     @Override
     public int hashCode() {
         return Objects.hash(id);

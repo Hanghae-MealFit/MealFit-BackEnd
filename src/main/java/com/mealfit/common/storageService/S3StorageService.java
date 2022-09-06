@@ -38,6 +38,7 @@ public class S3StorageService implements StorageService{
     public List<String> uploadMultipartFile(List<MultipartFile> files, String dirName) {
 
         List<String> savedUrlList = new ArrayList<>();
+
         for (MultipartFile file : files) {
             Optional<String> savedUrl = uploadOne(file, dirName);
             savedUrl.ifPresent(savedUrlList::add);

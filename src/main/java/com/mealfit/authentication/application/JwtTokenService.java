@@ -3,7 +3,7 @@ package com.mealfit.authentication.application;
 import com.mealfit.authentication.application.dto.JwtTokenDto;
 import com.mealfit.authentication.domain.JwtToken;
 import com.mealfit.authentication.domain.JwtTokenVerifyResult;
-import com.mealfit.authentication.domain.OAuthTokenDao;
+import com.mealfit.authentication.domain.OAuthTokenRepository;
 import com.mealfit.exception.authentication.InvalidTokenException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -12,28 +12,25 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class JwtTokenService {
 
-    private final OAuthTokenDao tokenDao;
+    private final OAuthTokenRepository tokenDao;
     private final JwtUtils jwtUtils;
 
-    public JwtTokenService(OAuthTokenDao tokenDao, JwtUtils jwtUtils) {
+    public JwtTokenService(OAuthTokenRepository tokenDao, JwtUtils jwtUtils) {
         this.tokenDao = tokenDao;
         this.jwtUtils = jwtUtils;
     }
 
-    @Transactional
     public JwtTokenDto createAccessToken(String username) {
         JwtToken jwtToken = jwtUtils.issueAccessJwtToken(username);
         return new JwtTokenDto(jwtToken.getUsername(), jwtToken.getToken());
     }
 
-    @Transactional
     public void blackAccessToken(String token) {
         JwtToken blackListToken = jwtUtils.issueBlackListToken(token);
 
         tokenDao.insert(blackListToken);
     }
 
-    @Transactional
     public JwtTokenDto createRefreshToken(String username) {
         JwtToken refreshToken = jwtUtils.issueRefreshJwtToken(username);
         tokenDao.insert(refreshToken);

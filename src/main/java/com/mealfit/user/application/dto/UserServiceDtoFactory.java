@@ -20,6 +20,7 @@ import com.mealfit.user.presentation.dto.request.ChangeUserInfoRequest;
 import com.mealfit.user.presentation.dto.request.ChangeUserPasswordRequest;
 import com.mealfit.user.presentation.dto.request.UserSignUpRequest;
 
+// 실제로 Assembler 라고 함.
 public class UserServiceDtoFactory {
 
     public static UserSignUpRequestDto userSignUpRequestDto(String redirectUrl,
@@ -113,6 +114,5 @@ public class UserServiceDtoFactory {
 
     public static CheckDuplicateSignupInputDto checkDuplicateSignupInput(String key, String value) {
         return new CheckDuplicateSignupInputDto(key, value);
-
     }
 }

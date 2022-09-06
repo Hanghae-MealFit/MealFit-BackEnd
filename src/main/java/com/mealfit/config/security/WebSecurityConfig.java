@@ -7,6 +7,7 @@ import com.mealfit.config.security.OAuth.CustomOAuth2UserService;
 import com.mealfit.config.security.OAuth.handler.OAuth2SuccessHandler;
 import com.mealfit.config.security.formlogin.FormLoginFilter;
 import com.mealfit.config.security.formlogin.FormLoginProvider;
+import com.mealfit.config.security.formlogin.RestAuthenticationEntryPoint;
 import com.mealfit.config.security.jwt.JwtAuthorizationFilter;
 import com.mealfit.config.security.jwt.JwtAuthorizationProvider;
 import lombok.RequiredArgsConstructor;
@@ -66,19 +67,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
               .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
               .antMatchers("/",
-                    "/user/signup", "/login",
-                    "/user/username/**", "/user/email/**", "/user/nickname/**", // 중복확인
-                    "/user/validate", "/find/**",
+                    "/api/user/signup", "/api/user/validate", "/login",
+                    "/api/user/username/**", "/api/user/email/**", "/api/user/nickname/**", // 중복확인
+                    "/api/user/find/**",
                     "/h2-console/**",
                     "/test/error").permitAll()
               .antMatchers("/actuator/**").access("hasRole('ADMIN')")
-              .antMatchers(HttpMethod.GET, "/post").permitAll()
+              .antMatchers(HttpMethod.GET, "/api/post/**").permitAll()
+              .antMatchers(HttpMethod.GET, "/api/post/**").permitAll()
               .anyRequest().authenticated();
 
         http.addFilterBefore(new FormLoginFilter(authenticationManager(), jwtTokenService),
                     UsernamePasswordAuthenticationFilter.class)
               .addFilterBefore(new JwtAuthorizationFilter(authenticationManager(), jwtTokenService),
                     UsernamePasswordAuthenticationFilter.class);
+
+        http.exceptionHandling()
+              .accessDeniedHandler(new CustomAccessDeniedHandler())
+              .authenticationEntryPoint(new RestAuthenticationEntryPoint());
 
         http.oauth2Login()
               .successHandler(oAuth2SuccessHandler)

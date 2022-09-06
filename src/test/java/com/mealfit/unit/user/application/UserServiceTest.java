@@ -16,7 +16,7 @@ import com.mealfit.bodyInfo.repository.BodyInfoRepository;
 import com.mealfit.common.factory.UserFactory;
 import com.mealfit.common.storageService.StorageService;
 import com.mealfit.exception.user.DuplicatedUserException;
-import com.mealfit.exception.user.NoUserException;
+import com.mealfit.exception.user.UserNotFoundException;
 import com.mealfit.exception.user.PasswordCheckException;
 import com.mealfit.user.application.EmailService;
 import com.mealfit.user.application.UserService;
@@ -47,6 +47,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -73,6 +74,8 @@ public class UserServiceTest {
     private PasswordEncoder passwordEncoder;
     @Mock
     private BodyInfoRepository bodyInfoRepository;
+    @Mock
+    private ApplicationEventPublisher publisher;
 
     User testUser = UserFactory.mockUser("username", "password123",
           "nickname1", "test@gmail.com", "https://github.com/testImage.jpg",
@@ -96,7 +99,8 @@ public class UserServiceTest {
                 // given
                 String duplicatedUsername = "test";
                 CheckDuplicateSignupInputDto dto =
-                      UserServiceDtoFactory.checkDuplicateSignupInput("username", duplicatedUsername);
+                      UserServiceDtoFactory.checkDuplicateSignupInput("username",
+                            duplicatedUsername);
 
                 given(userRepository.existsByUsername(duplicatedUsername)).willReturn(true);
 
@@ -115,7 +119,8 @@ public class UserServiceTest {
                 // given
                 String notDuplicatedUsername = "test1";
                 CheckDuplicateSignupInputDto dto =
-                      UserServiceDtoFactory.checkDuplicateSignupInput("username", notDuplicatedUsername);
+                      UserServiceDtoFactory.checkDuplicateSignupInput("username",
+                            notDuplicatedUsername);
 
                 // then
                 assertThatNoException().isThrownBy(
@@ -134,7 +139,8 @@ public class UserServiceTest {
                 //given
                 String duplicateNickname = "nickname1";
                 CheckDuplicateSignupInputDto dto =
-                      UserServiceDtoFactory.checkDuplicateSignupInput("nickname", duplicateNickname);
+                      UserServiceDtoFactory.checkDuplicateSignupInput("nickname",
+                            duplicateNickname);
 
                 // when
                 given(userRepository.existsByNickname(duplicateNickname)).willReturn(true);
@@ -151,7 +157,8 @@ public class UserServiceTest {
                 // given
                 String notDuplicateNickname = "nickname12";
                 CheckDuplicateSignupInputDto dto =
-                      UserServiceDtoFactory.checkDuplicateSignupInput("nickname", notDuplicateNickname);
+                      UserServiceDtoFactory.checkDuplicateSignupInput("nickname",
+                            notDuplicateNickname);
 
                 // then
                 assertThatNoException().isThrownBy(
@@ -170,7 +177,6 @@ public class UserServiceTest {
                 String duplicateEmail = "test@gmail.com";
                 CheckDuplicateSignupInputDto dto =
                       UserServiceDtoFactory.checkDuplicateSignupInput("email", duplicateEmail);
-
                 // when
                 when(userRepository.existsByEmail(duplicateEmail)).thenReturn(true);
 
@@ -187,7 +193,9 @@ public class UserServiceTest {
                 // given
                 String notDuplicateEmail = "test1@gmail.com";
                 CheckDuplicateSignupInputDto dto =
-                      UserServiceDtoFactory.checkDuplicateSignupInput("nickname", notDuplicateEmail);
+                      UserServiceDtoFactory.checkDuplicateSignupInput("email", notDuplicateEmail);
+                System.out.println(dto.getKey());
+                System.out.println(dto.getValue());
 
                 // then
                 assertThatNoException().isThrownBy(
@@ -339,7 +347,7 @@ public class UserServiceTest {
 
                 // when then
                 assertThatThrownBy(() -> userService.showUserInfo(notLoginUsername))
-                      .isInstanceOf(NoUserException.class);
+                      .isInstanceOf(UserNotFoundException.class);
 
                 verify(userRepository, times(1))
                       .findByUsername(null);
@@ -382,7 +390,8 @@ public class UserServiceTest {
                     // 나중에 일치시킬 수 있다면 usingRecursiveComparison() 사용도 나쁘지 않다.
                     assertThat(requestDto.getNickname()).isEqualTo(responseDto.getNickname());
                     assertThat(requestDto.getGoalWeight()).isEqualTo(responseDto.getGoalWeight());
-                    assertThat(requestDto.getStartFasting()).isEqualTo(responseDto.getStartFasting());
+                    assertThat(requestDto.getStartFasting()).isEqualTo(
+                          responseDto.getStartFasting());
                     assertThat(requestDto.getEndFasting()).isEqualTo(responseDto.getEndFasting());
                     assertThat(requestDto.getKcal()).isEqualTo(responseDto.getKcal());
                     assertThat(requestDto.getCarbs()).isEqualTo(responseDto.getCarbs());
@@ -411,7 +420,8 @@ public class UserServiceTest {
 
                     ChangeUserInfoRequestDto requestDto = UserFactory.mockChangeUserInfoRequestDto(
                           loginUsername,
-                          "new_social_nickname", new MockMultipartFile("profileImg", "Content".getBytes()),
+                          "new_social_nickname",
+                          new MockMultipartFile("profileImg", "Content".getBytes()),
                           80, 75,
                           LocalTime.of(9, 10), LocalTime.of(11, 10),
                           2500, 250, 150, 50);
@@ -428,13 +438,15 @@ public class UserServiceTest {
                     // 나중에 일치시킬 수 있다면 usingRecursiveComparison() 사용도 나쁘지 않다.
                     assertThat(requestDto.getNickname()).isEqualTo(responseDto.getNickname());
                     assertThat(requestDto.getGoalWeight()).isEqualTo(responseDto.getGoalWeight());
-                    assertThat(requestDto.getStartFasting()).isEqualTo(responseDto.getStartFasting());
+                    assertThat(requestDto.getStartFasting()).isEqualTo(
+                          responseDto.getStartFasting());
                     assertThat(requestDto.getEndFasting()).isEqualTo(responseDto.getEndFasting());
                     assertThat(requestDto.getKcal()).isEqualTo(responseDto.getKcal());
                     assertThat(requestDto.getCarbs()).isEqualTo(responseDto.getCarbs());
                     assertThat(requestDto.getProtein()).isEqualTo(responseDto.getProtein());
                     assertThat(requestDto.getFat()).isEqualTo(responseDto.getFat());
-                    assertThat(responseDto.getProfileImage()).isEqualTo("https://github.com/testImage.jpg");
+                    assertThat(responseDto.getProfileImage()).isEqualTo(
+                          "https://github.com/testImage.jpg");
                     assertThat(responseDto.getUserStatus()).isEqualTo(UserStatus.NORMAL);
 
                     verify(userRepository, times(1))
@@ -466,7 +478,7 @@ public class UserServiceTest {
 
                 // when then
                 assertThatThrownBy(() -> userService.changeUserInfo(dto))
-                      .isInstanceOf(NoUserException.class);
+                      .isInstanceOf(UserNotFoundException.class);
 
                 verify(userRepository, times(1))
                       .findByUsername(null);
@@ -602,7 +614,7 @@ public class UserServiceTest {
                       notLoginUsername, 2500, 300, 150, 50);
 
                 assertThatThrownBy(() -> userService.changeNutrition(requestDto))
-                      .isInstanceOf(NoUserException.class);
+                      .isInstanceOf(UserNotFoundException.class);
             }
         }
 

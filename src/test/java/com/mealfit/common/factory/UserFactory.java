@@ -11,7 +11,6 @@ import com.mealfit.user.domain.UserStatus;
 import com.mealfit.user.presentation.dto.request.ChangeUserInfoRequest;
 import com.mealfit.user.presentation.dto.request.ChangeUserPasswordRequest;
 import com.mealfit.user.presentation.dto.request.UserSignUpRequest;
-import com.mealfit.user.presentation.dto.response.UserInfoResponse;
 import com.mealfit.user.presentation.dto.response.UserNutritionGoalResponse;
 import java.time.LocalTime;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +24,15 @@ public class UserFactory {
         return MockUser.builder()
               .id(id)
               .username(username)
+              .build();
+    }
+
+    public static User basicUser(Long id, String username, String nickname, String profileImage) {
+        return MockUser.builder()
+              .id(id)
+              .username(username)
+              .nickname(nickname)
+              .profileImage(profileImage)
               .build();
     }
 
@@ -158,27 +166,6 @@ public class UserFactory {
               .username(username)
               .nickname(nickname)
               .email(email)
-              .profileImage(profileImage)
-              .goalWeight(goalWeight)
-              .startFasting(startFasting)
-              .endFasting(endFasting)
-              .kcal(kcal)
-              .carbs(carbs)
-              .protein(protein)
-              .fat(fat)
-              .userStatus(userStatus)
-              .providerType(providerType)
-              .build();
-    }
-
-    public static UserInfoResponse mockUserInfoResponse(Long userId,
-          String nickname, String profileImage, String email,
-          double goalWeight, LocalTime startFasting, LocalTime endFasting,
-          double kcal, double carbs, double protein, double fat,
-          UserStatus userStatus, ProviderType providerType) {
-        return UserInfoResponse.builder()
-              .userId(userId)
-              .nickname(nickname)
               .profileImage(profileImage)
               .goalWeight(goalWeight)
               .startFasting(startFasting)

@@ -10,6 +10,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import lombok.Generated;
 import lombok.Getter;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -58,6 +59,7 @@ public class Diet extends BaseEntity {
         this.foodWeight = foodWeight;
     }
 
+    @Generated
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -70,6 +72,7 @@ public class Diet extends BaseEntity {
         return Objects.equals(id, diet.id);
     }
 
+    @Generated
     @Override
     public int hashCode() {
         return Objects.hash(id);

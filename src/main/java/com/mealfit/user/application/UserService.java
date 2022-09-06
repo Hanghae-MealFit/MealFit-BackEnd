@@ -4,7 +4,7 @@ import com.mealfit.bodyInfo.domain.BodyInfo;
 import com.mealfit.bodyInfo.repository.BodyInfoRepository;
 import com.mealfit.common.storageService.StorageService;
 import com.mealfit.exception.user.DuplicatedUserException;
-import com.mealfit.exception.user.NoUserException;
+import com.mealfit.exception.user.UserNotFoundException;
 import com.mealfit.exception.user.PasswordCheckException;
 import com.mealfit.user.application.dto.UserServiceDtoFactory;
 import com.mealfit.user.application.dto.request.ChangeFastingTimeRequestDto;
@@ -82,25 +82,38 @@ public class UserService {
         validatePassword(dto.getPassword(), dto.getPasswordCheck());
     }
 
-    private boolean validateUsername(String username) {
+    private void validateUsername(String username) {
         if (userRepository.existsByUsername(username)) {
             throw new DuplicatedUserException("이미 존재하는 아이디입니다.");
         }
-        return true;
     }
 
-    private boolean validateNickname(String nickname) {
+    private void validateNickname(String nickname) {
         if (userRepository.existsByNickname(nickname)) {
             throw new DuplicatedUserException("이미 존재하는 닉네임입니다.");
         }
-        return true;
     }
 
-    private boolean validateEmail(String email) {
+    private void validateEmail(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new DuplicatedUserException("이미 존재하는 이메일입니다.");
         }
-        return true;
+    }
+
+    public void checkDuplicateSignupInput(CheckDuplicateSignupInputDto dto) {
+        switch (dto.getKey()) {
+            case "username":
+                validateUsername(dto.getValue());
+                break;
+            case "email":
+                validateEmail(dto.getValue());
+                break;
+            case "nickname":
+                validateNickname(dto.getValue());
+                break;
+            default:
+                throw new IllegalArgumentException("잘못된 값입니다");
+        }
     }
 
     public void validatePassword(String password, String passwordCheck) {
@@ -236,7 +249,7 @@ public class UserService {
 
     private User findByUsername(String username) {
         return userRepository.findByUsername(username)
-              .orElseThrow(() -> new NoUserException("찾으려는 회원이 없습니다."));
+              .orElseThrow(() -> new UserNotFoundException("찾으려는 회원이 없습니다."));
     }
 
     @Transactional
@@ -260,17 +273,5 @@ public class UserService {
         return UserServiceDtoFactory.userInfoResponseDto(user);
     }
 
-    public boolean checkDuplicateSignupInput(CheckDuplicateSignupInputDto dto) {
-        switch (dto.getKey()) {
-            case "username":
-                return validateUsername(dto.getValue());
 
-            case "email":
-                return validateEmail(dto.getValue());
-            case "nickname":
-                return validateNickname(dto.getValue());
-            default:
-                throw new IllegalArgumentException("잘못된 값입니다");
-        }
-    }
 }

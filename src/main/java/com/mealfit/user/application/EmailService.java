@@ -6,7 +6,7 @@ import com.mealfit.common.email.FindUsernameEmail;
 import com.mealfit.common.email.VerifyEmail;
 import com.mealfit.exception.email.BadVerifyCodeException;
 import com.mealfit.exception.email.EmailSendCountLimitException;
-import com.mealfit.exception.user.NoUserException;
+import com.mealfit.exception.user.UserNotFoundException;
 import com.mealfit.user.application.dto.request.EmailAuthRequestDto;
 import com.mealfit.user.domain.EmailEvent;
 import com.mealfit.user.domain.User;
@@ -35,6 +35,7 @@ public class EmailService {
         this.userRepository = userRepository;
     }
 
+    // TODO: retry + queueing 로직 구현
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMPLETION)
     public void sendEmail(EmailEvent event) {
         int sendingCountByUser = limitStorage.getOrDefault(event.getSendingEmail(), 0);
@@ -82,7 +83,7 @@ public class EmailService {
         }
 
         User user = userRepository.findByUsername(dto.getUsername())
-              .orElseThrow(() -> new NoUserException("잘못된 인증정보입니다."));
+              .orElseThrow(() -> new UserNotFoundException("잘못된 인증정보입니다."));
 
         if (!user.isNotValid()) {
             throw new IllegalStateException("이미 인증하셨습니다!");
