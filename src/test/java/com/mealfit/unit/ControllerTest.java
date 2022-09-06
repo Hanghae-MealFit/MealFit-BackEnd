@@ -1,7 +1,7 @@
 package com.mealfit.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mealfit.bodyInfo.service.BodyInfoService;
+import com.mealfit.bodyInfo.application.BodyInfoService;
 import com.mealfit.comment.presentation.CommentController;
 import com.mealfit.comment.application.CommentService;
 import com.mealfit.common.storageService.StorageService;

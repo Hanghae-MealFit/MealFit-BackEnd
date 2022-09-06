@@ -40,7 +40,6 @@ public class PostReadService {
               .nickname(user.getUserProfile().getNickname())
               .profileImage(user.getUserProfile().getProfileImage())
               .like(post.getLikeIt())
-              .view(postReadRepository.updateView(postId))
               .view(post.getView())
               .createdAt(post.getCreatedAt())
               .build();

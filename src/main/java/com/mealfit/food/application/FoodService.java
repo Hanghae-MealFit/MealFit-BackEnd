@@ -2,8 +2,8 @@ package com.mealfit.food.application;
 
 import com.mealfit.food.application.dto.request.CreateFoodRequestDto;
 import com.mealfit.food.domain.Food;
-import com.mealfit.food.presentation.dto.response.FoodInfoResponse;
 import com.mealfit.food.domain.FoodRepository;
+import com.mealfit.food.presentation.dto.response.FoodInfoResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,6 @@ public class FoodService {
     private final FoodRepository foodRepository;
 
     // 음식 검색
-    // @Transactional
     public List<FoodInfoResponse> getFood(String foodName) {
 
         List<Food> searchFood = foodRepository.findByFoodNameContaining(foodName);

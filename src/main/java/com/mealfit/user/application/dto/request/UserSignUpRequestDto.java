@@ -5,7 +5,6 @@ import com.mealfit.user.domain.LoginInfo;
 import com.mealfit.user.domain.User;
 import com.mealfit.user.domain.UserProfile;
 import com.mealfit.user.presentation.dto.request.UserSignUpRequest;
-import java.io.Serializable;
 import java.time.LocalTime;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -17,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserSignUpRequestDto implements Serializable {
+public class UserSignUpRequestDto {
 
     private String redirectURL;
     private String username;

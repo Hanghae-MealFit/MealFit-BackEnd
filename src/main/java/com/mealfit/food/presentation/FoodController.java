@@ -1,12 +1,12 @@
 package com.mealfit.food.presentation;
 
 
+import com.mealfit.config.security.details.UserDetailsImpl;
+import com.mealfit.food.application.FoodService;
 import com.mealfit.food.application.dto.FoodServiceDtoFactory;
 import com.mealfit.food.application.dto.request.CreateFoodRequestDto;
 import com.mealfit.food.presentation.dto.request.CreateFoodRequest;
 import com.mealfit.food.presentation.dto.response.FoodInfoResponse;
-import com.mealfit.food.application.FoodService;
-import com.mealfit.config.security.details.UserDetailsImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,8 @@ public class FoodController {
 
     // 음식 검색
     @GetMapping
-    public ResponseEntity<List<FoodInfoResponse>> getFood(@RequestParam("name") String food) {
+    public ResponseEntity<List<FoodInfoResponse>> getFood(
+          @RequestParam("name") String food) {
         return ResponseEntity.status(HttpStatus.OK)
               .body(foodService.getFood(food));
     }

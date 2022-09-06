@@ -12,12 +12,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.mealfit.bodyInfo.repository.BodyInfoRepository;
+import com.mealfit.bodyInfo.domain.BodyInfoRepository;
 import com.mealfit.common.factory.UserFactory;
 import com.mealfit.common.storageService.StorageService;
 import com.mealfit.exception.user.DuplicatedUserException;
-import com.mealfit.exception.user.UserNotFoundException;
 import com.mealfit.exception.user.PasswordCheckException;
+import com.mealfit.exception.user.UserNotFoundException;
 import com.mealfit.user.application.EmailService;
 import com.mealfit.user.application.UserService;
 import com.mealfit.user.application.dto.UserServiceDtoFactory;
@@ -31,7 +31,6 @@ import com.mealfit.user.application.dto.request.SendEmailRequestDto;
 import com.mealfit.user.application.dto.request.SendEmailRequestDto.EmailType;
 import com.mealfit.user.application.dto.request.UserSignUpRequestDto;
 import com.mealfit.user.application.dto.response.UserInfoResponseDto;
-import com.mealfit.user.domain.EmailEvent;
 import com.mealfit.user.domain.ProviderType;
 import com.mealfit.user.domain.User;
 import com.mealfit.user.domain.UserRepository;
@@ -715,8 +714,7 @@ public class UserServiceTest {
 
                 userService.findPassword(requestDto);
 
-                verify(emailService, times(1))
-                      .sendEmail(any(EmailEvent.class));
+                verify(userRepository, times(1)).findByUsername(username);
             }
         }
 

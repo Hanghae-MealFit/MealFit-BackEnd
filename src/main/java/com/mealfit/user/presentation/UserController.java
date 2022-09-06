@@ -1,7 +1,5 @@
 package com.mealfit.user.presentation;
 
-import com.mealfit.bodyInfo.dto.request.BodyInfoSaveRequestDto;
-import com.mealfit.bodyInfo.service.BodyInfoService;
 import com.mealfit.config.security.details.UserDetailsImpl;
 import com.mealfit.user.application.EmailService;
 import com.mealfit.user.application.UserService;
@@ -23,7 +21,6 @@ import com.mealfit.user.presentation.dto.request.ChangeUserInfoRequest;
 import com.mealfit.user.presentation.dto.request.ChangeUserPasswordRequest;
 import com.mealfit.user.presentation.dto.request.UserSignUpRequest;
 import com.mealfit.user.presentation.dto.response.UserInfoResponse;
-import java.time.LocalDate;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -44,13 +41,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
-    private final BodyInfoService bodyInfoService;
     private final EmailService emailService;
 
-    public UserController(UserService userService, BodyInfoService bodyInfoService,
-          EmailService emailService) {
+    public UserController(UserService userService, EmailService emailService) {
         this.userService = userService;
-        this.bodyInfoService = bodyInfoService;
         this.emailService = emailService;
     }
 
@@ -109,10 +103,6 @@ public class UserController {
 
         userService.changeUserInfo(requestDto);
 
-        //TODO: 무게가 info에 있어야 하나? -> 분리하자
-        bodyInfoService.saveBodyInfo(userDetailsImpl.getUser(),
-              new BodyInfoSaveRequestDto(requestDto.getCurrentWeight(), 0, LocalDate.now()));
-
         return ResponseEntity.status(HttpStatus.OK)
               .body("수정 완료");
     }
@@ -155,7 +145,8 @@ public class UserController {
     }
 
     @PutMapping("/password")
-    public ResponseEntity<UserInfoResponse> changePassword(@Valid @RequestBody ChangeUserPasswordRequest request,
+    public ResponseEntity<UserInfoResponse> changePassword(
+          @Valid @RequestBody ChangeUserPasswordRequest request,
           @AuthenticationPrincipal UserDetailsImpl userDetails) {
         ChangeUserPasswordRequestDto requestDto = UserServiceDtoFactory.changeUserPasswordRequestDto(
               userDetails.getUsername(), request);
