@@ -15,7 +15,7 @@ import com.mealfit.authentication.domain.JwtToken;
 import com.mealfit.authentication.domain.JwtTokenType;
 import com.mealfit.authentication.domain.JwtTokenVerifyResult;
 import com.mealfit.authentication.domain.JwtTokenVerifyResult.TokenStatus;
-import com.mealfit.authentication.domain.OAuthTokenDao;
+import com.mealfit.authentication.domain.OAuthTokenRepository;
 import com.mealfit.exception.authentication.InvalidTokenException;
 import java.util.Optional;
 import lombok.Getter;
@@ -37,7 +37,7 @@ public class JwtTokenServiceTest {
     private JwtUtils jwtUtils;
 
     @Mock
-    private OAuthTokenDao oAuthTokenDao;
+    private OAuthTokenRepository oAuthTokenRepository;
 
     @Getter
     class TokenInfo {
@@ -116,7 +116,7 @@ public class JwtTokenServiceTest {
             JwtToken blackToken = new TokenInfo().createBlackListToken();
 
             given(jwtUtils.issueBlackListToken(anyString())).willReturn(blackToken);
-            given(oAuthTokenDao.findByKey(blackToken.getUsername()))
+            given(oAuthTokenRepository.findByKey(blackToken.getUsername()))
                   .willReturn(Optional.ofNullable(blackToken.getToken()));
 
             // when
@@ -125,8 +125,8 @@ public class JwtTokenServiceTest {
 
             // then
             verify(jwtUtils, times(1)).issueBlackListToken(anyString());
-            verify(oAuthTokenDao, times(1)).insert(any());
-            verify(oAuthTokenDao, times(1)).findByKey(anyString());
+            verify(oAuthTokenRepository, times(1)).insert(any());
+            verify(oAuthTokenRepository, times(1)).findByKey(anyString());
         }
     }
 
@@ -143,7 +143,7 @@ public class JwtTokenServiceTest {
             JwtToken refreshToken = tokenInfo.createRefreshToken();
 
             given(jwtUtils.issueRefreshJwtToken(anyString())).willReturn(refreshToken);
-            given(oAuthTokenDao.findByKey(refreshToken.getUsername()))
+            given(oAuthTokenRepository.findByKey(refreshToken.getUsername()))
                   .willReturn(Optional.ofNullable(refreshToken.getToken()));
 
             // when
@@ -152,8 +152,8 @@ public class JwtTokenServiceTest {
 
             // then
             assertThat(result).isEqualTo(refreshToken.getToken());
-            verify(oAuthTokenDao, times(1)).insert(any());
-            verify(oAuthTokenDao, times(1)).findByKey(anyString());
+            verify(oAuthTokenRepository, times(1)).insert(any());
+            verify(oAuthTokenRepository, times(1)).findByKey(anyString());
         }
 
         @DisplayName("username을 전달받지 못하면 NullPointException을 반환한다.")
@@ -179,7 +179,7 @@ public class JwtTokenServiceTest {
 
             // given
             String noUsername = "asdsad";
-            given(oAuthTokenDao.findByKey(anyString())).willReturn(Optional.empty());
+            given(oAuthTokenRepository.findByKey(anyString())).willReturn(Optional.empty());
 
             // when then
             assertThatThrownBy(() -> jwtTokenService.findByUsername(noUsername))

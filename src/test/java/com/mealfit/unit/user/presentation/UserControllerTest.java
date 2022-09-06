@@ -30,7 +30,6 @@ import com.mealfit.unit.ControllerTest;
 import com.mealfit.user.application.dto.response.UserInfoResponseDto;
 import com.mealfit.user.domain.ProviderType;
 import com.mealfit.user.domain.UserStatus;
-import com.mealfit.user.presentation.dto.response.UserInfoResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalTime;
 import org.junit.jupiter.api.DisplayName;
@@ -42,15 +41,10 @@ import org.springframework.mock.web.MockMultipartFile;
 
 class UserControllerTest extends ControllerTest {
 
+    private static final String COMMON_API_ADDRESS = "/api/user";
+
     UserInfoResponseDto userInfoResponseDto = UserFactory.mockUserInfoResponseDto(
           1L, "username",
-          "nickname", "https://github.com/profileImg", "test@gmail.com",
-          80.0, LocalTime.of(11, 0), LocalTime.of(12, 0),
-          2000, 200, 150, 50,
-          UserStatus.NORMAL, ProviderType.LOCAL);
-
-    UserInfoResponse userInfoResponse = UserFactory.mockUserInfoResponse(
-          1L,
           "nickname", "https://github.com/profileImg", "test@gmail.com",
           80.0, LocalTime.of(11, 0), LocalTime.of(12, 0),
           2000, 200, 150, 50,
@@ -60,7 +54,7 @@ class UserControllerTest extends ControllerTest {
     @Nested
     class Context_when_Login {
 
-        @DisplayName(value = "[POST] /user/info 요청 시 회원 정보를 수정할 수 있다.")
+        @DisplayName(value = "[POST] /api/user/info 요청 시 회원 정보를 수정할 수 있다.")
         @WithMockCustomUser
         @Test
         void changeUserInfo_success() throws Exception {
@@ -71,7 +65,7 @@ class UserControllerTest extends ControllerTest {
 
             given(userService.changeUserInfo(any())).willReturn(userInfoResponseDto);
 
-            mockMvc.perform(multipart("/user/info")
+            mockMvc.perform(multipart(COMMON_API_ADDRESS + "/info")
                         .file(image)
                         .param("nickname", "new_Nickname")
                         .param("currentWeight", "80")
@@ -134,7 +128,7 @@ class UserControllerTest extends ControllerTest {
 
             given(userService.changeUserInfo(any())).willReturn(userInfoResponseDto);
 
-            mockMvc.perform(multipart("/user/info")
+            mockMvc.perform(multipart(COMMON_API_ADDRESS + "/info")
                         .file(image)
                         .param("nickname", "new_Nickname")
                         .param("currentWeight", "80")
@@ -194,7 +188,7 @@ class UserControllerTest extends ControllerTest {
             //given
             given(userService.showUserInfo(anyString())).willReturn(userInfoResponseDto);
 
-            mockMvc.perform(get("/user/info")
+            mockMvc.perform(get(COMMON_API_ADDRESS + "/info")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer access_token")
                         .header("refresh_token", "Bearer refresh_token")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -248,7 +242,7 @@ class UserControllerTest extends ControllerTest {
                   "profileTest.jpeg", "image/jpeg",
                   "<<image data>>".getBytes(StandardCharsets.UTF_8));
 
-            mockMvc.perform(multipart("/user/signup")
+            mockMvc.perform(multipart(COMMON_API_ADDRESS + "/signup")
                         .file(image)
                         .param("username", "test123")
                         .param("email", "test@gmail.com")
@@ -290,7 +284,7 @@ class UserControllerTest extends ControllerTest {
         @WithMockCustomUser
         @Test
         void validateUsername_success() throws Exception {
-            mockMvc.perform(get("/user/{key}/{value}", "username", "test123@gmail.com"))
+            mockMvc.perform(get(COMMON_API_ADDRESS + "/{key}/{value}", "username", "test123@gmail.com"))
                   .andExpect(status().isOk())
                   .andDo(print())
                   .andDo(document("user-usernameValidation",
@@ -301,7 +295,7 @@ class UserControllerTest extends ControllerTest {
         @WithMockCustomUser
         @Test
         void validateEmail_success() throws Exception {
-            mockMvc.perform(get("/user/{key}/{value}", "nickname", "test123@gmail.com"))
+            mockMvc.perform(get(COMMON_API_ADDRESS + "/{key}/{value}", "nickname", "test123@gmail.com"))
                   .andExpect(status().isOk())
                   .andDo(print())
                   .andDo(document("user-emailValidation",
@@ -312,7 +306,7 @@ class UserControllerTest extends ControllerTest {
         @WithMockCustomUser
         @Test
         void validateNickname_success() throws Exception {
-            mockMvc.perform(get("/user/{key}/{value}", "nickname", "test2"))
+            mockMvc.perform(get(COMMON_API_ADDRESS + "/{key}/{value}", "nickname", "test2"))
                   .andExpect(status().isOk())
                   .andDo(print())
                   .andDo(document("user-nicknameValidation",

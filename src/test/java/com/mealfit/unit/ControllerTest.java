@@ -5,11 +5,12 @@ import com.mealfit.bodyInfo.service.BodyInfoService;
 import com.mealfit.comment.presentation.CommentController;
 import com.mealfit.comment.application.CommentService;
 import com.mealfit.common.storageService.StorageService;
+import com.mealfit.post.application.PostReadService;
 import com.mealfit.post.presentation.PostController;
 import com.mealfit.post.application.PostService;
+import com.mealfit.post.presentation.PostReadController;
 import com.mealfit.user.application.EmailService;
 import com.mealfit.user.application.UserService;
-import com.mealfit.user.presentation.UserAdminController;
 import com.mealfit.user.presentation.UserController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -23,9 +24,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @AutoConfigureRestDocs
 @WebMvcTest(value = {
-      UserAdminController.class,
       UserController.class,
       PostController.class,
+      PostReadController.class,
       CommentController.class,
 }, excludeFilters = @ComponentScan.Filter(classes = {EnableWebSecurity.class}))
 @ActiveProfiles("test")
@@ -48,6 +49,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected PostService postService;
+
+    @MockBean
+    protected PostReadService postReadService;
 
     @MockBean
     protected UserService userService;
