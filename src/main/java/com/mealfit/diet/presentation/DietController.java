@@ -21,17 +21,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/diet")
 @RequiredArgsConstructor
 public class DietController {
 
     private final DietService dietService;
 
     //식단 조회
-    @GetMapping("/diet")
+    @GetMapping
     public ResponseEntity<DietResponseByDateDto> getDiet(
           @RequestParam("date")
           @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -45,7 +47,7 @@ public class DietController {
     }
 
     //식단 입력
-    @PostMapping("/diet")
+    @PostMapping
     public ResponseEntity<Long> createDiet(@RequestBody DietCreateRequest request,
           @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
 
@@ -59,7 +61,7 @@ public class DietController {
     }
 
     //식단 수정
-    @PutMapping("/diet")
+    @PutMapping
     public ResponseEntity<String> updateDiet(@RequestBody DietChangeRequest request,
           @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
@@ -73,7 +75,7 @@ public class DietController {
     }
 
     //식단 삭제
-    @DeleteMapping("/diet/{dietId}")
+    @DeleteMapping("/{dietId}")
     public ResponseEntity<String> deleteDiet(@PathVariable Long dietId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         dietService.deleteDiet(dietId, userDetails.getUser());
         return ResponseEntity.status(HttpStatus.OK)

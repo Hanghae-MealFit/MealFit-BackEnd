@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 @RestController
 public class UserController {
 
@@ -155,7 +155,7 @@ public class UserController {
     }
 
     @PutMapping("/password")
-    public ResponseEntity<UserInfoResponse> changePassword(@Valid ChangeUserPasswordRequest request,
+    public ResponseEntity<UserInfoResponse> changePassword(@Valid @RequestBody ChangeUserPasswordRequest request,
           @AuthenticationPrincipal UserDetailsImpl userDetails) {
         ChangeUserPasswordRequestDto requestDto = UserServiceDtoFactory.changeUserPasswordRequestDto(
               userDetails.getUsername(), request);
@@ -182,7 +182,7 @@ public class UserController {
 
     @PutMapping("/fastingTime")
     public ResponseEntity<UserInfoResponse> changeFastingTime(
-          @Valid ChangeFastingTimeRequest request,
+          @Valid @RequestBody ChangeFastingTimeRequest request,
           @AuthenticationPrincipal UserDetailsImpl userDetails) {
         ChangeFastingTimeRequestDto requestDto = UserServiceDtoFactory
               .changeFastingTimeRequestDto(userDetails.getUsername(), request);

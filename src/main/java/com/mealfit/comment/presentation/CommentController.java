@@ -23,9 +23,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/post")
 @RequiredArgsConstructor
 public class CommentController {
 
@@ -41,7 +43,7 @@ public class CommentController {
      *           FrameWork -> json 형식으로 보내는게 아니네?라 착각함  (application-www-encodedType) Form-Data
      *                        이럴땐 Content-Type : Application/JSON
      */
-    @PostMapping("/post/{postId}/comment")
+    @PostMapping("/{postId}/comment")
     public ResponseEntity<String> createComment(@PathVariable Long postId,
                                         @Valid @RequestBody CreateCommentRequest request,
                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -57,7 +59,7 @@ public class CommentController {
 
     }
 
-    @DeleteMapping("/post/comment/{commentId}")
+    @DeleteMapping("/comment/{commentId}")
     public ResponseEntity<String> deleteComment(@PathVariable Long commentId,
                                                 @AuthenticationPrincipal UserDetailsImpl userDetails){
         commentService.deleteComment(commentId,userDetails.getUser());
@@ -65,7 +67,7 @@ public class CommentController {
                 .body("삭제완료");
     }
 
-    @PutMapping("/post/comment/{commentId}")
+    @PutMapping("/comment/{commentId}")
     public ResponseEntity<String> updateComment(@PathVariable Long commentId,
                                                 @Valid @RequestBody UpdateCommentRequest request,
                                                 @AuthenticationPrincipal UserDetailsImpl userDetails){
@@ -77,7 +79,7 @@ public class CommentController {
                 .body("수정 완료!");
     }
 
-    @GetMapping("/post/{postId}/comment")
+    @GetMapping("/{postId}/comment")
     public ResponseEntity<CommentWrapper<List<CommentResponse>>> listComment(@PathVariable Long postId) {
         List<CommentResponse> dtoList = commentService.listComment(postId);
         return ResponseEntity.status(HttpStatus.OK)

@@ -15,24 +15,26 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/food")
 @RequiredArgsConstructor
 public class FoodController {
 
     private final FoodService foodService;
 
     // 음식 검색
-    @GetMapping("/food")
+    @GetMapping
     public ResponseEntity<List<FoodInfoResponse>> getFood(@RequestParam("name") String food) {
         return ResponseEntity.status(HttpStatus.OK)
               .body(foodService.getFood(food));
     }
 
     // 음식 입력
-    @PostMapping("/food")
+    @PostMapping
     public ResponseEntity<String> createFood(@RequestBody CreateFoodRequest request,
           @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
         CreateFoodRequestDto requestDto =

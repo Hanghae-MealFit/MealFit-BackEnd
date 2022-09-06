@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/api")
+@RequestMapping("/api/bodyInfo")
 @RestController
 public class BodyInfoController {
 
@@ -28,7 +28,7 @@ public class BodyInfoController {
         this.bodyInfoService = bodyInfoService;
     }
 
-    @GetMapping("/bodyInfo")
+    @GetMapping
     public ResponseEntity<DataWrapper<List<BodyInfoResponseDto>>> showAllUserBodyInfo(
           @AuthenticationPrincipal UserDetailsImpl userDetails) {
         List<BodyInfoResponseDto> result = bodyInfoService.showBodyInfos(
@@ -38,7 +38,7 @@ public class BodyInfoController {
               .body(new DataWrapper<>(result));
     }
 
-    @GetMapping("/bodyInfo/{bodyInfoId}")
+    @GetMapping("/{bodyInfoId}")
     public ResponseEntity<BodyInfoResponseDto> showUserBodyInfo(
           @AuthenticationPrincipal UserDetailsImpl userDetails,
           @PathVariable Long bodyInfoId) {
@@ -49,7 +49,7 @@ public class BodyInfoController {
               .body(result);
     }
 
-    @PostMapping("/bodyInfo")
+    @PostMapping
     public ResponseEntity<String> saveUserBodyInfo(
           @AuthenticationPrincipal UserDetailsImpl userDetails,
           @RequestBody BodyInfoSaveRequestDto dto) {
@@ -60,7 +60,7 @@ public class BodyInfoController {
     }
 
 
-    @PutMapping("/bodyInfo")
+    @PutMapping
     public ResponseEntity<String> changeUserBodyInfo(
           @AuthenticationPrincipal UserDetailsImpl userDetails,
           @RequestBody BodyInfoChangeRequestDto dto) {
