@@ -3,12 +3,12 @@ package com.mealfit.comment.application;
 import com.mealfit.comment.application.dto.request.CreateCommentRequestDto;
 import com.mealfit.comment.application.dto.request.UpdateCommentRequestDto;
 import com.mealfit.comment.domain.Comment;
-import com.mealfit.comment.presentation.dto.response.CommentResponse;
 import com.mealfit.comment.domain.CommentRepository;
+import com.mealfit.comment.presentation.dto.response.CommentResponse;
 import com.mealfit.post.domain.PostRepository;
 import com.mealfit.user.domain.User;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -71,13 +71,9 @@ public class CommentService {
     //댓글 리스트
     @Transactional(readOnly = true)
     public List<CommentResponse> listComment(Long postId) {
-        List<CommentResponse> commentResponseList = new ArrayList<>();
 
-        List<Comment> commentList = commentRepository.findByPostIdOrderByCreatedAt(postId);
-        for (Comment comment : commentList) {
-            CommentResponse commentResponse = new CommentResponse(comment);
-            commentResponseList.add(commentResponse);
-        }
-        return commentResponseList;
+        return commentRepository.findByPostIdOrderByCreatedAt(postId).stream()
+        .map(CommentResponse::new)
+        .collect(Collectors.toList());
     }
 }
