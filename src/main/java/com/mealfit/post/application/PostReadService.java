@@ -4,11 +4,15 @@ package com.mealfit.post.application;
 import com.mealfit.exception.post.PostNotFoundException;
 import com.mealfit.exception.user.UserNotFoundException;
 import com.mealfit.post.domain.Post;
+import com.mealfit.post.domain.PostLike;
+import com.mealfit.post.domain.PostLikeRepository;
 import com.mealfit.post.domain.PostReadRepository;
 import com.mealfit.post.presentation.dto.response.PostResponse;
 import com.mealfit.user.domain.User;
 import com.mealfit.user.domain.UserRepository;
 import java.util.List;
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -24,6 +28,7 @@ public class PostReadService {
 
     private final UserRepository userRepository;
     private final PostReadRepository postReadRepository;
+    private final PostLikeRepository postLikeRepository;
 
     //상세 게시글 조회
     public PostResponse getReadOne(Long postId) {
@@ -40,6 +45,7 @@ public class PostReadService {
               .nickname(user.getUserProfile().getNickname())
               .profileImage(user.getUserProfile().getProfileImage())
               .like(post.getLikeIt())
+              .liked(postLikeRepository.existsByPostIdAndUserId(postId,user.getId()))
               .view(postReadRepository.updateView(postId))
               .view(post.getView())
               .createdAt(post.getCreatedAt())
@@ -75,9 +81,30 @@ public class PostReadService {
                         .profileImage(user.getUserProfile().getProfileImage())
                         .view(post.getView())
                         .like(post.getLikeIt())
+                        .liked(postLikeRepository.existsByPostIdAndUserId(post.getId(),user.getId()))
                         .createdAt(post.getCreatedAt())
                         .build();
               }
         ).toList();
     }
+
+
+    public boolean saveLike (Long postId, User user){
+        Optional<PostLike> findLike = postLikeRepository.findByPostIdAndUserId(postId, user.getId());
+        if(findLike.isEmpty()){
+            PostLike postLike = PostLike.builder()
+                    .postId(postId)
+                    .userId(user.getId())
+                    .build();
+            postLikeRepository.save(postLike);
+            postReadRepository.plusLike(postId);
+            return true;
+        }else {
+            postLikeRepository.deleteByPostIdAndUserId(postId, user.getId());
+            postReadRepository.minusLike(postId);
+            return false;
+        }
+    }
+
+
 }

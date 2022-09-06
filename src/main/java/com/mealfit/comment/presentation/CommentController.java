@@ -87,6 +87,15 @@ public class CommentController {
                 .body(new CommentWrapper<>(dtoList));
     }
 
+    @PostMapping("/comment/{commentId}/likeIt")
+    public boolean addlike(@PathVariable Long commentId,
+                           @AuthenticationPrincipal UserDetailsImpl userDetails){
+
+        boolean result = commentService.saveLike(commentId,userDetails.getUser());
+
+        return result;
+    }
+
     @Data
     @AllArgsConstructor
     static class CommentWrapper<T> {
