@@ -3,7 +3,6 @@ package com.mealfit.user.application.dto.response;
 import com.mealfit.user.domain.ProviderType;
 import com.mealfit.user.domain.User;
 import com.mealfit.user.domain.UserStatus;
-import java.io.Serializable;
 import java.time.LocalTime;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +10,7 @@ import lombok.ToString;
 
 @ToString
 @Getter
-public class UserInfoResponseDto implements Serializable {
+public class UserInfoResponseDto {
 
     private Long userId;
     private String username;

@@ -1,9 +1,12 @@
-package com.mealfit.bodyInfo.controller;
+package com.mealfit.bodyInfo.presentation;
 
-import com.mealfit.bodyInfo.dto.request.BodyInfoChangeRequestDto;
-import com.mealfit.bodyInfo.dto.request.BodyInfoSaveRequestDto;
-import com.mealfit.bodyInfo.dto.response.BodyInfoResponseDto;
-import com.mealfit.bodyInfo.service.BodyInfoService;
+import com.mealfit.bodyInfo.application.BodyInfoService;
+import com.mealfit.bodyInfo.application.dto.BodyInfoServiceDtoFactory;
+import com.mealfit.bodyInfo.application.dto.request.BodyInfoChangeRequestDto;
+import com.mealfit.bodyInfo.application.dto.request.BodyInfoSaveRequestDto;
+import com.mealfit.bodyInfo.application.dto.response.BodyInfoResponseDto;
+import com.mealfit.bodyInfo.presentation.dto.request.BodyInfoChangeRequest;
+import com.mealfit.bodyInfo.presentation.dto.request.BodyInfoSaveRequest;
 import com.mealfit.common.wrapper.DataWrapper;
 import com.mealfit.config.security.details.UserDetailsImpl;
 import java.util.List;
@@ -45,6 +48,8 @@ public class BodyInfoController {
         BodyInfoResponseDto result = bodyInfoService.showBodyInfo(
               userDetails.getUser(), bodyInfoId);
 
+
+
         return ResponseEntity.status(HttpStatus.OK)
               .body(result);
     }
@@ -52,8 +57,12 @@ public class BodyInfoController {
     @PostMapping
     public ResponseEntity<String> saveUserBodyInfo(
           @AuthenticationPrincipal UserDetailsImpl userDetails,
-          @RequestBody BodyInfoSaveRequestDto dto) {
-        bodyInfoService.saveBodyInfo(userDetails.getUser(), dto);
+          @RequestBody BodyInfoSaveRequest request) {
+
+        BodyInfoSaveRequestDto requestDto = BodyInfoServiceDtoFactory
+              .bodyInfoSaveRequestDto(request, userDetails.getUser().getId());
+
+        bodyInfoService.saveBodyInfo(requestDto);
 
         return ResponseEntity.status(HttpStatus.OK)
               .body("입력 완료!");
@@ -63,8 +72,11 @@ public class BodyInfoController {
     @PutMapping
     public ResponseEntity<String> changeUserBodyInfo(
           @AuthenticationPrincipal UserDetailsImpl userDetails,
-          @RequestBody BodyInfoChangeRequestDto dto) {
-        bodyInfoService.changeBodyInfo(userDetails.getUser(), dto);
+          @RequestBody BodyInfoChangeRequest request) {
+        BodyInfoChangeRequestDto requestDto = BodyInfoServiceDtoFactory
+              .bodyInfoChangeRequestDto(request, userDetails.getUser().getId());
+
+        bodyInfoService.changeBodyInfo(requestDto);
 
         return ResponseEntity.status(HttpStatus.OK)
               .body("수정 완료!");

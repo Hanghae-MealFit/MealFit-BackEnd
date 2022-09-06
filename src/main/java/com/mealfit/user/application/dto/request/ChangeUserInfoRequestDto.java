@@ -1,7 +1,6 @@
 package com.mealfit.user.application.dto.request;
 
 
-import java.io.Serializable;
 import java.time.LocalTime;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 @Getter
 @NoArgsConstructor
-public class ChangeUserInfoRequestDto implements Serializable {
+public class ChangeUserInfoRequestDto {
 
     private String username;
     private String nickname;

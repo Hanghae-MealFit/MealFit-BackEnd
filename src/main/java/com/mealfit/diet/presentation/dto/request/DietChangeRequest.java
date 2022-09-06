@@ -1,5 +1,6 @@
 package com.mealfit.diet.presentation.dto.request;
 
+import java.io.Serializable;
 import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Builder
-public class DietChangeRequest {
+public class DietChangeRequest implements Serializable {
 
     @NotNull
     private Long dietId;  // 식단 ID

@@ -2,6 +2,7 @@ package com.mealfit.diet.presentation.dto.request;
 
 import com.mealfit.diet.domain.Diet;
 import com.mealfit.diet.domain.DietStatus;
+import java.io.Serializable;
 import java.time.LocalDate;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DietCreateRequest {
+public class DietCreateRequest implements Serializable {
     @NotNull
     private Long foodId;  // 음식 ID
 

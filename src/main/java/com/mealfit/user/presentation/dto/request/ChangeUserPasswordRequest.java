@@ -1,5 +1,6 @@
 package com.mealfit.user.presentation.dto.request;
 
+import java.io.Serializable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import lombok.Builder;
@@ -8,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class ChangeUserPasswordRequest {
+public class ChangeUserPasswordRequest implements Serializable {
 
     @Size(max = 20)
     @NotBlank(message = "비밀번호는 필수로 입력해주세요")

@@ -1,7 +1,7 @@
 package com.mealfit.user.application;
 
 import com.mealfit.bodyInfo.domain.BodyInfo;
-import com.mealfit.bodyInfo.repository.BodyInfoRepository;
+import com.mealfit.bodyInfo.domain.BodyInfoRepository;
 import com.mealfit.common.storageService.StorageService;
 import com.mealfit.exception.user.DuplicatedUserException;
 import com.mealfit.exception.user.UserNotFoundException;
@@ -69,8 +69,7 @@ public class UserService {
               EmailType.VERIFY);
         publisher.publishEvent(emailEvent);
 
-        bodyInfoRepository.save(BodyInfo.createBodyInfo(saveEntity.getId(), dto.getCurrentWeight(),
-              0, LocalDate.now()));
+        bodyInfoRepository.save(BodyInfo.createBodyInfo(saveEntity.getId(), dto.getCurrentWeight(), LocalDate.now()));
 
         return UserServiceDtoFactory.userInfoResponseDto(saveEntity);
     }

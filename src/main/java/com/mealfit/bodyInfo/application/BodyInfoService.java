@@ -1,10 +1,10 @@
-package com.mealfit.bodyInfo.service;
+package com.mealfit.bodyInfo.application;
 
 import com.mealfit.bodyInfo.domain.BodyInfo;
-import com.mealfit.bodyInfo.dto.request.BodyInfoChangeRequestDto;
-import com.mealfit.bodyInfo.dto.request.BodyInfoSaveRequestDto;
-import com.mealfit.bodyInfo.dto.response.BodyInfoResponseDto;
-import com.mealfit.bodyInfo.repository.BodyInfoRepository;
+import com.mealfit.bodyInfo.application.dto.request.BodyInfoChangeRequestDto;
+import com.mealfit.bodyInfo.application.dto.request.BodyInfoSaveRequestDto;
+import com.mealfit.bodyInfo.application.dto.response.BodyInfoResponseDto;
+import com.mealfit.bodyInfo.domain.BodyInfoRepository;
 import com.mealfit.user.domain.User;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,15 +21,15 @@ public class BodyInfoService {
     }
 
     @Transactional
-    public void saveBodyInfo(User user, BodyInfoSaveRequestDto dto) {
-        BodyInfo bodyInfo = BodyInfo.createBodyInfo(user.getId(), dto.getWeight(),
-              dto.getBodyFat(), dto.getSavedDate());
+    public void saveBodyInfo(BodyInfoSaveRequestDto dto) {
+        BodyInfo bodyInfo = BodyInfo.createBodyInfo(dto.getUserId(), dto.getWeight(),
+              dto.getSavedDate());
         bodyInfoRepository.save(bodyInfo);
     }
 
     @Transactional
-    public void changeBodyInfo(User user, BodyInfoChangeRequestDto dto) {
-        BodyInfo bodyInfo = bodyInfoRepository.findByIdAndUserId(dto.getId(), user.getId())
+    public void changeBodyInfo(BodyInfoChangeRequestDto dto) {
+        BodyInfo bodyInfo = bodyInfoRepository.findByIdAndUserId(dto.getId(), dto.getUserId())
               .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 체중기록입니다."));
 
         bodyInfo.changeWeight(dto.getWeight());

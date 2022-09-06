@@ -46,8 +46,6 @@ public class PostReadService {
               .profileImage(user.getUserProfile().getProfileImage())
               .like(post.getLikeIt())
               .liked(postLikeRepository.existsByPostIdAndUserId(postId,user.getId()))
-              .view(postReadRepository.updateView(postId))
-              .view(post.getView())
               .createdAt(post.getCreatedAt())
               .build();
     }
