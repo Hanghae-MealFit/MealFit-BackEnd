@@ -7,14 +7,14 @@ import com.mealfit.diet.application.dto.response.DietResponseByDateDto;
 import com.mealfit.diet.application.dto.response.DietResponseDto;
 import com.mealfit.diet.domain.Diet;
 import com.mealfit.diet.domain.DietRepository;
-import com.mealfit.exception.user.NoUserException;
+import com.mealfit.exception.user.UserNotFoundException;
 import com.mealfit.food.domain.Food;
 import com.mealfit.food.domain.FoodRepository;
 import com.mealfit.user.application.dto.response.UserNutritionGoalResponseDto;
 import com.mealfit.user.domain.User;
 import com.mealfit.user.domain.UserRepository;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,16 +38,17 @@ public class DietService {
         List<Diet> dietList = dietRepository.findByDietDateAndUserId(dto.getDate(),
               dto.getUserId());
 
-        List<DietResponseDto> dietResponseDtoList = new ArrayList<>();
+        List<DietResponseDto> dietResponseDtoList = dietList.stream()
+              .map(diet -> {
+                  Food food = foodRepository.findById(diet.getFoodId())
+                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 음식입니다."));
 
-        for (Diet diet : dietList) {
-            Food food = foodRepository.findById(diet.getFoodId())
-                  .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 음식입니다."));
-            DietResponseDto dietResponseDto = new DietResponseDto(diet, food);
-            dietResponseDtoList.add(dietResponseDto);
-        }
+                  return new DietResponseDto(diet, food);
+              })
+              .collect(Collectors.toList());
+        
         User user = userRepository.findById(dto.getUserId())
-              .orElseThrow(() -> new NoUserException("존재하지 않는 회원입니다."));
+              .orElseThrow(() -> new UserNotFoundException("존재하지 않는 회원입니다."));
 
         UserNutritionGoalResponseDto userGoalDto =
               new UserNutritionGoalResponseDto(user);
