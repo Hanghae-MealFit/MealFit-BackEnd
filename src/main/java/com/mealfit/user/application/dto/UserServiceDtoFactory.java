@@ -14,6 +14,7 @@ import com.mealfit.user.application.dto.request.UserSignUpRequestDto;
 import com.mealfit.user.application.dto.response.UserInfoResponseDto;
 import com.mealfit.user.application.dto.response.UserNutritionGoalResponseDto;
 import com.mealfit.user.domain.User;
+import com.mealfit.user.presentation.dto.request.PasswordFindRequest;
 import com.mealfit.user.presentation.dto.request.ChangeFastingTimeRequest;
 import com.mealfit.user.presentation.dto.request.ChangeNutritionRequest;
 import com.mealfit.user.presentation.dto.request.ChangeUserInfoRequest;
@@ -60,7 +61,7 @@ public class UserServiceDtoFactory {
     public static ChangeUserPasswordRequestDto changeUserPasswordRequestDto(String username,
           ChangeUserPasswordRequest request) {
         return new ChangeUserPasswordRequestDto(username, request.getPassword(),
-              request.getChangePassword(), request.getCheckPassword());
+              request.getChangePassword(), request.getPasswordCheck());
     }
 
     public static UserInfoResponseDto userInfoResponseDto(User user) {
@@ -88,13 +89,12 @@ public class UserServiceDtoFactory {
               .build();
     }
 
-    public static FindUsernameRequestDto findUsernameRequestDto(String redirectUrl, String email) {
-        return new FindUsernameRequestDto(redirectUrl, email);
+    public static FindUsernameRequestDto findUsernameRequestDto(String email) {
+        return new FindUsernameRequestDto(email);
     }
 
-    public static FindPasswordRequestDto findPasswordRequestDto(String username, String redirectUrl,
-          String email) {
-        return new FindPasswordRequestDto(username, redirectUrl, email);
+    public static FindPasswordRequestDto findPasswordRequestDto(PasswordFindRequest request) {
+        return new FindPasswordRequestDto(request.getUsername(), request.getEmail());
     }
 
     public static ChangeNutritionRequestDto changeNutritionRequestDto(String username,

@@ -35,7 +35,7 @@ public class UserSignUpRequestDto {
               new LoginInfo(username, password),
               new UserProfile(nickname, email, null),
               goalWeight,
-              new FastingTime(startFasting, endFasting), null);
+              new FastingTime(startFasting, endFasting));
     }
 
     @Builder

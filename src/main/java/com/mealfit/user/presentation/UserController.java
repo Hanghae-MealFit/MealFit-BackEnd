@@ -1,7 +1,8 @@
 package com.mealfit.user.presentation;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.mealfit.config.security.details.UserDetailsImpl;
-import com.mealfit.user.application.EmailService;
+import com.mealfit.user.application.EmailEventHandler;
 import com.mealfit.user.application.UserService;
 import com.mealfit.user.application.dto.UserServiceDtoFactory;
 import com.mealfit.user.application.dto.request.ChangeFastingTimeRequestDto;
@@ -19,6 +20,7 @@ import com.mealfit.user.presentation.dto.request.ChangeFastingTimeRequest;
 import com.mealfit.user.presentation.dto.request.ChangeNutritionRequest;
 import com.mealfit.user.presentation.dto.request.ChangeUserInfoRequest;
 import com.mealfit.user.presentation.dto.request.ChangeUserPasswordRequest;
+import com.mealfit.user.presentation.dto.request.PasswordFindRequest;
 import com.mealfit.user.presentation.dto.request.UserSignUpRequest;
 import com.mealfit.user.presentation.dto.response.UserInfoResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -41,11 +43,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
-    private final EmailService emailService;
+    private final EmailEventHandler emailEventHandler;
 
-    public UserController(UserService userService, EmailService emailService) {
+    public UserController(UserService userService, EmailEventHandler emailEventHandler) {
         this.userService = userService;
-        this.emailService = emailService;
+        this.emailEventHandler = emailEventHandler;
     }
 
     @PostMapping("/signup")
@@ -115,16 +117,15 @@ public class UserController {
         EmailAuthRequestDto requestDto = UserServiceDtoFactory
               .emailAuthRequestDto(username, code);
 
-        emailService.verifyEmail(requestDto);
+        emailEventHandler.verifyEmail(requestDto);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
+        return ResponseEntity.status(HttpStatus.OK)
               .body("이메일이 성공적으로 인증되었습니다.");
     }
 
-    @GetMapping("/find/username")
-    public ResponseEntity<String> findUsername(HttpServletRequest request, String email) {
-        FindUsernameRequestDto requestDto = UserServiceDtoFactory.findUsernameRequestDto(
-              extractDomainRoot(request), email);
+    @PostMapping("/find/username")
+    public ResponseEntity<String> findUsername(@RequestBody TextNode email) {
+        FindUsernameRequestDto requestDto = UserServiceDtoFactory.findUsernameRequestDto(email.asText());
 
         userService.findUsername(requestDto);
 
@@ -132,11 +133,9 @@ public class UserController {
               .body("전송완료");
     }
 
-    @GetMapping("/find/password")
-    public ResponseEntity<String> findPassword(HttpServletRequest request,
-          @RequestBody String email, String username) {
-        FindPasswordRequestDto requestDto = UserServiceDtoFactory.findPasswordRequestDto(
-              username, extractDomainRoot(request), email);
+    @PostMapping("/find/password")
+    public ResponseEntity<String> findPassword(@RequestBody PasswordFindRequest request) {
+        FindPasswordRequestDto requestDto = UserServiceDtoFactory.findPasswordRequestDto(request);
 
         userService.findPassword(requestDto);
 

@@ -1,6 +1,7 @@
 package com.mealfit.user.domain;
 
 import com.mealfit.common.baseEntity.BaseEntity;
+import com.mealfit.common.event.infrastructure.EventsPublisher;
 import com.mealfit.exception.user.UserNotFoundException;
 import java.util.Objects;
 import javax.persistence.Embedded;
@@ -72,8 +73,11 @@ public class User extends BaseEntity {
     }
 
     public static User createLocalUser(LoginInfo loginInfo, UserProfile userBasicProfile,
-          double goalWeight,
-          FastingTime fastingTime, Nutrition nutrition) {
+          double goalWeight, FastingTime fastingTime) {
+
+        EventsPublisher.raise(new SignupEvent(loginInfo.getUsername(),
+              userBasicProfile.getEmail()));
+
         return new User(loginInfo,
               userBasicProfile,
               goalWeight,

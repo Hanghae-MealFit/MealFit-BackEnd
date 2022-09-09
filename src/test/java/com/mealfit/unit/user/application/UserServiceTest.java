@@ -18,7 +18,7 @@ import com.mealfit.common.storageService.StorageService;
 import com.mealfit.exception.user.DuplicatedUserException;
 import com.mealfit.exception.user.PasswordCheckException;
 import com.mealfit.exception.user.UserNotFoundException;
-import com.mealfit.user.application.EmailService;
+import com.mealfit.user.application.EmailEventHandler;
 import com.mealfit.user.application.UserService;
 import com.mealfit.user.application.dto.UserServiceDtoFactory;
 import com.mealfit.user.application.dto.request.ChangeNutritionRequestDto;
@@ -35,6 +35,7 @@ import com.mealfit.user.domain.ProviderType;
 import com.mealfit.user.domain.User;
 import com.mealfit.user.domain.UserRepository;
 import com.mealfit.user.domain.UserStatus;
+import com.mealfit.user.presentation.dto.request.PasswordFindRequest;
 import com.mealfit.user.presentation.dto.request.UserSignUpRequest;
 import java.time.LocalTime;
 import java.util.List;
@@ -66,7 +67,7 @@ public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
     @Mock
-    private EmailService emailService;
+    private EmailEventHandler emailEventHandler;
     @Mock
     private StorageService storageService;
     @Mock
@@ -652,8 +653,7 @@ public class UserServiceTest {
                 // given
                 String correctEmail = "test@gmail.com";
 
-                FindUsernameRequestDto requestDto = UserServiceDtoFactory.findUsernameRequestDto(
-                      "redirect_url", correctEmail);
+                FindUsernameRequestDto requestDto = UserServiceDtoFactory.findUsernameRequestDto(correctEmail);
 
                 SendEmailRequestDto dto = UserServiceDtoFactory.sendEmailRequestDto("username",
                       "redirect_url", correctEmail, EmailType.FIND_USERNAME);
@@ -680,7 +680,7 @@ public class UserServiceTest {
                 String inCorrectEmail = "test1@gmail.com";
 
                 FindUsernameRequestDto requestDto = UserServiceDtoFactory
-                      .findUsernameRequestDto("redirect_url", inCorrectEmail);
+                      .findUsernameRequestDto(inCorrectEmail);
 
                 // when then
                 assertThatThrownBy(() -> userService.findUsername(requestDto))
@@ -710,7 +710,7 @@ public class UserServiceTest {
 
                 // when
                 FindPasswordRequestDto requestDto = UserServiceDtoFactory
-                      .findPasswordRequestDto(username, "redirect_url", correctEmail);
+                      .findPasswordRequestDto(new PasswordFindRequest(username, correctEmail));
 
                 userService.findPassword(requestDto);
 
@@ -730,7 +730,7 @@ public class UserServiceTest {
                 String inCorrectEmail = "test1@gmail.com";
 
                 FindPasswordRequestDto requestDto = UserServiceDtoFactory
-                      .findPasswordRequestDto(username, "redirect_url", inCorrectEmail);
+                      .findPasswordRequestDto(new PasswordFindRequest(username, inCorrectEmail));
 
                 SendEmailRequestDto sendEmailRequestDto = UserServiceDtoFactory.sendEmailRequestDto(
                       testUser.getLoginInfo().getUsername(),
