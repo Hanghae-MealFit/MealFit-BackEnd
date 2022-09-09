@@ -137,7 +137,7 @@ public class UserFactory {
         return ChangeUserPasswordRequest.builder()
               .password(password)
               .changePassword(changePassword)
-              .checkPassword(passwordCheck)
+              .passwordCheck(passwordCheck)
               .build();
     }
 

@@ -1,12 +1,13 @@
 package com.mealfit.food.presentation.dto.response;
 
 import com.mealfit.food.domain.Food;
+import java.io.Serializable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class FoodInfoResponse {
+public class FoodInfoResponse implements Serializable {
 
     private Long foodId; // 음식 ID
 
@@ -23,7 +24,6 @@ public class FoodInfoResponse {
     private double fat; // 지방
 
     private String madeBy; // 제조사
-
 
 
     public FoodInfoResponse(Food food) {
