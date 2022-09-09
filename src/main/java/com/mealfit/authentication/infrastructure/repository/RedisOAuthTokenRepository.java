@@ -9,7 +9,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
-@Profile("!local")
+@Profile("!prod")
 @Component
 public class RedisOAuthTokenRepository implements OAuthTokenRepository {
 
@@ -19,9 +19,6 @@ public class RedisOAuthTokenRepository implements OAuthTokenRepository {
         this.opsForValue = redisTemplate.opsForValue();
     }
 
-    /**
-     * TODO Transaction Rollback Testing 필요
-     */
     @Override
     public void insert(JwtToken jwtToken) {
         opsForValue.set(
@@ -35,5 +32,10 @@ public class RedisOAuthTokenRepository implements OAuthTokenRepository {
     @Override
     public Optional<String> findByKey(String key) {
         return Optional.ofNullable(opsForValue.get(key));
+    }
+
+    @Override
+    public void remove(String key) {
+        opsForValue.getAndDelete(key);
     }
 }
