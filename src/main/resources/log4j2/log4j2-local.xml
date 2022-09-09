@@ -7,7 +7,7 @@
     </Console>
   </Appenders>
   <Loggers>
-    <Logger name="com.woowacourse.pickgit" level="info" additivity="false">
+    <Logger name="com.mealfit" level="info" additivity="false">
       <AppenderRef ref="ConsoleAppender"/>
     </Logger>
     <Logger name="org.springframework" level="info" additivity="false">

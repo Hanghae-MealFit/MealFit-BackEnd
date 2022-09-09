@@ -5,6 +5,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 import com.mealfit.authentication.application.JwtTokenService;
 import com.mealfit.config.security.OAuth.CustomOAuth2UserService;
 import com.mealfit.config.security.OAuth.handler.OAuth2SuccessHandler;
+import com.mealfit.config.security.anonymous.CustomAnonymousAuthenticationFilter;
 import com.mealfit.config.security.formlogin.FormLoginFilter;
 import com.mealfit.config.security.formlogin.FormLoginProvider;
 import com.mealfit.config.security.formlogin.RestAuthenticationEntryPoint;
@@ -84,7 +85,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterBefore(new FormLoginFilter(authenticationManager(), jwtTokenService),
                     UsernamePasswordAuthenticationFilter.class)
               .addFilterBefore(new JwtAuthorizationFilter(authenticationManager(), jwtTokenService),
-                    UsernamePasswordAuthenticationFilter.class);
+                    UsernamePasswordAuthenticationFilter.class)
+              .addFilter(new CustomAnonymousAuthenticationFilter());
 
         http.exceptionHandling()
               .accessDeniedHandler(new CustomAccessDeniedHandler())
