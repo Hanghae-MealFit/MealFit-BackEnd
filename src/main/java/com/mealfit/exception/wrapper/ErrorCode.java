@@ -18,6 +18,7 @@ public enum ErrorCode implements ErrorModel {
     DUPLICATE_SIGNUP_INPUT(HttpStatus.BAD_REQUEST, "U001", "이미 해당 값이 존재합니다."),
     WRONG_SIGNUP_PASSWORD(HttpStatus.BAD_REQUEST, "U002", "비밀번호와 비밀번호 재확인을 확인해주세요."),
     BAD_LOGIN_INFO(HttpStatus.BAD_GATEWAY, "U003", "잘못된 로그인 정보입니다."),
+    UNAUTHORIZED_USER(HttpStatus.UNAUTHORIZED, "U004", "해당 작업을 하기 위한 권한이 없습니다."),
 
     // POST
     NO_POST_CONTENT(HttpStatus.INTERNAL_SERVER_ERROR, "P001", "Content 값이 비어있습니다."),
