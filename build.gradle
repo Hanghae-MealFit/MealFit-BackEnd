@@ -168,8 +168,19 @@ jacocoTestCoverageVerification {
                     '**.*Response*',
                     '**.*Dto*',
                     '**.*Exception*',
+                    '**.*logging*',
                     '**.*Storage*',
+                    '*equals',
+                    '*hashCode'
+            ]
+        }
+        rule {
+            element = 'METHOD'
+            enabled = true
 
+            excludes = [
+                    'equals()',
+                    'hashCode()'
             ]
         }
     }

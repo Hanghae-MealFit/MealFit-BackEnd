@@ -1,7 +1,6 @@
 package com.mealfit.config.security.logout;
 
 import com.mealfit.authentication.application.JwtTokenService;
-import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -24,19 +23,12 @@ public class CustomLogoutHandler implements LogoutHandler {
     public void logout(HttpServletRequest request, HttpServletResponse response,
           Authentication authentication) {
 
-        Enumeration<String> headerNames = request.getHeaderNames();
-
-        while (headerNames.hasMoreElements()) {
-            log.info(headerNames.nextElement());
-        }
-
         String accessToken = extractTokenFromHeader(request, HttpHeaders.AUTHORIZATION);
         String refreshToken = extractTokenFromHeader(request, "refresh_token");
 
-        log.info("accessToken: {} / refreshToken: {}", accessToken, refreshToken);
-
         jwtTokenService.blackAccessToken(accessToken);
         jwtTokenService.removeRefreshToken(refreshToken);
+        log.info("success");
     }
 
     private String extractTokenFromHeader(HttpServletRequest request, String tokenType) {
@@ -50,4 +42,6 @@ public class CustomLogoutHandler implements LogoutHandler {
         }
         return headerValue.substring("Bearer ".length());
     }
+
+
 }

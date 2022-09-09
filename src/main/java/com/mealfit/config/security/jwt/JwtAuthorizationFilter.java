@@ -50,7 +50,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             case AVAILABLE:
                 // check logout
                 if (jwtTokenService.isBlackListToken(accessToken)) {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "다시 로그인 해 주세요");
+                    throw new InvalidTokenException("이미 로그아웃 하셨습니다. 다시 로그인해 주세요.");
                 } else {
                     // success filter
                     checkAndSaveToContextHolder(accessTokenVerifyResult.getUsername());

@@ -101,8 +101,6 @@ public class UserController {
         ChangeUserInfoRequestDto requestDto = UserServiceDtoFactory.changeUserInfoRequestDto(
               userDetailsImpl.getUsername(), request);
 
-        log.info("requestDto -> {}", requestDto.getNickname());
-
         userService.changeUserInfo(requestDto);
 
         return ResponseEntity.status(HttpStatus.OK)
