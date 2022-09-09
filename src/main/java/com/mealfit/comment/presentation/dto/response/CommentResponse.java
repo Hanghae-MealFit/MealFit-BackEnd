@@ -3,31 +3,32 @@ package com.mealfit.comment.presentation.dto.response;
 
 import com.mealfit.comment.domain.Comment;
 
+import java.io.Serializable;
 import lombok.*;
 
 
 @ToString
 @NoArgsConstructor
 @Getter
-public class CommentResponse {
+public class CommentResponse implements Serializable {
 
     private Long commentId;
     private Long postId;
-    private String comment;
+    private String content;
     private UserInfoDto userDto;
     private int like;
 
-    public CommentResponse(Comment comment) {
+    public CommentResponse(Comment comment, String nickname, String profileImage) {
         this.commentId = comment.getId();
-        this.comment = comment.getContent();
+        this.content = comment.getContent();
         this.postId = comment.getPostId();
-        this.userDto = new UserInfoDto(comment.getNickname(), comment.getProfileImage());
+        this.userDto = new UserInfoDto(nickname, profileImage);
         this.like = comment.getLikeIt();
     }
 
     @Data
     @AllArgsConstructor
-    static class UserInfoDto {
+    public static class UserInfoDto {
 
         private String nickname;
         private String profileImage;
