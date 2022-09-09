@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
@@ -15,7 +16,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @NoArgsConstructor
-public class PostResponse {
+public class PostResponse implements Serializable {
 
     private Long postId;
 

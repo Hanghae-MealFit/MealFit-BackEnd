@@ -16,6 +16,7 @@ import com.mealfit.exception.user.UserNotFoundException;
 import com.mealfit.post.application.PostReadService;
 import com.mealfit.post.domain.Post;
 import com.mealfit.post.domain.PostImage;
+import com.mealfit.post.domain.PostLikeRepository;
 import com.mealfit.post.domain.PostReadRepository;
 import com.mealfit.post.presentation.dto.response.PostResponse;
 import com.mealfit.user.domain.User;
@@ -47,6 +48,9 @@ public class PostReadServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private PostLikeRepository postLikeRepository;
 
     @DisplayName("getReadOne() 메서드는")
     @Nested
@@ -152,6 +156,7 @@ public class PostReadServiceTest {
 
             given(postReadRepository.findAllByIdLessThan(anyLong(), any(Pageable.class))).willReturn(postPage);
             given(userRepository.findById(anyLong())).willReturn(Optional.of(user));
+            given(postLikeRepository.existsByPostIdAndUserId(anyLong(), anyLong())).willReturn(true);
 
             // when
             List<PostResponse> postResponseList = postReadService.getReadAll(pageable, 10L);
@@ -162,7 +167,6 @@ public class PostReadServiceTest {
 
             for (int i = 1; i <= postResponseList.size(); i++) {
                 PostResponse postResponse = postResponseList.get(i-1);
-                System.out.println(postResponse);
                 assertThat(postResponse.getPostId()).isEqualTo((long) i);
                 assertThat(postResponse.getNickname()).isEqualTo(user.getUserProfile().getNickname());
                 assertThat(postResponse.getProfileImage()).isEqualTo(user.getUserProfile().getProfileImage());
