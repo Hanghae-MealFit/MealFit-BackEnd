@@ -1,12 +1,13 @@
 package com.mealfit.exception.wrapper;
 
+import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 @Getter
 @Setter
-public class ErrorResponse {
+public class ErrorResponse implements Serializable {
 
     private HttpStatus httpStatus;
     private String code;

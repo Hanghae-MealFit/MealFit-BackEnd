@@ -7,8 +7,4 @@ public class BadLoginInfoException extends AuthenticationException {
     public BadLoginInfoException(String msg) {
         super(msg);
     }
-
-    public BadLoginInfoException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
 }
