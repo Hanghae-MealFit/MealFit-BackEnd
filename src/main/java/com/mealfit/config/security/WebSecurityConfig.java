@@ -10,6 +10,7 @@ import com.mealfit.config.security.formlogin.FormLoginProvider;
 import com.mealfit.config.security.formlogin.RestAuthenticationEntryPoint;
 import com.mealfit.config.security.jwt.JwtAuthorizationFilter;
 import com.mealfit.config.security.jwt.JwtAuthorizationProvider;
+import com.mealfit.config.security.logout.CustomLogoutHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +35,7 @@ import org.springframework.web.cors.CorsUtils;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtTokenService jwtTokenService;
+    private final CustomLogoutHandler customLogoutHandler;
     private final FormLoginProvider formLoginProvider;
     private final JwtAuthorizationProvider jwtAuthProvider;
     private final CustomOAuth2UserService customOAuth2UserService;
@@ -67,7 +69,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
               .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
               .antMatchers("/",
-                    "/api/user/signup", "/api/user/validate", "/login",
+                    "/api/user/signup", "/api/user/verify", "/login", "/logout",
                     "/api/user/username/**", "/api/user/email/**", "/api/user/nickname/**", // 중복확인
                     "/api/user/find/**",
                     "/h2-console/**",
@@ -90,6 +92,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
               .successHandler(oAuth2SuccessHandler)
               .userInfoEndpoint()
               .userService(customOAuth2UserService);
+
+        http.logout()
+              .logoutUrl("/logout")
+              .addLogoutHandler(customLogoutHandler);
     }
 
     @Override

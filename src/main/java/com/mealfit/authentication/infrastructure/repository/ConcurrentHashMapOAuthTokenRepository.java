@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-@Profile("!prod")
+@Profile("!local")
 @Component
 public class ConcurrentHashMapOAuthTokenRepository implements OAuthTokenRepository {
 
@@ -28,5 +28,10 @@ public class ConcurrentHashMapOAuthTokenRepository implements OAuthTokenReposito
     @Override
     public Optional<String> findByKey(String key) {
         return Optional.ofNullable(storage.get(key));
+    }
+
+    @Override
+    public void remove(String key) {
+        storage.remove(key);
     }
 }

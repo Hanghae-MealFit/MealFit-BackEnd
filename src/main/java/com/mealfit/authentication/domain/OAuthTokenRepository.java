@@ -7,4 +7,6 @@ public interface OAuthTokenRepository {
     void insert(JwtToken jwtToken);
 
     Optional<String> findByKey(String key);
+
+    void remove(String key);
 }
