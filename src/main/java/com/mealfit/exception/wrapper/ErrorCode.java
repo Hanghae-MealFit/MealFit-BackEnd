@@ -19,6 +19,7 @@ public enum ErrorCode implements ErrorModel {
     WRONG_SIGNUP_PASSWORD(HttpStatus.BAD_REQUEST, "U002", "비밀번호와 비밀번호 재확인을 확인해주세요."),
     BAD_LOGIN_INFO(HttpStatus.BAD_GATEWAY, "U003", "잘못된 로그인 정보입니다."),
     UNAUTHORIZED_USER(HttpStatus.UNAUTHORIZED, "U004", "해당 작업을 하기 위한 권한이 없습니다."),
+    USER_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "U005", "찾고자 하는 회원이 없습니다."),
 
     // POST
     NO_POST_CONTENT(HttpStatus.INTERNAL_SERVER_ERROR, "P001", "Content 값이 비어있습니다."),
@@ -27,6 +28,7 @@ public enum ErrorCode implements ErrorModel {
     POST_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "P004", "찾고자 하는 게시글이 없습니다."),
 
     // COMMENT
+    COMMENT_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "C001", "찾고자 하는 댓글이 없습니다."),
 
 
     // COMMON

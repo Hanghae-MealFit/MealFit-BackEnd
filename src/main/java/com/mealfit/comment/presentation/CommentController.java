@@ -2,8 +2,9 @@ package com.mealfit.comment.presentation;
 
 import com.mealfit.comment.application.CommentService;
 import com.mealfit.comment.application.dto.CommentServiceDtoFactory;
-import com.mealfit.comment.application.dto.request.CreateCommentRequestDto;
-import com.mealfit.comment.application.dto.request.UpdateCommentRequestDto;
+import com.mealfit.comment.application.dto.request.CommentCreateRequestDto;
+import com.mealfit.comment.application.dto.request.CommentDeleteRequestDto;
+import com.mealfit.comment.application.dto.request.CommentUpdateRequestDto;
 import com.mealfit.comment.presentation.dto.response.CommentResponse;
 import com.mealfit.comment.presentation.dto.request.CreateCommentRequest;
 import com.mealfit.comment.presentation.dto.request.UpdateCommentRequest;
@@ -48,7 +49,7 @@ public class CommentController {
                                         @Valid @RequestBody CreateCommentRequest request,
                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        CreateCommentRequestDto requestDto = CommentServiceDtoFactory.createCommentRequestDto(
+        CommentCreateRequestDto requestDto = CommentServiceDtoFactory.commentCreateRequestDto(
               postId,
               userDetails.getUser(),
               request);
@@ -62,7 +63,9 @@ public class CommentController {
     @DeleteMapping("/comment/{commentId}")
     public ResponseEntity<String> deleteComment(@PathVariable Long commentId,
                                                 @AuthenticationPrincipal UserDetailsImpl userDetails){
-        commentService.deleteComment(commentId,userDetails.getUser());
+        CommentDeleteRequestDto requestDto = CommentServiceDtoFactory.commentDeleteRequestDto(
+              commentId, userDetails.getUser());
+        commentService.deleteComment(requestDto);
         return ResponseEntity.status(HttpStatus.OK)
                 .body("삭제완료");
     }
@@ -71,7 +74,7 @@ public class CommentController {
     public ResponseEntity<String> updateComment(@PathVariable Long commentId,
                                                 @Valid @RequestBody UpdateCommentRequest request,
                                                 @AuthenticationPrincipal UserDetailsImpl userDetails){
-        UpdateCommentRequestDto requestDto = CommentServiceDtoFactory.updateCommentRequestDto(
+        CommentUpdateRequestDto requestDto = CommentServiceDtoFactory.commentUpdateRequestDto(
               commentId, userDetails.getUser(), request);
 
         commentService.updateComment(requestDto);
@@ -81,7 +84,7 @@ public class CommentController {
 
     @GetMapping("/{postId}/comment")
     public ResponseEntity<CommentWrapper<List<CommentResponse>>> listComment(@PathVariable Long postId) {
-        List<CommentResponse> dtoList = commentService.listComment(postId);
+        List<CommentResponse> dtoList = commentService.getCommentList(postId);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new CommentWrapper<>(dtoList));
