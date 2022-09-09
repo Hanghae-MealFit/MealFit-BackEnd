@@ -73,10 +73,7 @@ public class UserDetailsImpl implements UserDetails, OAuth2User, OidcUser {
     //계정이 갖고 있는 궈한 목록을 리턴한다.(권한이 여러개 있을 수 있어서 로프를 돌아야 하는데 우리는 한개만..? 놉 관리자 추가 가능성 있음.
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-//        Collection<GrantedAuthority> collectors = new ArrayList<>();
-//        collectors.add(()->{return "ROLE_" + user.getRole();});
-//        return collectors;
-        return Collections.emptyList();
+        return authorities;
     }
 
     private UserDetailsImpl(User user, ProviderType providerType,
@@ -99,6 +96,14 @@ public class UserDetailsImpl implements UserDetails, OAuth2User, OidcUser {
               user,
               user.getUserStatusInfo().getProviderType(),
               Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+    }
+
+    public static UserDetailsImpl createAnonymousUser() {
+        return new UserDetailsImpl(
+              null,
+              ProviderType.ANONYMOUS,
+              Collections.singletonList(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))
         );
     }
 

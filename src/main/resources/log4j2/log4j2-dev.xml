@@ -78,7 +78,7 @@
   </Appenders>
 
   <Loggers>
-    <AsyncLogger name="com.woowacourse.pickgit" level="info" additivity="false" includeLocation="true">
+    <AsyncLogger name="com.mealfit" level="info" additivity="false" includeLocation="true">
       <AppenderRef ref="InfoFileAppender"/>
       <AppenderRef ref="WarnFileAppender"/>
       <AppenderRef ref="ErrorFileAppender"/>
