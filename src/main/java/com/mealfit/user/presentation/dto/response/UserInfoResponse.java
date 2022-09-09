@@ -39,7 +39,7 @@ public class UserInfoResponse implements Serializable {
     }
 
     @Data
-    public static class UserProfileResponse {
+    public static class UserProfileResponse  implements Serializable {
 
         private String nickname;
         private String profileImage;
@@ -59,7 +59,7 @@ public class UserInfoResponse implements Serializable {
     }
 
     @Data
-    public static class UserFastingResponse {
+    public static class UserFastingResponse  implements Serializable {
 
         private LocalTime startFasting;
         private LocalTime endFasting;
@@ -71,7 +71,7 @@ public class UserInfoResponse implements Serializable {
     }
 
     @Data
-    public static class NutritionGoalResponse {
+    public static class NutritionGoalResponse  implements Serializable {
 
         private double kcal;
         private double carbs;

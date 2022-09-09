@@ -21,12 +21,12 @@ public class ChangeUserPasswordRequest implements Serializable {
 
     @Size(max = 20)
     @NotBlank(message = "비밀번호 재확인을 필수로 입력해주세요")
-    private String checkPassword;
+    private String passwordCheck;
 
     @Builder
-    public ChangeUserPasswordRequest(String password, String changePassword, String checkPassword) {
+    public ChangeUserPasswordRequest(String password, String changePassword, String passwordCheck) {
         this.password = password;
         this.changePassword = changePassword;
-        this.checkPassword = checkPassword;
+        this.passwordCheck = passwordCheck;
     }
 }

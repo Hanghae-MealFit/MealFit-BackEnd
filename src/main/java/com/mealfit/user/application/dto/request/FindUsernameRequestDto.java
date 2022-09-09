@@ -5,11 +5,9 @@ import lombok.Getter;
 @Getter
 public class FindUsernameRequestDto {
 
-    private String redirectUrl;
     private String sendingEmail;
 
-    public FindUsernameRequestDto(String redirectUrl, String sendingEmail) {
-        this.redirectUrl = redirectUrl;
+    public FindUsernameRequestDto(String sendingEmail) {
         this.sendingEmail = sendingEmail;
     }
 }

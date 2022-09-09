@@ -1,5 +1,6 @@
 package com.mealfit.user.application;
 
+import com.mealfit.common.email.EmailEvent;
 import com.mealfit.common.email.EmailUtil;
 import com.mealfit.common.email.FindPasswordEmail;
 import com.mealfit.common.email.FindUsernameEmail;
@@ -8,65 +9,80 @@ import com.mealfit.exception.email.BadVerifyCodeException;
 import com.mealfit.exception.email.EmailSendCountLimitException;
 import com.mealfit.exception.user.UserNotFoundException;
 import com.mealfit.user.application.dto.request.EmailAuthRequestDto;
-import com.mealfit.user.domain.EmailEvent;
+import com.mealfit.user.domain.FindPasswordEvent;
 import com.mealfit.user.domain.User;
 import com.mealfit.user.domain.UserRepository;
 import com.mealfit.user.domain.UserStatus;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 @Slf4j
-@Service
-public class EmailService {
+@Component
+public class EmailEventHandler {
 
+    private final String frontUrl;
     private final EmailUtil emailUtil;
     private final UserRepository userRepository;
     private final ConcurrentHashMap<String, Integer> limitStorage = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> verifyStorage = new ConcurrentHashMap<>();
 
-    public EmailService(EmailUtil emailUtil, UserRepository userRepository) {
+    public EmailEventHandler(@Value("${front-url}")String frontUrl,
+          EmailUtil emailUtil, UserRepository userRepository) {
+        this.frontUrl = frontUrl;
         this.emailUtil = emailUtil;
         this.userRepository = userRepository;
     }
 
-    // TODO: retry + queueing 로직 구현
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMPLETION)
+    @Async
+//    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @EventListener
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void sendEmail(EmailEvent event) {
-        int sendingCountByUser = limitStorage.getOrDefault(event.getSendingEmail(), 0);
+        int sendingCountByUser = limitStorage.getOrDefault(event.getSendToEmail(), 0);
 
-        if (sendingCountByUser > 5) {
-            throw new EmailSendCountLimitException("하루에 이메일을 5건 이상 전송할 수 없습니다.");
-        }
+        checkEmailSendCount(sendingCountByUser);
 
-        limitStorage.put(event.getSendingEmail(), sendingCountByUser + 1);
+        limitStorage.put(event.getSendToEmail(), sendingCountByUser + 1);
 
         String authKey = UUID.randomUUID().toString();
 
-        verifyStorage.put(event.getUsername(), event.getSendingEmail());
+        verifyStorage.put(event.getSendToUsername(), authKey);
+
         switch (event.getEmailType()) {
             case VERIFY:
-                emailUtil.sendEmail(event.getSendingEmail(),
-                      new VerifyEmail(event.getRedirectUrl(), event.getUsername(), authKey));
+                emailUtil.sendEmail(event.getSendToEmail(),
+                      new VerifyEmail(
+                            frontUrl + "/user/verify"
+                            , event.getSendToUsername(), authKey));
                 return;
 
             case FIND_USERNAME:
-                emailUtil.sendEmail(event.getSendingEmail(),
-                      new FindUsernameEmail(event.getUsername()));
+                emailUtil.sendEmail(event.getSendToEmail(),
+                      new FindUsernameEmail(frontUrl + "/user/login", event.getSendToUsername()));
                 return;
 
             case FIND_PASSWORD:
-                emailUtil.sendEmail(event.getSendingEmail(),
-                      new FindPasswordEmail(event.getRedirectUrl(), event.getUsername(), authKey));
+                FindPasswordEvent findPasswordEvent = (FindPasswordEvent) event;
+                emailUtil.sendEmail(findPasswordEvent.getSendToEmail(),
+                      new FindPasswordEmail(frontUrl, findPasswordEvent.getSendToUsername(), findPasswordEvent.getTemporaryPassword()));
                 return;
 
             default:
                 throw new IllegalArgumentException("잘못된 이메일 양식입니다.");
+        }
+    }
+
+    private static void checkEmailSendCount(int sendingCountByUser) {
+        if (sendingCountByUser > 5) {
+            throw new EmailSendCountLimitException("하루에 이메일을 5건 이상 전송할 수 없습니다.");
         }
     }
 

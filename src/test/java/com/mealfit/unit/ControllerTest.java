@@ -9,7 +9,7 @@ import com.mealfit.post.application.PostReadService;
 import com.mealfit.post.presentation.PostController;
 import com.mealfit.post.application.PostService;
 import com.mealfit.post.presentation.PostReadController;
-import com.mealfit.user.application.EmailService;
+import com.mealfit.user.application.EmailEventHandler;
 import com.mealfit.user.application.UserService;
 import com.mealfit.user.presentation.UserController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public abstract class ControllerTest {
     protected BodyInfoService bodyInfoService;
 
     @MockBean
-    protected EmailService emailService;
+    protected EmailEventHandler emailEventHandler;
 
     @MockBean
     protected CommentService commentService;

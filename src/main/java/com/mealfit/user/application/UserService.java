@@ -2,10 +2,11 @@ package com.mealfit.user.application;
 
 import com.mealfit.bodyInfo.domain.BodyInfo;
 import com.mealfit.bodyInfo.domain.BodyInfoRepository;
+import com.mealfit.common.event.infrastructure.EventsPublisher;
 import com.mealfit.common.storageService.StorageService;
 import com.mealfit.exception.user.DuplicatedUserException;
-import com.mealfit.exception.user.UserNotFoundException;
 import com.mealfit.exception.user.PasswordCheckException;
+import com.mealfit.exception.user.UserNotFoundException;
 import com.mealfit.user.application.dto.UserServiceDtoFactory;
 import com.mealfit.user.application.dto.request.ChangeFastingTimeRequestDto;
 import com.mealfit.user.application.dto.request.ChangeNutritionRequestDto;
@@ -14,26 +15,28 @@ import com.mealfit.user.application.dto.request.ChangeUserPasswordRequestDto;
 import com.mealfit.user.application.dto.request.CheckDuplicateSignupInputDto;
 import com.mealfit.user.application.dto.request.FindPasswordRequestDto;
 import com.mealfit.user.application.dto.request.FindUsernameRequestDto;
-import com.mealfit.user.application.dto.request.SendEmailRequestDto.EmailType;
 import com.mealfit.user.application.dto.request.UserSignUpRequestDto;
 import com.mealfit.user.application.dto.response.UserInfoResponseDto;
-import com.mealfit.user.domain.EmailEvent;
 import com.mealfit.user.domain.FastingTime;
+import com.mealfit.user.domain.FindPasswordEvent;
+import com.mealfit.user.domain.FindUsernameEvent;
 import com.mealfit.user.domain.Nutrition;
 import com.mealfit.user.domain.User;
 import com.mealfit.user.domain.UserRepository;
 import com.mealfit.user.domain.UserStatus;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -45,7 +48,6 @@ public class UserService {
     private final BodyInfoRepository bodyInfoRepository;
     private static final Pattern PASSWORD_PATTERN = Pattern.compile(
           "^(?=.*?[a-zA-Z])(?=.*?[0-9]).{8,}$");
-    private final ApplicationEventPublisher publisher;
 
     @Transactional
     public UserInfoResponseDto signup(UserSignUpRequestDto dto) {
@@ -57,19 +59,14 @@ public class UserService {
 
         if (dto.getProfileImage() != null) {
             List<String> profileUrl = storageService.uploadMultipartFile(
-                  List.of(dto.getProfileImage()), "/profile");
+                  List.of(dto.getProfileImage()), "profile/");
             user.changeProfileImage(profileUrl.get(0));
         }
 
         User saveEntity = userRepository.save(user);
 
-        EmailEvent emailEvent = new EmailEvent(dto.getUsername(),
-              dto.getRedirectURL(),
-              dto.getEmail(),
-              EmailType.VERIFY);
-        publisher.publishEvent(emailEvent);
-
-        bodyInfoRepository.save(BodyInfo.createBodyInfo(saveEntity.getId(), dto.getCurrentWeight(), LocalDate.now()));
+        bodyInfoRepository.save(
+              BodyInfo.createBodyInfo(saveEntity.getId(), dto.getCurrentWeight(), LocalDate.now()));
 
         return UserServiceDtoFactory.userInfoResponseDto(saveEntity);
     }
@@ -202,11 +199,11 @@ public class UserService {
 
         User user = findByUsername(dto.getUsername());
 
-        if (!user.getLoginInfo().getPassword().equals(dto.getPassword())) {
+        if (!passwordEncoder.matches(dto.getPassword(), user.getLoginInfo().getPassword())) {
             throw new BadCredentialsException("잘못된 비밀번호입니다.");
         }
 
-        String encodedPassword = passwordEncoder.encode(dto.getPassword());
+        String encodedPassword = passwordEncoder.encode(dto.getChangePassword());
         user.changePassword(encodedPassword);
 
         return UserServiceDtoFactory.userInfoResponseDto(user);
@@ -218,19 +215,17 @@ public class UserService {
 
         String maskedUsername = maskingUsername(user.getLoginInfo().getUsername());
 
-        EmailEvent emailEvent = new EmailEvent(maskedUsername,
-              dto.getRedirectUrl(),
-              dto.getSendingEmail(),
-              EmailType.VERIFY);
-
-        publisher.publishEvent(emailEvent);
+        EventsPublisher.raise(new FindUsernameEvent(maskedUsername,
+              dto.getSendingEmail()));
     }
 
     private String maskingUsername(String username) {
-        String middleMask = username.substring(3, username.length() - 1);
-        return username.replace(middleMask, "*");
+        String middleMask = username.substring(3);
+        int size = middleMask.length();
+        return username.replace(middleMask, "*".repeat(size));
     }
 
+    @Transactional
     public void findPassword(FindPasswordRequestDto dto) {
         User user = findByUsername(dto.getUsername());
 
@@ -238,12 +233,13 @@ public class UserService {
             throw new IllegalArgumentException("잘못된 이메일입니다.");
         }
 
-        EmailEvent emailEvent = new EmailEvent(dto.getUsername(),
-              dto.getRedirectUrl(),
-              dto.getSendingEmail(),
-              EmailType.VERIFY);
+        String uuid = UUID.randomUUID().toString();
 
-        publisher.publishEvent(emailEvent);
+        String temporaryPassword = uuid.substring(0, 8);
+
+        user.changePassword(passwordEncoder.encode(temporaryPassword));
+
+        EventsPublisher.raise(new FindPasswordEvent(dto.getUsername(), dto.getSendingEmail(), temporaryPassword));
     }
 
     private User findByUsername(String username) {

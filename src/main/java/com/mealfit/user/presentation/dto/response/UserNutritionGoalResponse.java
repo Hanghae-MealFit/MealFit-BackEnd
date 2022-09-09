@@ -1,12 +1,13 @@
 package com.mealfit.user.presentation.dto.response;
 
+import java.io.Serializable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class UserNutritionGoalResponse {
+public class UserNutritionGoalResponse implements Serializable {
 
     private double kcal;
 
