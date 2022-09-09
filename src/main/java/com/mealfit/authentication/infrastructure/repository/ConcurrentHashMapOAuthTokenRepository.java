@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-@Profile("!local")
+@Profile("!prod")
 @Component
 public class ConcurrentHashMapOAuthTokenRepository implements OAuthTokenRepository {
 

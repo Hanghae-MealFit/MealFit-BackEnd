@@ -28,7 +28,6 @@ public class JwtTokenService {
     }
 
     public void blackAccessToken(String token) {
-        log.info("black access token = {}", token);
         JwtToken blackListToken = jwtUtils.issueBlackListToken(token);
 
         tokenRepository.insert(blackListToken);

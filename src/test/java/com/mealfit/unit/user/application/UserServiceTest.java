@@ -547,7 +547,7 @@ public class UserServiceTest {
                 // when
                 given(userRepository.findByUsername(anyString())).willReturn(
                       Optional.ofNullable(testUser));
-                given(passwordEncoder.encode(anyString())).willReturn(password);
+                given(passwordEncoder.matches(anyString(), anyString())).willReturn(true);
 
                 // then
                 UserInfoResponseDto userInfoResponseDto = userService.changePassword(dto);
@@ -556,7 +556,7 @@ public class UserServiceTest {
                 verify(userRepository, times(1))
                       .findByUsername(anyString());
                 verify(passwordEncoder, times(1))
-                      .encode(anyString());
+                      .matches(anyString(), anyString());
             }
         }
 
