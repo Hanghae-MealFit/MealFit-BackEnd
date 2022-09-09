@@ -12,9 +12,9 @@ import static org.mockito.Mockito.verify;
 
 import com.mealfit.common.factory.PostFactory;
 import com.mealfit.common.storageService.StorageService;
+import com.mealfit.exception.authentication.UnAuthorizedUserException;
 import com.mealfit.exception.post.NoPostContentException;
 import com.mealfit.exception.post.NoPostImageException;
-import com.mealfit.exception.post.NotPostWriterException;
 import com.mealfit.exception.post.PostNotFoundException;
 import com.mealfit.post.application.PostService;
 import com.mealfit.post.application.dto.request.PostCreateRequestDto;
@@ -233,7 +233,7 @@ public class PostServiceTest {
 
             // when then
             assertThatThrownBy(() -> postService.updatePost(requestDto))
-                  .isInstanceOf(NotPostWriterException.class);
+                  .isInstanceOf(UnAuthorizedUserException.class);
         }
 
         @DisplayName("게시글이 없는 경우 실패한다.")
@@ -318,7 +318,7 @@ public class PostServiceTest {
 
             // when then
             assertThatThrownBy(() -> postService.deletePost(requestDto))
-                  .isInstanceOf(NotPostWriterException.class);
+                  .isInstanceOf(UnAuthorizedUserException.class);
 
             // verify
             verify(postRepository, times(1))

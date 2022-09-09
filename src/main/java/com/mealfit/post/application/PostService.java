@@ -1,9 +1,9 @@
 package com.mealfit.post.application;
 
 import com.mealfit.common.storageService.StorageService;
+import com.mealfit.exception.authentication.UnAuthorizedUserException;
 import com.mealfit.exception.post.NoPostContentException;
 import com.mealfit.exception.post.NoPostImageException;
-import com.mealfit.exception.post.NotPostWriterException;
 import com.mealfit.exception.post.PostNotFoundException;
 import com.mealfit.post.application.dto.request.PostCreateRequestDto;
 import com.mealfit.post.application.dto.request.PostDeleteReqeustDto;
@@ -93,7 +93,7 @@ public class PostService {
 
     private void validateUser(Long userId, Long writerId) {
         if (!userId.equals(writerId)) {
-            throw new NotPostWriterException("작성자가 아니므로, 해당 게시글을 수정할 수 없습니다.");
+            throw new UnAuthorizedUserException("작성자가 아니므로, 해당 게시글을 수정할 수 없습니다.");
         }
     }
 

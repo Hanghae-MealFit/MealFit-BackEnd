@@ -1,6 +1,7 @@
 package com.mealfit.post.presentation.dto.response;
 
 import com.mealfit.post.domain.Post;
+import java.io.Serializable;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +10,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class PostCUDResponse {
+public class PostCUDResponse implements Serializable {
 
     private Long postId;
     private String content;
