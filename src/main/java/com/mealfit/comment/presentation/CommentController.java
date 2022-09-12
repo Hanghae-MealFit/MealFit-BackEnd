@@ -59,7 +59,7 @@ public class CommentController {
                 .body("작성 완료!");
 
     }
-
+    //delete
     @DeleteMapping("/comment/{commentId}")
     public ResponseEntity<String> deleteComment(@PathVariable Long commentId,
                                                 @AuthenticationPrincipal UserDetailsImpl userDetails){
@@ -69,7 +69,7 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body("삭제완료");
     }
-
+    //update
     @PutMapping("/comment/{commentId}")
     public ResponseEntity<String> updateComment(@PathVariable Long commentId,
                                                 @Valid @RequestBody UpdateCommentRequest request,
@@ -81,15 +81,21 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body("수정 완료!");
     }
-
+    //comment List
     @GetMapping("/{postId}/comment")
-    public ResponseEntity<CommentWrapper<List<CommentResponse>>> listComment(@PathVariable Long postId) {
-        List<CommentResponse> dtoList = commentService.getCommentList(postId);
-        return ResponseEntity.status(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(new CommentWrapper<>(dtoList));
-    }
+    public ResponseEntity<CommentWrapper<List<CommentResponse>>> listComment(@PathVariable Long postId,@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        if(userDetails == null){
+            return ResponseEntity.status(HttpStatus.OK)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(new CommentWrapper<>(commentService.getCommentList(postId,null)));
+        }else{
+            return ResponseEntity.status(HttpStatus.OK)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(new CommentWrapper<>(commentService.getCommentList(postId,userDetails.getUser().getId())));
+        }
 
+    }
+    //like
     @PostMapping("/comment/{commentId}/likeIt")
     public boolean addlike(@PathVariable Long commentId,
                            @AuthenticationPrincipal UserDetailsImpl userDetails){

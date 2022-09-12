@@ -17,13 +17,15 @@ public class CommentResponse implements Serializable {
     private String content;
     private UserInfoDto userDto;
     private int like;
+    private boolean liked;
 
-    public CommentResponse(Comment comment, String nickname, String profileImage) {
+    public CommentResponse(Comment comment, String nickname, String profileImage,Boolean liked) {
         this.commentId = comment.getId();
         this.content = comment.getContent();
         this.postId = comment.getPostId();
         this.userDto = new UserInfoDto(nickname, profileImage);
         this.like = comment.getLikeIt();
+        this.liked = liked;
     }
 
     @Data
