@@ -5,7 +5,10 @@ import com.mealfit.config.security.details.UserDetailsImpl;
 import com.mealfit.post.application.PostReadService;
 import com.mealfit.post.presentation.dto.response.PostResponse;
 import java.util.List;
+
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.implementation.bind.MethodDelegationBinder;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -27,21 +30,30 @@ public class PostReadController {
 
     @GetMapping
     // sort = "id", direction = Sort.Direction.DESC 아이디로 내림차순 정렬
-    public ResponseEntity<List<PostResponse>> readAll(
+    public ResponseEntity<List<PostResponse>> readAll(@AuthenticationPrincipal UserDetailsImpl userDetails,
           @RequestParam(defaultValue = "" + Long.MAX_VALUE) Long lastId,
           @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = DEFAULT_PAGE_SIZE) Pageable pageable) {
 
-        return ResponseEntity.status(HttpStatus.OK)
-              .body(postReadService.getReadAll(pageable, lastId));
+        if(userDetails.getUser() == null){
+            return ResponseEntity.status(HttpStatus.OK).body(postReadService.getReadAll(pageable,lastId,null));
+        }else{
+            return ResponseEntity.status(HttpStatus.OK).body(postReadService.getReadAll(pageable,lastId,userDetails.getUser().getId()));}
+
     }
 
 
     //상세페이지 조회
     @GetMapping("/{postId}")
-    public ResponseEntity<PostResponse> readOne(@PathVariable Long postId) {
+    public ResponseEntity<PostResponse> readOne(@PathVariable Long postId,
+                                                @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        return ResponseEntity.status(HttpStatus.OK)
-              .body(postReadService.getReadOne(postId));
+        if(userDetails.getUser() == null){
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(postReadService.getReadOne(postId,null));
+        } else{
+            return ResponseEntity.status(HttpStatus.OK)
+              .body(postReadService.getReadOne(postId,userDetails.getUser().getId()));
+        }
     }
 
 
@@ -54,6 +66,18 @@ public class PostReadController {
         return result;
     }
 
+//    @GetMapping("/{postId}/likeIt")
+//    public boolean findLike(@PathVariable Long postId,
+//                            @AuthenticationPrincipal UserDetailsImpl userDetails ){
+//        boolean result = postReadService.findLike(postId,userDetails.getUser());
+//        return result;
+//    }
+
+//    @GetMapping("/main")
+//    public ResponseEntity<List<PostResponse>> getBest(@PathVariable Long postId){
+//        return ResponseEntity.status(HttpStatus.OK)
+//                .body(postReadService.getList(postId));
+//    }
 
 }
 

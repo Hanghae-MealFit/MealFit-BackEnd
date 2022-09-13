@@ -49,7 +49,7 @@ public class CommentService {
         Comment comment = dto.toEntity();
         Comment savedComment = commentRepository.save(comment);
 
-        return CommentControllerDtoFactory.commentResponse(user, savedComment);
+        return CommentControllerDtoFactory.commentResponse(user, savedComment,false);
     }
 
     private User findUserById(Long userId) {
@@ -89,7 +89,7 @@ public class CommentService {
 
     //댓글 리스트
     @Transactional(readOnly = true)
-    public List<CommentResponse> getCommentList(Long postId) {
+    public List<CommentResponse> getCommentList(Long postId,Long userId) {
 
         return commentRepository.findByPostIdOrderByCreatedAt(postId)
               .stream()
@@ -97,7 +97,8 @@ public class CommentService {
                   User user = findUserById(comment.getUserId());
                   return new CommentResponse(comment,
                         user.getUserProfile().getNickname(),
-                        user.getUserProfile().getProfileImage());
+                        user.getUserProfile().getProfileImage(),
+                        commentLikeRepository.existsByCommentIdAndUserId(comment.getId(),userId));
               })
               .collect(Collectors.toList());
     }

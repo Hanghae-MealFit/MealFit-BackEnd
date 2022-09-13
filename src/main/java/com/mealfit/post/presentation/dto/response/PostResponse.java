@@ -7,6 +7,8 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.mealfit.post.domain.Post;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
