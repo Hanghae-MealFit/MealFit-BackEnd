@@ -3,6 +3,7 @@ package com.mealfit.bodyInfo.presentation;
 import com.mealfit.bodyInfo.application.BodyInfoService;
 import com.mealfit.bodyInfo.application.dto.BodyInfoServiceDtoFactory;
 import com.mealfit.bodyInfo.application.dto.request.BodyInfoChangeRequestDto;
+import com.mealfit.bodyInfo.application.dto.request.BodyInfoRequestDto;
 import com.mealfit.bodyInfo.application.dto.request.BodyInfoSaveRequestDto;
 import com.mealfit.bodyInfo.application.dto.response.BodyInfoResponseDto;
 import com.mealfit.bodyInfo.presentation.dto.request.BodyInfoChangeRequest;
@@ -32,30 +33,33 @@ public class BodyInfoController {
     }
 
     @GetMapping
-    public ResponseEntity<DataWrapper<List<BodyInfoResponseDto>>> showAllUserBodyInfo(
+    public ResponseEntity<DataWrapper<List<BodyInfoResponseDto>>> showBodyInfoList(
           @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        List<BodyInfoResponseDto> result = bodyInfoService.showBodyInfos(
-              userDetails.getUser());
+        BodyInfoRequestDto requestDto =
+              BodyInfoServiceDtoFactory.bodyInfoRequestDto(userDetails.getUser().getId());
+
+        List<BodyInfoResponseDto> result = bodyInfoService.showBodyInfos(requestDto);
 
         return ResponseEntity.status(HttpStatus.OK)
               .body(new DataWrapper<>(result));
     }
 
     @GetMapping("/{bodyInfoId}")
-    public ResponseEntity<BodyInfoResponseDto> showUserBodyInfo(
+    public ResponseEntity<BodyInfoResponseDto> showBodyInfo(
           @AuthenticationPrincipal UserDetailsImpl userDetails,
           @PathVariable Long bodyInfoId) {
-        BodyInfoResponseDto result = bodyInfoService.showBodyInfo(
-              userDetails.getUser(), bodyInfoId);
 
+        BodyInfoRequestDto requestDto = BodyInfoServiceDtoFactory
+              .bodyInfoRequestDto(userDetails.getUser().getId(), bodyInfoId);
 
+        BodyInfoResponseDto result = bodyInfoService.showBodyInfo(requestDto);
 
         return ResponseEntity.status(HttpStatus.OK)
               .body(result);
     }
 
     @PostMapping
-    public ResponseEntity<String> saveUserBodyInfo(
+    public ResponseEntity<String> saveBodyInfo(
           @AuthenticationPrincipal UserDetailsImpl userDetails,
           @RequestBody BodyInfoSaveRequest request) {
 
@@ -64,13 +68,13 @@ public class BodyInfoController {
 
         bodyInfoService.saveBodyInfo(requestDto);
 
-        return ResponseEntity.status(HttpStatus.OK)
+        return ResponseEntity.status(HttpStatus.CREATED)
               .body("입력 완료!");
     }
 
 
     @PutMapping
-    public ResponseEntity<String> changeUserBodyInfo(
+    public ResponseEntity<String> changeBodyInfo(
           @AuthenticationPrincipal UserDetailsImpl userDetails,
           @RequestBody BodyInfoChangeRequest request) {
         BodyInfoChangeRequestDto requestDto = BodyInfoServiceDtoFactory

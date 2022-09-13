@@ -97,7 +97,7 @@ public class PostControllerTest extends ControllerTest {
                         requestHeaders(
                               headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
                                     .attributes(key("constraints").value("Bearer 토큰.")),
-                              headerWithName("refresh_token").description("리프레싴 토큰")
+                              headerWithName("refresh_token").description("리프레시 토큰")
                                     .attributes(key("constraints").value("Bearer 토큰."))
                         ), requestParameters(
                               parameterWithName("content").optional().description("게시글 내용")

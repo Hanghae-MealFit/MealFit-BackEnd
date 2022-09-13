@@ -14,12 +14,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DietCreateRequest implements Serializable {
+public class DietSaveRequest implements Serializable {
     @NotNull
     private Long foodId;  // 음식 ID
 
     @NotNull
-    private Long foodWeight; // 음식 중량
+    private double foodWeight; // 음식 중량
 
     @NotNull
     private String status; // 아침 점심 저녁

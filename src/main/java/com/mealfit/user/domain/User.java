@@ -168,16 +168,25 @@ public class User extends BaseEntity {
         this.userStatusInfo = new UserStatusInfo(userStatus, this.userStatusInfo.getProviderType());
     }
 
+    @Generated
     public boolean isNotValid() {
         return this.userStatusInfo.getUserStatus() == UserStatus.NOT_VALID;
     }
 
+    @Generated
     public boolean isFirstLogin() {
         return this.userStatusInfo.getUserStatus() == UserStatus.FIRST_LOGIN;
     }
 
+    @Generated
     public boolean isSocialUser() {
         return this.userStatusInfo.getProviderType() != ProviderType.LOCAL;
+    }
+
+    private void checkUserDeleted() {
+        if (userStatusInfo.getUserStatus() == UserStatus.DELETE) {
+            throw new UserNotFoundException("이미 회원탈퇴한 회원입니다. userId = " + this.id);
+        }
     }
 
     @Generated
@@ -193,32 +202,9 @@ public class User extends BaseEntity {
         return Objects.equals(id, user.id);
     }
 
-    @Generated
-    private void checkUserDeleted() {
-        if (userStatusInfo.getUserStatus() == UserStatus.DELETE) {
-            throw new UserNotFoundException("이미 회원탈퇴한 회원입니다. userId = " + this.id);
-        }
-    }
-
-    @Generated
     @Override
+    @Generated
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public LoginInfo getLoginInfo() {
-        return loginInfo == null ? new LoginInfo() : loginInfo;
-    }
-
-    public UserProfile getUserProfile() {
-        return userProfile == null ? new UserProfile() : userProfile;
-    }
-
-    public FastingTime getFastingTime() {
-        return fastingTime == null ? new FastingTime() : fastingTime;
     }
 }

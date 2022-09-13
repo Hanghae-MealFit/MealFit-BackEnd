@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Builder
-public class DietChangeRequest implements Serializable {
+public class DietUpdateRequest implements Serializable {
 
     @NotNull
     private Long dietId;  // 식단 ID
@@ -18,9 +18,9 @@ public class DietChangeRequest implements Serializable {
     private Long foodId; // 바꿀 음식ID,
 
     @NotNull
-    private Long foodWeight; // 음식 중량
+    private double foodWeight; // 음식 중량
 
-    public DietChangeRequest(Long dietId, Long foodId, Long foodWeight) {
+    public DietUpdateRequest(Long dietId, Long foodId, double foodWeight) {
         this.dietId = dietId;
         this.foodId = foodId;
         this.foodWeight = foodWeight;

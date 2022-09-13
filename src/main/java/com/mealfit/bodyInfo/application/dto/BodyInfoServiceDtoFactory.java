@@ -1,6 +1,7 @@
 package com.mealfit.bodyInfo.application.dto;
 
 import com.mealfit.bodyInfo.application.dto.request.BodyInfoChangeRequestDto;
+import com.mealfit.bodyInfo.application.dto.request.BodyInfoRequestDto;
 import com.mealfit.bodyInfo.application.dto.request.BodyInfoSaveRequestDto;
 import com.mealfit.bodyInfo.presentation.dto.request.BodyInfoChangeRequest;
 import com.mealfit.bodyInfo.presentation.dto.request.BodyInfoSaveRequest;
@@ -20,7 +21,15 @@ public class BodyInfoServiceDtoFactory {
               userId,
               request.getId(),
               request.getWeight(),
-              request.getSaveDate()
+              request.getSavedDate()
         );
+    }
+
+    public static BodyInfoRequestDto bodyInfoRequestDto(Long userId) {
+        return new BodyInfoRequestDto(userId);
+    }
+
+    public static BodyInfoRequestDto bodyInfoRequestDto(Long userId, Long bodyInfoId) {
+        return new BodyInfoRequestDto(userId, bodyInfoId);
     }
 }

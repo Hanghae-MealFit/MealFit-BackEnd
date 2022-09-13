@@ -2,7 +2,8 @@ package com.mealfit.comment.presentation;
 
 import com.mealfit.comment.application.CommentService;
 import com.mealfit.comment.application.dto.CommentServiceDtoFactory;
-import com.mealfit.comment.application.dto.request.CommentCreateRequestDto;
+import com.mealfit.comment.application.dto.request.CommentLikeRequestDto;
+import com.mealfit.comment.application.dto.request.CommentSaveRequestDto;
 import com.mealfit.comment.application.dto.request.CommentDeleteRequestDto;
 import com.mealfit.comment.application.dto.request.CommentUpdateRequestDto;
 import com.mealfit.comment.presentation.dto.response.CommentResponse;
@@ -35,51 +36,49 @@ public class CommentController {
     private final CommentService commentService;
 
     /**
-     *  JSON -> 필드 하나인 경우
-     *      - Front -> 내용 으로 전송을 하면....
-
-     *        Back - content = "content : 내용"으로 받아버림
-     *
-     *  해결책 : Front측 에게 {content : 내용} 이 아닌 {내용} 만 보내게 해라
-     *           FrameWork -> json 형식으로 보내는게 아니네?라 착각함  (application-www-encodedType) Form-Data
-     *                        이럴땐 Content-Type : Application/JSON
+     * JSON -> 필드 하나인 경우 - Front -> 내용 으로 전송을 하면....
+     * <p>
+     * Back - content = "content : 내용"으로 받아버림
+     * <p>
+     * 해결책 : Front측 에게 {content : 내용} 이 아닌 {내용} 만 보내게 해라 FrameWork -> json 형식으로 보내는게 아니네?라 착각함
+     * (application-www-encodedType) Form-Data 이럴땐 Content-Type : Application/JSON
      */
     @PostMapping("/{postId}/comment")
     public ResponseEntity<String> createComment(@PathVariable Long postId,
-                                        @Valid @RequestBody CreateCommentRequest request,
-                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+          @Valid @RequestBody CreateCommentRequest request,
+          @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        CommentCreateRequestDto requestDto = CommentServiceDtoFactory.commentCreateRequestDto(
+        CommentSaveRequestDto requestDto = CommentServiceDtoFactory.commentCreateRequestDto(
               postId,
               userDetails.getUser(),
               request);
         commentService.createComment(requestDto);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body("작성 완료!");
+              .body("작성 완료!");
 
     }
     //delete
     @DeleteMapping("/comment/{commentId}")
     public ResponseEntity<String> deleteComment(@PathVariable Long commentId,
-                                                @AuthenticationPrincipal UserDetailsImpl userDetails){
+          @AuthenticationPrincipal UserDetailsImpl userDetails) {
         CommentDeleteRequestDto requestDto = CommentServiceDtoFactory.commentDeleteRequestDto(
               commentId, userDetails.getUser());
         commentService.deleteComment(requestDto);
         return ResponseEntity.status(HttpStatus.OK)
-                .body("삭제완료");
+              .body("삭제완료");
     }
     //update
     @PutMapping("/comment/{commentId}")
     public ResponseEntity<String> updateComment(@PathVariable Long commentId,
-                                                @Valid @RequestBody UpdateCommentRequest request,
-                                                @AuthenticationPrincipal UserDetailsImpl userDetails){
+          @Valid @RequestBody UpdateCommentRequest request,
+          @AuthenticationPrincipal UserDetailsImpl userDetails) {
         CommentUpdateRequestDto requestDto = CommentServiceDtoFactory.commentUpdateRequestDto(
               commentId, userDetails.getUser(), request);
 
         commentService.updateComment(requestDto);
         return ResponseEntity.status(HttpStatus.OK)
-                .body("수정 완료!");
+              .body("수정 완료!");
     }
     //comment List
     @GetMapping("/{postId}/comment")
@@ -97,17 +96,20 @@ public class CommentController {
     }
     //like
     @PostMapping("/comment/{commentId}/likeIt")
-    public boolean addlike(@PathVariable Long commentId,
-                           @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity<Boolean> addlike(@PathVariable Long commentId,
+          @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        boolean result = commentService.saveLike(commentId,userDetails.getUser());
+        CommentLikeRequestDto requestDto = CommentServiceDtoFactory.commentLikeRequestDto(
+              commentId, userDetails.getUser());
 
-        return result;
+        return ResponseEntity.status(HttpStatus.OK)
+              .body(commentService.saveLike(requestDto));
     }
 
     @Data
     @AllArgsConstructor
     static class CommentWrapper<T> {
+
         private T comments;
     }
 

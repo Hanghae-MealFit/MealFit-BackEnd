@@ -19,22 +19,18 @@ public enum ErrorCode implements ErrorModel {
     WRONG_SIGNUP_PASSWORD(HttpStatus.BAD_REQUEST, "U002", "비밀번호와 비밀번호 재확인을 확인해주세요."),
     BAD_LOGIN_INFO(HttpStatus.BAD_GATEWAY, "U003", "잘못된 로그인 정보입니다."),
     UNAUTHORIZED_USER(HttpStatus.UNAUTHORIZED, "U004", "해당 작업을 하기 위한 권한이 없습니다."),
-    USER_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "U005", "찾고자 하는 회원이 없습니다."),
 
     // POST
     NO_POST_CONTENT(HttpStatus.INTERNAL_SERVER_ERROR, "P001", "Content 값이 비어있습니다."),
     NO_IMAGE(HttpStatus.INTERNAL_SERVER_ERROR, "P002", "이미지 업로드에 실패했습니다."),
     NOT_POST_WRITER(HttpStatus.UNAUTHORIZED, "P003", "게시글을 수정 및 삭제할 권한이 없습니다."),
-    POST_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "P004", "찾고자 하는 게시글이 없습니다."),
 
     // COMMENT
-    COMMENT_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "C001", "찾고자 하는 댓글이 없습니다."),
-
 
     // COMMON
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "C001", "서버 내부 에러"),
     INVALID_CODE(HttpStatus.BAD_REQUEST, "C002", "Invalid Code"),
-    RESOURCE_NOT_FOUND(HttpStatus.BAD_REQUEST, "C003", "Resource not found"),
+    RESOURCE_NOT_FOUND(HttpStatus.BAD_REQUEST, "C003", "찾고자 하는 정보가 없습니다."),
     EXPIRED_CODE(HttpStatus.BAD_REQUEST, "C004", "Expired Code"),
 
     // EMAIL

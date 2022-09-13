@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class CreateFoodRequest implements Serializable {   // 회원이 음식을 직접 입력
+public class FoodSaveRequest implements Serializable {   // 회원이 음식을 직접 입력
 
     @NotBlank
     private String foodName;
@@ -25,7 +25,7 @@ public class CreateFoodRequest implements Serializable {   // 회원이 음식�
     @NotNull
     private String madeBy;
 
-    public CreateFoodRequest(String foodName, double oneServing, double kcal, double carbs,
+    public FoodSaveRequest(String foodName, double oneServing, double kcal, double carbs,
           double protein, double fat, String madeBy) {
         this.foodName = foodName;
         this.oneServing = oneServing;

@@ -40,6 +40,13 @@ public class BodyInfo {
         this.savedDate = savedDate;
     }
 
+    public BodyInfo(Long id, Long userId, double weight, LocalDate savedDate) {
+        this.id = id;
+        this.userId = userId;
+        this.weight = weight;
+        this.savedDate = savedDate;
+    }
+
     public static BodyInfo createBodyInfo(Long userId, double weight, LocalDate savedDate) {
         return new BodyInfo(userId, weight, savedDate);
     }

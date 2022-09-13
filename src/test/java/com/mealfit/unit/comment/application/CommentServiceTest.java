@@ -11,7 +11,7 @@ import static org.mockito.Mockito.verify;
 import com.mealfit.comment.application.CommentService;
 import com.mealfit.comment.application.dto.request.CommentDeleteRequestDto;
 import com.mealfit.comment.application.dto.request.CommentUpdateRequestDto;
-import com.mealfit.comment.application.dto.request.CommentCreateRequestDto;
+import com.mealfit.comment.application.dto.request.CommentSaveRequestDto;
 import com.mealfit.comment.domain.Comment;
 import com.mealfit.comment.domain.CommentLikeRepository;
 import com.mealfit.comment.domain.CommentRepository;
@@ -61,7 +61,7 @@ public class CommentServiceTest {
         @Test
         void createComment_success() {
             // given
-            CommentCreateRequestDto requestDto = new CommentCreateRequestDto("댓글입니다.",
+            CommentSaveRequestDto requestDto = new CommentSaveRequestDto("댓글입니다.",
                   1L, 1L);
 
             Comment comment = Comment.builder()
@@ -101,7 +101,7 @@ public class CommentServiceTest {
         @Test
         void createComment_not_login_fail() {
             // given
-            CommentCreateRequestDto requestDto = new CommentCreateRequestDto("댓글입니다.",
+            CommentSaveRequestDto requestDto = new CommentSaveRequestDto("댓글입니다.",
                   1L, 1L);
 
             given(postRepository.existsById(anyLong())).willReturn(true);
@@ -116,7 +116,7 @@ public class CommentServiceTest {
         @Test
         void createComment_post_not_found_fail() {
             // given
-            CommentCreateRequestDto requestDto = new CommentCreateRequestDto("댓글입니다.",
+            CommentSaveRequestDto requestDto = new CommentSaveRequestDto("댓글입니다.",
                   1L, 1L);
 
             given(postRepository.existsById(anyLong())).willReturn(false);
@@ -290,6 +290,80 @@ public class CommentServiceTest {
 
             // then
             assertThat(result).hasSize(2);
+        }
+    }
+
+    @DisplayName("saveLike() 메서드는")
+    @Nested
+    class Testing_saveLike {
+
+        @DisplayName("로그인 + 모든 정보를 입력하면 댓글이 작성된다.")
+        @Test
+        void saveLike_success() {
+            // given
+            CommentSaveRequestDto requestDto = new CommentSaveRequestDto("댓글입니다.",
+                  1L, 1L);
+
+            Comment comment = Comment.builder()
+                  .id(1L)
+                  .content("댓글입니다.")
+                  .userId(1L)
+                  .postId(1L)
+                  .likeIt(0)
+                  .build();
+
+            User user = UserFactory.basicUser(1L, "username", "nickname",
+                  "https://github.com/profileImage1/jpeg");
+
+            given(postRepository.existsById(anyLong())).willReturn(true);
+            given(commentRepository.save(any(Comment.class))).willReturn(comment);
+            given(userRepository.findById(anyLong())).willReturn(Optional.of(user));
+
+            // when
+            CommentResponse response = commentService.createComment(requestDto);
+
+            // then
+            assertThat(response.getCommentId()).isEqualTo(1L);
+            assertThat(response.getContent()).isEqualTo(requestDto.getContent());
+            assertThat(response.getUserDto().getNickname()).isEqualTo(
+                  user.getUserProfile().getNickname());
+            assertThat(response.getUserDto().getProfileImage()).isEqualTo(
+                  user.getUserProfile().getProfileImage());
+            assertThat(response.getLike()).isEqualTo(0);
+            assertThat(response.getCommentId()).isEqualTo(1L);
+
+            verify(postRepository, times(1)).existsById(anyLong());
+            verify(commentRepository, times(1)).save(any(Comment.class));
+            verify(userRepository, times(1)).findById(anyLong());
+        }
+
+        @DisplayName("비로그인 시 UserNotFoundException 을 반환한다.")
+        @Test
+        void createComment_not_login_fail() {
+            // given
+            CommentSaveRequestDto requestDto = new CommentSaveRequestDto("댓글입니다.",
+                  1L, 1L);
+
+            given(postRepository.existsById(anyLong())).willReturn(true);
+            given(userRepository.findById(anyLong())).willReturn(Optional.empty());
+
+            // when then
+            assertThatThrownBy(() -> commentService.createComment(requestDto))
+                  .isInstanceOf(UserNotFoundException.class);
+        }
+
+        @DisplayName("게시글이 없을 시 PostNotFoundException 을 반환한다.")
+        @Test
+        void createComment_post_not_found_fail() {
+            // given
+            CommentSaveRequestDto requestDto = new CommentSaveRequestDto("댓글입니다.",
+                  1L, 1L);
+
+            given(postRepository.existsById(anyLong())).willReturn(false);
+
+            // when then
+            assertThatThrownBy(() -> commentService.createComment(requestDto))
+                  .isInstanceOf(PostNotFoundException.class);
         }
     }
 }

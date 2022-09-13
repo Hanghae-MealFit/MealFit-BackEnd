@@ -1,12 +1,14 @@
 package com.mealfit.food.application.dto;
 
-import com.mealfit.food.presentation.dto.request.CreateFoodRequest;
-import com.mealfit.food.application.dto.request.CreateFoodRequestDto;
+import com.mealfit.food.application.dto.request.FoodRequestDto;
+import com.mealfit.food.presentation.dto.request.FoodSaveRequest;
+import com.mealfit.food.application.dto.request.FoodSaveRequestDto;
+import org.springframework.data.domain.Pageable;
 
 public class FoodServiceDtoFactory {
 
-    public static CreateFoodRequestDto createFoodRequestDto(CreateFoodRequest request, Long userId) {
-        return new CreateFoodRequestDto(
+    public static FoodSaveRequestDto foodSaveRequestDto(FoodSaveRequest request, Long userId) {
+        return new FoodSaveRequestDto(
               request.getFoodName(),
               request.getOneServing(),
               request.getKcal(),
@@ -15,4 +17,13 @@ public class FoodServiceDtoFactory {
               request.getFat(),
               request.getMadeBy());
     }
+
+    public static FoodRequestDto foodRequestDto(String foodName, Pageable pageable, long lastId) {
+        return new FoodRequestDto(
+              foodName,
+              pageable,
+              lastId
+        );
+    }
+
 }

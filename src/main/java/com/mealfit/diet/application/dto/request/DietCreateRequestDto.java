@@ -12,7 +12,7 @@ public class DietCreateRequestDto {
 
     private Long userId;
     private Long foodId;  // 음식 ID
-    private Long foodWeight; // 음식 중량
+    private double foodWeight; // 음식 중량
     private DietStatus status; // 아침 점심 저녁
     private LocalDate date; // 기록 일자
 

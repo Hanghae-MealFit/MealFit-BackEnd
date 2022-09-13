@@ -1,7 +1,8 @@
 package com.mealfit.comment.application;
 
 import com.mealfit.comment.application.dto.request.CommentDeleteRequestDto;
-import com.mealfit.comment.application.dto.request.CommentCreateRequestDto;
+import com.mealfit.comment.application.dto.request.CommentLikeRequestDto;
+import com.mealfit.comment.application.dto.request.CommentSaveRequestDto;
 import com.mealfit.comment.application.dto.request.CommentUpdateRequestDto;
 import com.mealfit.comment.domain.Comment;
 import com.mealfit.comment.domain.CommentLike;
@@ -36,7 +37,7 @@ public class CommentService {
     private final CommentLikeRepository commentLikeRepository;
 
     //작성하기
-    public CommentResponse createComment(CommentCreateRequestDto dto) {
+    public CommentResponse createComment(CommentSaveRequestDto dto) {
 
         // 굳이 Post 인스턴스가 필요하지 않기 때문에 있는지 없는지만 체크해주는 exists 메서드 사용.
         if (!postRepository.existsById(dto.getPostId())) {
@@ -102,20 +103,28 @@ public class CommentService {
               .collect(Collectors.toList());
     }
 
-    public boolean saveLike(Long commentId, User user) {
-        Optional<CommentLike> findLike = commentLikeRepository.findByCommentIdAndUserId(commentId,
-              user.getId());
+    public boolean saveLike(CommentLikeRequestDto dto) {
+        Optional<CommentLike> findLike = commentLikeRepository.findByCommentIdAndUserId(
+              dto.getCommentId(), dto.getUserId());
         if (findLike.isEmpty()) {
             CommentLike commentLike = CommentLike.builder()
-                  .commentId(commentId)
-                  .userId(user.getId())
+                  .commentId(dto.getCommentId())
+                  .userId(dto.getUserId())
                   .build();
             commentLikeRepository.save(commentLike);
-            commentRepository.plusLike(commentId);
+
+            Comment comment = commentRepository.findById(dto.getCommentId())
+                  .orElseThrow(() -> new CommentNotFoundException("해당 Comment가 없습니다."));
+
+            comment.likeComment();
             return true;
         } else {
-            commentLikeRepository.deleteByCommentIdAndUserId(commentId, user.getId());
-            commentRepository.minusLike(commentId);
+            commentLikeRepository.deleteByCommentIdAndUserId(dto.getCommentId(), dto.getUserId());
+            
+            Comment comment = commentRepository.findById(dto.getCommentId())
+                  .orElseThrow(() -> new CommentNotFoundException("해당 Comment가 없습니다."));
+
+            comment.unlikeComment();
             return false;
         }
     }

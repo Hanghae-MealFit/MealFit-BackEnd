@@ -1,11 +1,12 @@
 package com.mealfit.bodyInfo.application;
 
-import com.mealfit.bodyInfo.domain.BodyInfo;
 import com.mealfit.bodyInfo.application.dto.request.BodyInfoChangeRequestDto;
+import com.mealfit.bodyInfo.application.dto.request.BodyInfoRequestDto;
 import com.mealfit.bodyInfo.application.dto.request.BodyInfoSaveRequestDto;
 import com.mealfit.bodyInfo.application.dto.response.BodyInfoResponseDto;
+import com.mealfit.bodyInfo.domain.BodyInfo;
 import com.mealfit.bodyInfo.domain.BodyInfoRepository;
-import com.mealfit.user.domain.User;
+import com.mealfit.exception.bodyInfo.BodyInfoNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
@@ -21,30 +22,32 @@ public class BodyInfoService {
     }
 
     @Transactional
-    public void saveBodyInfo(BodyInfoSaveRequestDto dto) {
+    public Long saveBodyInfo(BodyInfoSaveRequestDto dto) {
         BodyInfo bodyInfo = BodyInfo.createBodyInfo(dto.getUserId(), dto.getWeight(),
               dto.getSavedDate());
-        bodyInfoRepository.save(bodyInfo);
+        BodyInfo savedBodyInfo = bodyInfoRepository.save(bodyInfo);
+
+        return savedBodyInfo.getId();
     }
 
     @Transactional
     public void changeBodyInfo(BodyInfoChangeRequestDto dto) {
         BodyInfo bodyInfo = bodyInfoRepository.findByIdAndUserId(dto.getId(), dto.getUserId())
-              .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 체중기록입니다."));
+              .orElseThrow(() -> new BodyInfoNotFoundException("존재하지 않는 체중기록입니다."));
 
         bodyInfo.changeWeight(dto.getWeight());
     }
 
-    public List<BodyInfoResponseDto> showBodyInfos(User user) {
-        return bodyInfoRepository.findByUserIdOrderBySavedDateDesc(user.getId())
+    public List<BodyInfoResponseDto> showBodyInfos(BodyInfoRequestDto dto) {
+        return bodyInfoRepository.findByUserIdOrderBySavedDateDesc(dto.getUserId())
               .stream()
               .map(BodyInfoResponseDto::new)
               .collect(Collectors.toList());
     }
 
-    public BodyInfoResponseDto showBodyInfo(User user, Long bodyInfoId) {
-        BodyInfo bodyInfo = bodyInfoRepository.findByIdAndUserId(bodyInfoId, user.getId())
-              .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 체중기록입니다."));
+    public BodyInfoResponseDto showBodyInfo(BodyInfoRequestDto dto) {
+        BodyInfo bodyInfo = bodyInfoRepository.findByIdAndUserId(dto.getBodyInfoId(), dto.getUserId())
+              .orElseThrow(() -> new BodyInfoNotFoundException("존재하지 않는 체중기록입니다."));
 
         return new BodyInfoResponseDto(bodyInfo);
     }

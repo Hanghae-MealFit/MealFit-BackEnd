@@ -10,12 +10,15 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import lombok.AccessLevel;
 import lombok.Generated;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 
 @Getter
 @DynamicUpdate
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Diet extends BaseEntity {
 
@@ -39,15 +42,19 @@ public class Diet extends BaseEntity {
     @Column(nullable = false)
     private double foodWeight;
 
-    public Diet(Long foodId, DietStatus status, Long foodWeight, LocalDate dietDate) {
+    public Diet(Long foodId, DietStatus status, double foodWeight, LocalDate dietDate) {
         this.foodId = foodId;
         this.status = status;
         this.foodWeight = foodWeight;
         this.dietDate = dietDate;
     }
 
-    protected Diet() {
-
+    public Diet(Long id, Long foodId, DietStatus status, double foodWeight, LocalDate dietDate) {
+        this.id = id;
+        this.foodId = foodId;
+        this.status = status;
+        this.foodWeight = foodWeight;
+        this.dietDate = dietDate;
     }
 
     public void settingUserInfo(Long userId) {

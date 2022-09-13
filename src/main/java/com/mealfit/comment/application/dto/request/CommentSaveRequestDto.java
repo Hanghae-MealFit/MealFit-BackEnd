@@ -4,13 +4,13 @@ import com.mealfit.comment.domain.Comment;
 import lombok.Getter;
 
 @Getter
-public class CommentCreateRequestDto {
+public class CommentSaveRequestDto {
 
     private String content;
     private Long postId;
     private Long userId;
 
-    public CommentCreateRequestDto(String content, Long postId, Long userId) {
+    public CommentSaveRequestDto(String content, Long postId, Long userId) {
         this.content = content;
         this.postId = postId;
         this.userId = userId;

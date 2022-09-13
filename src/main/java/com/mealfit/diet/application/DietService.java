@@ -1,12 +1,15 @@
 package com.mealfit.diet.application;
 
-import com.mealfit.diet.application.dto.request.DietChangeRequestDto;
+import com.mealfit.diet.application.dto.request.DietDeleteRequestDto;
+import com.mealfit.diet.application.dto.request.DietUpdateRequestDto;
 import com.mealfit.diet.application.dto.request.DietCreateRequestDto;
 import com.mealfit.diet.application.dto.request.DietListByDateRequestDto;
 import com.mealfit.diet.application.dto.response.DietResponseByDateDto;
 import com.mealfit.diet.application.dto.response.DietResponseDto;
 import com.mealfit.diet.domain.Diet;
 import com.mealfit.diet.domain.DietRepository;
+import com.mealfit.exception.diet.DietNotFoundException;
+import com.mealfit.exception.user.InvalidUserException;
 import com.mealfit.exception.user.UserNotFoundException;
 import com.mealfit.food.domain.Food;
 import com.mealfit.food.domain.FoodRepository;
@@ -32,7 +35,7 @@ public class DietService {
 
     //식단 조회
     @Transactional(readOnly = true)
-    public DietResponseByDateDto getDietById(DietListByDateRequestDto dto) {
+    public DietResponseByDateDto getDietListByDate(DietListByDateRequestDto dto) {
 
         // 얘도 여러개니까 리스트로
         List<Diet> dietList = dietRepository.findByDietDateAndUserId(dto.getDate(),
@@ -71,7 +74,7 @@ public class DietService {
     }
 
     // 식단 수정
-    public void updateDiet(DietChangeRequestDto dto) {
+    public void updateDiet(DietUpdateRequestDto dto) {
         //item
         Diet diet = getDietById(dto.getDietId());
 
@@ -82,23 +85,24 @@ public class DietService {
 
     private static void validateUser(Long userId, Long dietUserId) {
         if (!userId.equals(dietUserId)) {
-            throw new IllegalArgumentException("작성자가 아니므로, 해당 식단을 수정할 수 없습니다.");
+            throw new InvalidUserException("작성자가 아니므로, 해당 식단을 수정할 수 없습니다.");
         }
     }
 
     // 식단 삭제
-    public void deleteDiet(Long dietId, User user) {
+    public void deleteDiet(DietDeleteRequestDto dto) {
         //유효성 검사
-        Diet diet = getDietById(dietId);
+        Diet diet = getDietById(dto.getDietId());
 
         //작성자 검사
-        validateUser(user.getId(), diet.getUserId());
+        validateUser(dto.getUserId(), diet.getUserId());
 
         dietRepository.delete(diet);
     }
 
+
     private Diet getDietById(Long dietId) {
         return dietRepository.findById(dietId)
-              .orElseThrow(() -> new IllegalArgumentException("기록한 식단이 없습니다."));
+              .orElseThrow(() -> new DietNotFoundException("기록한 식단이 없습니다."));
     }
 }
