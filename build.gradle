@@ -124,6 +124,7 @@ jacocoTestReport {
                             '**/*Dto*',
                             '**/*Exception*',
                             '**/*config*',
+                            '**/email',
                     ])
                 })
         )
@@ -170,8 +171,7 @@ jacocoTestCoverageVerification {
                     '**.*Exception*',
                     '**.*logging*',
                     '**.*Storage*',
-                    '*equals',
-                    '*hashCode'
+                    '**.*Email'
             ]
         }
         rule {
