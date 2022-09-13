@@ -1,12 +1,12 @@
-package com.mealfit.exception.post;
+package com.mealfit.exception.bodyInfo;
 
 import com.mealfit.exception.wrapper.ErrorCode;
 
-public class PostNotFoundException extends PostException{
+public class BodyInfoNotFoundException extends BodyInfoException{
 
     private static final ErrorCode errorCode = ErrorCode.RESOURCE_NOT_FOUND;
 
-    public PostNotFoundException(String message) {
+    public BodyInfoNotFoundException(String message) {
         super(errorCode, message);
     }
 }

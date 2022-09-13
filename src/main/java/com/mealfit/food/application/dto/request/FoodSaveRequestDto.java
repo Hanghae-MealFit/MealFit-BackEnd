@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Builder
-public class CreateFoodRequestDto {   // 회원이 음식을 직접 입력
+public class FoodSaveRequestDto {   // 회원이 음식을 직접 입력
 
     private String foodName; // 음식 이름
 
@@ -23,7 +23,7 @@ public class CreateFoodRequestDto {   // 회원이 음식을 직접 입력
 
     private String madeBy;
 
-    public CreateFoodRequestDto(String foodName, double oneServing, double kcal, double carbs,
+    public FoodSaveRequestDto(String foodName, double oneServing, double kcal, double carbs,
           double protein, double fat, String madeBy) {
         this.foodName = foodName;
         this.oneServing = oneServing;
