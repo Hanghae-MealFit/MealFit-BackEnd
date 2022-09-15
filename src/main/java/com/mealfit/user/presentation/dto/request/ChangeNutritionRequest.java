@@ -3,8 +3,10 @@ package com.mealfit.user.presentation.dto.request;
 import java.io.Serializable;
 import javax.validation.constraints.Min;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class ChangeNutritionRequest implements Serializable {
 
     @Min(value = 0, message = "0보다 크게 입력해주세요")

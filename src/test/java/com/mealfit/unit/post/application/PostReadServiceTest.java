@@ -14,6 +14,8 @@ import com.mealfit.common.factory.UserFactory;
 import com.mealfit.exception.post.PostNotFoundException;
 import com.mealfit.exception.user.UserNotFoundException;
 import com.mealfit.post.application.PostReadService;
+import com.mealfit.post.application.dto.request.PostDetailRequestDto;
+import com.mealfit.post.application.dto.request.PostListRequestDto;
 import com.mealfit.post.domain.Post;
 import com.mealfit.post.domain.PostImage;
 import com.mealfit.post.domain.PostLikeRepository;
@@ -71,7 +73,7 @@ public class PostReadServiceTest {
             given(userRepository.findById(anyLong())).willReturn(Optional.of(user));
 
             // when
-            PostResponse response = postReadService.getReadOne(1L);
+            PostResponse response = postReadService.getReadOne(new PostDetailRequestDto(1L, 1L));
 
             // then
             assertEquals(response.getPostId(), post.getId());
@@ -81,7 +83,7 @@ public class PostReadServiceTest {
                         "https://github.com/testImage2.jpeg"));
             assertEquals(response.getNickname(), user.getUserProfile().getNickname());
             assertEquals(response.getProfileImage(), user.getUserProfile().getProfileImage());
-            assertEquals(response.getView(), post.getView());
+            assertEquals(response.getView() + 1, post.getView());
             assertEquals(response.getLike(), post.getLikeIt());
 
             verify(postReadRepository, times(1)).findById(anyLong());
@@ -97,8 +99,8 @@ public class PostReadServiceTest {
             given(postReadRepository.findById(anyLong())).willReturn(Optional.empty());
 
             // when then
-            assertThrows(PostNotFoundException.class, () -> postReadService.getReadOne(1L));
-
+            assertThrows(PostNotFoundException.class,
+                  () -> postReadService.getReadOne(new PostDetailRequestDto(1L, 1L)));
             verify(postReadRepository, times(1)).findById(anyLong());
         }
 
@@ -114,7 +116,8 @@ public class PostReadServiceTest {
             given(userRepository.findById(anyLong())).willReturn(Optional.empty());
 
             // when then
-            assertThrows(UserNotFoundException.class, () -> postReadService.getReadOne(1L));
+            assertThrows(UserNotFoundException.class,
+                  () -> postReadService.getReadOne(new PostDetailRequestDto(1L, 1L)));
 
             verify(postReadRepository, times(1)).findById(anyLong());
             verify(userRepository, times(1)).findById(anyLong());
@@ -154,24 +157,30 @@ public class PostReadServiceTest {
             User user = UserFactory
                   .basicUser(1L, "username1", "nickname1", "https://github.com/profileImg.jpeg");
 
-            given(postReadRepository.findAllByIdLessThan(anyLong(), any(Pageable.class))).willReturn(postPage);
+            given(postReadRepository.findAllByIdLessThan(anyLong(),
+                  any(Pageable.class))).willReturn(postPage);
             given(userRepository.findById(anyLong())).willReturn(Optional.of(user));
-            given(postLikeRepository.existsByPostIdAndUserId(anyLong(), anyLong())).willReturn(true);
+            given(postLikeRepository.existsByPostIdAndUserId(anyLong(), anyLong())).willReturn(
+                  true);
 
             // when
-            List<PostResponse> postResponseList = postReadService.getReadAll(pageable, 10L);
+            List<PostResponse> postResponseList = postReadService.getReadAll(
+                  new PostListRequestDto(pageable, 10L, 1L));
 
             // then
             List<String> imageUrls = List.of("https://github.com/testImage1.jpeg",
                   "https://github.com/testImage2.jpeg");
 
             for (int i = 1; i <= postResponseList.size(); i++) {
-                PostResponse postResponse = postResponseList.get(i-1);
+                PostResponse postResponse = postResponseList.get(i - 1);
                 assertThat(postResponse.getPostId()).isEqualTo((long) i);
-                assertThat(postResponse.getNickname()).isEqualTo(user.getUserProfile().getNickname());
-                assertThat(postResponse.getProfileImage()).isEqualTo(user.getUserProfile().getProfileImage());
+                assertThat(postResponse.getNickname()).isEqualTo(
+                      user.getUserProfile().getNickname());
+                assertThat(postResponse.getProfileImage()).isEqualTo(
+                      user.getUserProfile().getProfileImage());
                 assertThat(postResponse.getContent()).isEqualTo(postResponse.getContent());
-                assertThat(postResponse.getImages()).usingRecursiveComparison().isEqualTo(imageUrls);
+                assertThat(postResponse.getImages()).usingRecursiveComparison()
+                      .isEqualTo(imageUrls);
             }
 
             verify(postReadRepository, times(1))
@@ -212,7 +221,7 @@ public class PostReadServiceTest {
 
             // when then
             assertThrows(UserNotFoundException.class,
-                  () -> postReadService.getReadAll(pageable, 10L));
+                  () -> postReadService.getReadAll(new PostListRequestDto(pageable, 10L, 1L)));
 
             verify(postReadRepository, times(1))
                   .findAllByIdLessThan(anyLong(), any(Pageable.class));

@@ -7,8 +7,8 @@ import com.mealfit.comment.application.dto.request.CommentSaveRequestDto;
 import com.mealfit.comment.application.dto.request.CommentDeleteRequestDto;
 import com.mealfit.comment.application.dto.request.CommentUpdateRequestDto;
 import com.mealfit.comment.presentation.dto.response.CommentResponse;
-import com.mealfit.comment.presentation.dto.request.CreateCommentRequest;
-import com.mealfit.comment.presentation.dto.request.UpdateCommentRequest;
+import com.mealfit.comment.presentation.dto.request.CommentSaveRequest;
+import com.mealfit.comment.presentation.dto.request.CommentUpdateRequest;
 import com.mealfit.config.security.details.UserDetailsImpl;
 import java.util.List;
 import javax.validation.Valid;
@@ -44,18 +44,19 @@ public class CommentController {
      * (application-www-encodedType) Form-Data 이럴땐 Content-Type : Application/JSON
      */
     @PostMapping("/{postId}/comment")
-    public ResponseEntity<String> createComment(@PathVariable Long postId,
-          @Valid @RequestBody CreateCommentRequest request,
+    public ResponseEntity<CommentResponse> createComment(@PathVariable Long postId,
+          @Valid @RequestBody CommentSaveRequest request,
           @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         CommentSaveRequestDto requestDto = CommentServiceDtoFactory.commentCreateRequestDto(
               postId,
               userDetails.getUser(),
               request);
-        commentService.createComment(requestDto);
+
+        CommentResponse response = commentService.createComment(requestDto);
 
         return ResponseEntity.status(HttpStatus.OK)
-              .body("작성 완료!");
+              .body(response);
 
     }
     //delete
@@ -71,7 +72,7 @@ public class CommentController {
     //update
     @PutMapping("/comment/{commentId}")
     public ResponseEntity<String> updateComment(@PathVariable Long commentId,
-          @Valid @RequestBody UpdateCommentRequest request,
+          @Valid @RequestBody CommentUpdateRequest request,
           @AuthenticationPrincipal UserDetailsImpl userDetails) {
         CommentUpdateRequestDto requestDto = CommentServiceDtoFactory.commentUpdateRequestDto(
               commentId, userDetails.getUser(), request);
@@ -82,7 +83,8 @@ public class CommentController {
     }
     //comment List
     @GetMapping("/{postId}/comment")
-    public ResponseEntity<CommentWrapper<List<CommentResponse>>> listComment(@PathVariable Long postId,@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<CommentWrapper<List<CommentResponse>>> listComment(@PathVariable Long postId,
+          @AuthenticationPrincipal UserDetailsImpl userDetails) {
         if(userDetails == null){
             return ResponseEntity.status(HttpStatus.OK)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -96,7 +98,7 @@ public class CommentController {
     }
     //like
     @PostMapping("/comment/{commentId}/likeIt")
-    public ResponseEntity<Boolean> addlike(@PathVariable Long commentId,
+    public ResponseEntity<Boolean> likeIt(@PathVariable Long commentId,
           @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         CommentLikeRequestDto requestDto = CommentServiceDtoFactory.commentLikeRequestDto(

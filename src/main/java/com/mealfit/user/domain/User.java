@@ -190,6 +190,31 @@ public class User extends BaseEntity {
     }
 
     @Generated
+    public LoginInfo getLoginInfo() {
+        return loginInfo == null ? new LoginInfo() : loginInfo ;
+    }
+
+    @Generated
+    public UserProfile getUserProfile() {
+        return userProfile == null ? new UserProfile() : userProfile;
+    }
+
+    @Generated
+    public FastingTime getFastingTime() {
+        return fastingTime == null ? new FastingTime() : fastingTime;
+    }
+
+    @Generated
+    public Nutrition getNutrition() {
+        return nutrition == null ? new Nutrition() : nutrition;
+    }
+
+    @Generated
+    public UserStatusInfo getUserStatusInfo() {
+        return userStatusInfo == null ? new UserStatusInfo() : userStatusInfo;
+    }
+
+    @Generated
     @Override
     public boolean equals(Object o) {
         if (this == o) {

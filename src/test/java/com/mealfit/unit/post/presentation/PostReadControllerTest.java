@@ -1,7 +1,6 @@
 package com.mealfit.unit.post.presentation;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -20,6 +19,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.mealfit.config.security.WithMockCustomUser;
+import com.mealfit.post.application.dto.request.PostDetailRequestDto;
+import com.mealfit.post.application.dto.request.PostListRequestDto;
 import com.mealfit.post.presentation.dto.response.PostResponse;
 import com.mealfit.unit.ControllerTest;
 import java.time.LocalDateTime;
@@ -28,7 +29,6 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.Pageable;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 public class PostReadControllerTest extends ControllerTest {
@@ -61,7 +61,7 @@ public class PostReadControllerTest extends ControllerTest {
                       .build());
             }
 
-            given(postReadService.getReadAll(any(Pageable.class), anyLong())).willReturn(
+            given(postReadService.getReadAll(any(PostListRequestDto.class))).willReturn(
                   postResponseList);
 
             mockMvc.perform(get(COMMON_API_ADDRESS)
@@ -101,7 +101,7 @@ public class PostReadControllerTest extends ControllerTest {
                   ));
 
             verify(postReadService, times(1))
-                  .getReadAll(any(Pageable.class), anyLong());
+                  .getReadAll(any(PostListRequestDto.class));
         }
 
     }
@@ -129,7 +129,7 @@ public class PostReadControllerTest extends ControllerTest {
                   .updatedAt(LocalDateTime.now())
                   .build();
 
-            given(postReadService.getReadOne(anyLong())).willReturn(response);
+            given(postReadService.getReadOne(any(PostDetailRequestDto.class))).willReturn(response);
 
             mockMvc.perform(get(COMMON_API_ADDRESS + "/{postId}", 1)
                         .with(csrf().asHeader()))
@@ -166,7 +166,7 @@ public class PostReadControllerTest extends ControllerTest {
                   );
 
             verify(postReadService, times(1))
-                  .getReadOne(anyLong());
+                  .getReadOne(any(PostDetailRequestDto.class));
         }
     }
 }

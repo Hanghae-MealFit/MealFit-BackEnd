@@ -75,10 +75,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     "/api/user/signup", "/api/user/verify", "/login", "/logout",
                     "/api/user/username/**", "/api/user/email/**", "/api/user/nickname/**", // 중복확인
                     "/api/user/find/**",
+                    "/api/food/**",
                     "/h2-console/**",
                     "/test/error").permitAll()
               .antMatchers("/actuator/**").access("hasRole('ADMIN')")
-              .antMatchers(HttpMethod.GET, "/api/post/**").permitAll()
               .antMatchers(HttpMethod.GET, "/api/post/**").permitAll()
               .anyRequest().authenticated();
 

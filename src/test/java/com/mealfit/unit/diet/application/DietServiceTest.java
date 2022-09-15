@@ -17,6 +17,7 @@ import com.mealfit.diet.domain.Diet;
 import com.mealfit.diet.domain.DietRepository;
 import com.mealfit.diet.domain.DietStatus;
 import com.mealfit.exception.diet.DietNotFoundException;
+import com.mealfit.exception.food.FoodNotFoundException;
 import com.mealfit.exception.user.InvalidUserException;
 import com.mealfit.exception.user.UserNotFoundException;
 import com.mealfit.food.domain.Food;
@@ -219,7 +220,7 @@ public class DietServiceTest {
 
             // when then
             Assertions.assertThatThrownBy(() -> dietService.getDietListByDate(requestDto))
-                  .isInstanceOf(UserNotFoundException.class);
+                  .isInstanceOf(FoodNotFoundException.class);
 
             verify(dietRepository, times(1))
                   .findByDietDateAndUserId(any(LocalDate.class), anyLong());

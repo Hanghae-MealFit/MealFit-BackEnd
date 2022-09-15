@@ -3,7 +3,6 @@ plugins {
     id 'org.springframework.boot' version '2.6.10'
     id 'io.spring.dependency-management' version '1.0.12.RELEASE'
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
-//    id 'com.vaadin' version '23.1.2'
     // testCoverage
     id 'jacoco'
     id 'org.sonarqube' version '3.3'
@@ -23,14 +22,11 @@ configurations {
 
 repositories {
     mavenCentral()
-//    maven { url = "https://maven.vaadin.com/vaadin-addons" }
 }
 
 ext {
     restdocVersion = "2.0.6.RELEASE"
     snippetsDir = file('build/generated-snippets')
-//    set('vaadinVersion', "23.1.2")
-//    def profile = project.hasProperty("profile") ? project.property("proifle").toString() : "local"
 }
 
 
@@ -59,10 +55,6 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'mysql:mysql-connector-java'
 
-    // back-office vaadin
-//    implementation 'com.vaadin:vaadin-spring-boot-starter'
-//    implementation 'dev.mett.vaadin:tooltip:1.7.0'
-
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
@@ -73,10 +65,6 @@ dependencies {
 
     //스프링 redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    //embedded redis
-    implementation 'it.ozimov:embedded-redis:0.7.2'
-    implementation 'com.google.code.gson:gson:2.8.0'
-    implementation 'javax.xml.bind:jaxb-api'
 
     // Test Coverage
     implementation 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.3'
@@ -84,6 +72,22 @@ dependencies {
     // REST DOC
     asciidoctorExt "org.springframework.restdocs:spring-restdocs-asciidoctor:${restdocVersion}"
     testImplementation "org.springframework.restdocs:spring-restdocs-mockmvc:${restdocVersion}"
+
+    // Logging
+    implementation 'org.springframework.boot:spring-boot-starter-log4j2'
+    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.15.0'
+    implementation 'org.apache.logging.log4j:log4j-api:2.15.0'
+    implementation 'org.apache.logging.log4j:log4j-core:2.15.0'
+    implementation 'org.apache.logging.log4j:log4j-jul:2.15.0'
+    implementation 'net.rakugakibox.spring.boot:logback-access-spring-boot-starter:2.7.1'
+    implementation 'org.reflections:reflections:0.9.10'
+    implementation 'com.lmax:disruptor:3.4.2'
+
+    modules {
+        module("org.springframework.boot:spring-boot-starter-logging") {
+            replacedBy("org.springframework.boot:spring-boot-starter-log4j2", "Use Log4j2 instead of Logback")
+        }
+    }
 }
 
 tasks.named('test') {
@@ -124,6 +128,7 @@ jacocoTestReport {
                             '**/*Dto*',
                             '**/*Exception*',
                             '**/*config*',
+                            '**/*Event*',
                             '**/email',
                     ])
                 })
@@ -186,38 +191,25 @@ jacocoTestCoverageVerification {
     }
 }
 
-//vaadin {
-//    optimizeBundle = false
-//    productionMode = true
-//}
+asciidoctor {
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
+    dependsOn test
+}
 
-//dependencyManagement {
-//    imports {
-//        mavenBom "com.vaadin:vaadin-bom:23.1.2"
-//    }
-//}
+task copyDocument(type: Copy) {
+    dependsOn asciidoctor
+    from file("build/docs/asciidoc")
+    into file("src/main/resources/static/docs")
+}
 
+bootJar {
+    dependsOn asciidoctor
+    from ("${asciidoctor.outputDir}/html5") {
+        into 'static/docs'
+    }
+}
 
-
-//asciidoctor {
-//    inputs.dir snippetsDir
-//    configurations 'asciidoctorExt'
-//    dependsOn test
-//}
-
-//task copyDocument(type: Copy) {
-//    dependsOn asciidoctor
-//    from file("build/docs/asciidoc")
-//    into file("src/main/resources/static/docs")
-//}
-//
-//bootJar {
-//    dependsOn asciidoctor
-//    from ("${asciidoctor.outputDir}/html5") {
-//        into 'static/docs'
-//    }
-//}
-//
-//build {
-//    dependsOn copyDocument
-//}
+build {
+    dependsOn copyDocument
+}

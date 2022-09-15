@@ -12,6 +12,7 @@ out/
 node_modules
 package-lock.json
 HELP.md
+logs/
 
 # Resources
 src/main/resources/static/docs

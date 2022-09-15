@@ -10,12 +10,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 @Setter
 @Getter
 @NoArgsConstructor
+@ToString
 public class ChangeUserInfoRequest implements Serializable {
 
     @NotBlank(message = "닉네임을 필수로 입력해주세요")

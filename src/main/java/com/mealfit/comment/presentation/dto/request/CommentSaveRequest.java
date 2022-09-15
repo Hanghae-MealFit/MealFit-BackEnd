@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateCommentRequest implements Serializable {
+public class CommentSaveRequest implements Serializable {
 
     @NotBlank(message = "내용을 입력해주세요")
     private String content;

@@ -21,11 +21,12 @@ public enum ErrorCode implements ErrorModel {
     UNAUTHORIZED_USER(HttpStatus.UNAUTHORIZED, "U004", "해당 작업을 하기 위한 권한이 없습니다."),
 
     // POST
-    NO_POST_CONTENT(HttpStatus.INTERNAL_SERVER_ERROR, "P001", "Content 값이 비어있습니다."),
+    NO_POST_CONTENT(HttpStatus.BAD_REQUEST, "P001", "Content 값이 비어있습니다."),
     NO_IMAGE(HttpStatus.INTERNAL_SERVER_ERROR, "P002", "이미지 업로드에 실패했습니다."),
     NOT_POST_WRITER(HttpStatus.UNAUTHORIZED, "P003", "게시글을 수정 및 삭제할 권한이 없습니다."),
 
     // COMMENT
+    NO_COMMENT_CONTENT(HttpStatus.BAD_REQUEST, "C001", "Content 값이 비어있습니다."),
 
     // COMMON
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "C001", "서버 내부 에러"),

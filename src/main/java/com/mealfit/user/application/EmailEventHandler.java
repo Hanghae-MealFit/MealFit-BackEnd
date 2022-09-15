@@ -34,7 +34,7 @@ public class EmailEventHandler {
     private final ConcurrentHashMap<String, Integer> limitStorage = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> verifyStorage = new ConcurrentHashMap<>();
 
-    public EmailEventHandler(@Value("${front-url}")String frontUrl,
+    public EmailEventHandler(@Value("${common.front-url}")String frontUrl,
           EmailUtil emailUtil, UserRepository userRepository) {
         this.frontUrl = frontUrl;
         this.emailUtil = emailUtil;
@@ -46,11 +46,11 @@ public class EmailEventHandler {
     @EventListener
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void sendEmail(EmailEvent event) {
-        int sendingCountByUser = limitStorage.getOrDefault(event.getSendToEmail(), 0);
+        int sendCountByUser = limitStorage.getOrDefault(event.getSendToEmail(), 0);
 
-        checkEmailSendCount(sendingCountByUser);
+        checkEmailSendCount(sendCountByUser);
 
-        limitStorage.put(event.getSendToEmail(), sendingCountByUser + 1);
+        limitStorage.put(event.getSendToEmail(), sendCountByUser + 1);
 
         String authKey = UUID.randomUUID().toString();
 

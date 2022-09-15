@@ -49,7 +49,7 @@ public class CommentService {
         Comment comment = dto.toEntity();
         Comment savedComment = commentRepository.save(comment);
 
-        return CommentControllerDtoFactory.commentResponse(user, savedComment,false);
+        return CommentControllerDtoFactory.commentResponse(user, savedComment, false);
     }
 
     private User findUserById(Long userId) {
@@ -89,7 +89,7 @@ public class CommentService {
 
     //댓글 리스트
     @Transactional(readOnly = true)
-    public List<CommentResponse> getCommentList(Long postId,Long userId) {
+    public List<CommentResponse> getCommentList(Long postId, Long userId) {
 
         return commentRepository.findByPostIdOrderByCreatedAt(postId)
               .stream()
@@ -98,7 +98,7 @@ public class CommentService {
                   return new CommentResponse(comment,
                         user.getUserProfile().getNickname(),
                         user.getUserProfile().getProfileImage(),
-                        commentLikeRepository.existsByCommentIdAndUserId(comment.getId(),userId));
+                        commentLikeRepository.existsByCommentIdAndUserId(comment.getId(), userId));
               })
               .collect(Collectors.toList());
     }
@@ -120,7 +120,7 @@ public class CommentService {
             return true;
         } else {
             commentLikeRepository.deleteByCommentIdAndUserId(dto.getCommentId(), dto.getUserId());
-            
+
             Comment comment = commentRepository.findById(dto.getCommentId())
                   .orElseThrow(() -> new CommentNotFoundException("해당 Comment가 없습니다."));
 

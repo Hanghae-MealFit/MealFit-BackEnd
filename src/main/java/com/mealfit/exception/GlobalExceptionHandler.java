@@ -43,10 +43,9 @@ public class GlobalExceptionHandler {
 
         log.error(LOG_FORMAT,
               e.getClass().getSimpleName(), HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-        throw e;
-//        return ResponseEntity
-//              .status(HttpStatus.INTERNAL_SERVER_ERROR)
-//              .body(ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR));
+        return ResponseEntity
+              .status(HttpStatus.INTERNAL_SERVER_ERROR)
+              .body(ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR));
     }
 
     /**
