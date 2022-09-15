@@ -9,6 +9,7 @@ import com.mealfit.diet.application.dto.response.DietResponseDto;
 import com.mealfit.diet.domain.Diet;
 import com.mealfit.diet.domain.DietRepository;
 import com.mealfit.exception.diet.DietNotFoundException;
+import com.mealfit.exception.food.FoodNotFoundException;
 import com.mealfit.exception.user.InvalidUserException;
 import com.mealfit.exception.user.UserNotFoundException;
 import com.mealfit.food.domain.Food;
@@ -44,7 +45,7 @@ public class DietService {
         List<DietResponseDto> dietResponseDtoList = dietList.stream()
               .map(diet -> {
                   Food food = foodRepository.findById(diet.getFoodId())
-                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 음식입니다."));
+                        .orElseThrow(() -> new FoodNotFoundException("존재하지 않는 음식입니다."));
 
                   return new DietResponseDto(diet, food);
               })

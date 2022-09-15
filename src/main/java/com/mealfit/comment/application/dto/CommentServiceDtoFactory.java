@@ -4,15 +4,15 @@ import com.mealfit.comment.application.dto.request.CommentDeleteRequestDto;
 import com.mealfit.comment.application.dto.request.CommentLikeRequestDto;
 import com.mealfit.comment.application.dto.request.CommentSaveRequestDto;
 import com.mealfit.comment.application.dto.request.CommentUpdateRequestDto;
-import com.mealfit.comment.presentation.dto.request.CreateCommentRequest;
-import com.mealfit.comment.presentation.dto.request.UpdateCommentRequest;
+import com.mealfit.comment.presentation.dto.request.CommentSaveRequest;
+import com.mealfit.comment.presentation.dto.request.CommentUpdateRequest;
 import com.mealfit.user.domain.User;
 
 public class CommentServiceDtoFactory {
 
     public static CommentSaveRequestDto commentCreateRequestDto(Long postId,
           User user,
-          CreateCommentRequest request) {
+          CommentSaveRequest request) {
         return new CommentSaveRequestDto(
               request.getContent(),
               postId,
@@ -21,7 +21,7 @@ public class CommentServiceDtoFactory {
 
     public static CommentUpdateRequestDto commentUpdateRequestDto(Long commentId,
           User user,
-          UpdateCommentRequest request) {
+          CommentUpdateRequest request) {
         return new CommentUpdateRequestDto(request.getContent(),
               commentId,
               user.getId());

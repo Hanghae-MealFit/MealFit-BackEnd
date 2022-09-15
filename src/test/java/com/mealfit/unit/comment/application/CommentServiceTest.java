@@ -10,13 +10,16 @@ import static org.mockito.Mockito.verify;
 
 import com.mealfit.comment.application.CommentService;
 import com.mealfit.comment.application.dto.request.CommentDeleteRequestDto;
+import com.mealfit.comment.application.dto.request.CommentLikeRequestDto;
 import com.mealfit.comment.application.dto.request.CommentUpdateRequestDto;
 import com.mealfit.comment.application.dto.request.CommentSaveRequestDto;
 import com.mealfit.comment.domain.Comment;
+import com.mealfit.comment.domain.CommentLike;
 import com.mealfit.comment.domain.CommentLikeRepository;
 import com.mealfit.comment.domain.CommentRepository;
 import com.mealfit.comment.presentation.dto.response.CommentResponse;
 import com.mealfit.common.factory.UserFactory;
+import com.mealfit.config.security.WithMockCustomUser;
 import com.mealfit.exception.authentication.UnAuthorizedUserException;
 import com.mealfit.exception.comment.CommentNotFoundException;
 import com.mealfit.exception.post.PostNotFoundException;
@@ -256,6 +259,7 @@ public class CommentServiceTest {
     }
 
     @DisplayName("getCommentList() 메서드는")
+    @WithMockCustomUser
     @Nested
     class Testing_getCommentList {
 
@@ -282,88 +286,127 @@ public class CommentServiceTest {
 
             User user = UserFactory.basicUser(1L, "username", "닉네임", "프로필사진");
 
-            given(commentRepository.findByPostIdOrderByCreatedAt(anyLong())).willReturn(commentList);
+            given(commentRepository.findByPostIdOrderByCreatedAt(anyLong())).willReturn(
+                  commentList);
             given(userRepository.findById(anyLong())).willReturn(Optional.of(user));
 
             // when
-            List<CommentResponse> result = commentService.getCommentList(1L);
+            List<CommentResponse> result = commentService.getCommentList(1L, 1L);
 
             // then
             assertThat(result).hasSize(2);
         }
     }
 
-    @DisplayName("saveLike() 메서드는")
+    @DisplayName("saveLike() 메서드에서")
     @Nested
     class Testing_saveLike {
 
-        @DisplayName("로그인 + 모든 정보를 입력하면 댓글이 작성된다.")
-        @Test
-        void saveLike_success() {
-            // given
-            CommentSaveRequestDto requestDto = new CommentSaveRequestDto("댓글입니다.",
-                  1L, 1L);
+        @DisplayName("좋아요는 ")
+        @Nested
+        class Context_like {
 
-            Comment comment = Comment.builder()
-                  .id(1L)
-                  .content("댓글입니다.")
-                  .userId(1L)
-                  .postId(1L)
-                  .likeIt(0)
-                  .build();
+            @DisplayName("좋아요 내역이 없다면 실행된다.")
+            @Test
+            void saveLike_like_success() {
+                // given
+                CommentLikeRequestDto requestDto = new CommentLikeRequestDto(1L, 1L);
 
-            User user = UserFactory.basicUser(1L, "username", "nickname",
-                  "https://github.com/profileImage1/jpeg");
+                Comment comment = Comment.builder()
+                      .id(1L)
+                      .content("댓글입니다.")
+                      .userId(1L)
+                      .postId(1L)
+                      .likeIt(0)
+                      .build();
 
-            given(postRepository.existsById(anyLong())).willReturn(true);
-            given(commentRepository.save(any(Comment.class))).willReturn(comment);
-            given(userRepository.findById(anyLong())).willReturn(Optional.of(user));
+                given(commentLikeRepository.findByCommentIdAndUserId(anyLong(), anyLong()))
+                      .willReturn(Optional.empty());
+                given(commentRepository.findById(anyLong())).willReturn(Optional.of(comment));
 
-            // when
-            CommentResponse response = commentService.createComment(requestDto);
+                // when
+                boolean likeOrUnlike = commentService.saveLike(requestDto);
 
-            // then
-            assertThat(response.getCommentId()).isEqualTo(1L);
-            assertThat(response.getContent()).isEqualTo(requestDto.getContent());
-            assertThat(response.getUserDto().getNickname()).isEqualTo(
-                  user.getUserProfile().getNickname());
-            assertThat(response.getUserDto().getProfileImage()).isEqualTo(
-                  user.getUserProfile().getProfileImage());
-            assertThat(response.getLike()).isEqualTo(0);
-            assertThat(response.getCommentId()).isEqualTo(1L);
+                // then
+                assertThat(likeOrUnlike).isEqualTo(true);
+                verify(commentLikeRepository, times(1)).findByCommentIdAndUserId(anyLong(),
+                      anyLong());
+                verify(commentRepository, times(1)).findById(anyLong());
+            }
 
-            verify(postRepository, times(1)).existsById(anyLong());
-            verify(commentRepository, times(1)).save(any(Comment.class));
-            verify(userRepository, times(1)).findById(anyLong());
+            @DisplayName("만약 Comment가 없으면 실패한다.")
+            @Test
+            void saveLike_comment_not_found_fail() {
+                // given
+                CommentLikeRequestDto requestDto = new CommentLikeRequestDto(1L, 1L);
+
+                given(commentLikeRepository.findByCommentIdAndUserId(anyLong(), anyLong()))
+                      .willReturn(Optional.empty());
+                given(commentRepository.findById(anyLong())).willReturn(Optional.empty());
+
+                // when then
+                assertThatThrownBy(() -> commentService.saveLike(requestDto))
+                      .isInstanceOf(CommentNotFoundException.class);
+            }
         }
 
-        @DisplayName("비로그인 시 UserNotFoundException 을 반환한다.")
-        @Test
-        void createComment_not_login_fail() {
-            // given
-            CommentSaveRequestDto requestDto = new CommentSaveRequestDto("댓글입니다.",
-                  1L, 1L);
+        @DisplayName("좋아요 취소는")
+        @Nested
+        class Context_unlike {
 
-            given(postRepository.existsById(anyLong())).willReturn(true);
-            given(userRepository.findById(anyLong())).willReturn(Optional.empty());
+            @DisplayName("좋아요 내역이 있다면 좋아요를 취소한다.")
+            @Test
+            void saveLike_unlike_success() {
+                // given
+                CommentLikeRequestDto requestDto = new CommentLikeRequestDto(1L, 1L);
 
-            // when then
-            assertThatThrownBy(() -> commentService.createComment(requestDto))
-                  .isInstanceOf(UserNotFoundException.class);
-        }
+                Comment comment = Comment.builder()
+                      .id(1L)
+                      .content("댓글입니다.")
+                      .userId(1L)
+                      .postId(1L)
+                      .likeIt(0)
+                      .build();
 
-        @DisplayName("게시글이 없을 시 PostNotFoundException 을 반환한다.")
-        @Test
-        void createComment_post_not_found_fail() {
-            // given
-            CommentSaveRequestDto requestDto = new CommentSaveRequestDto("댓글입니다.",
-                  1L, 1L);
+                CommentLike commentLike = CommentLike.builder()
+                      .commentId(1L)
+                      .userId(1L)
+                      .build();
 
-            given(postRepository.existsById(anyLong())).willReturn(false);
+                given(commentLikeRepository.findByCommentIdAndUserId(anyLong(), anyLong()))
+                      .willReturn(Optional.of(commentLike));
+                given(commentRepository.findById(anyLong())).willReturn(Optional.of(comment));
 
-            // when then
-            assertThatThrownBy(() -> commentService.createComment(requestDto))
-                  .isInstanceOf(PostNotFoundException.class);
+                // when
+                boolean likeOrUnlike = commentService.saveLike(requestDto);
+
+                // then
+                assertThat(likeOrUnlike).isEqualTo(false);
+                verify(commentLikeRepository, times(1)).findByCommentIdAndUserId(anyLong(),
+                      anyLong());
+                verify(commentRepository, times(1)).findById(anyLong());
+            }
+
+            @DisplayName("만약 Comment가 없으면 실패한다.")
+            @Test
+            void saveLike_comment_not_found_fail() {
+                // given
+                CommentLikeRequestDto requestDto = new CommentLikeRequestDto(1L, 1L);
+
+                CommentLike commentLike = CommentLike.builder()
+                      .commentId(1L)
+                      .userId(1L)
+                      .build();
+
+                given(commentLikeRepository.findByCommentIdAndUserId(anyLong(), anyLong()))
+                      .willReturn(Optional.of(commentLike));
+
+                given(commentRepository.findById(anyLong())).willReturn(Optional.empty());
+
+                // when then
+                assertThatThrownBy(() -> commentService.saveLike(requestDto))
+                      .isInstanceOf(CommentNotFoundException.class);
+            }
         }
     }
 }

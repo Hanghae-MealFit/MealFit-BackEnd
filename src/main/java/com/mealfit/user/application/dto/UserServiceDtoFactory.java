@@ -106,8 +106,8 @@ public class UserServiceDtoFactory {
               request.getFat());
     }
 
-    public static ChangeFastingTimeRequestDto changeFastingTimeRequestDto(String username, ChangeFastingTimeRequest request) {
-        return new ChangeFastingTimeRequestDto(username,
+    public static ChangeFastingTimeRequestDto changeFastingTimeRequestDto(User user, ChangeFastingTimeRequest request) {
+        return new ChangeFastingTimeRequestDto(user.getId(),
               request.getStartFasting(),
               request.getEndFasting());
     }

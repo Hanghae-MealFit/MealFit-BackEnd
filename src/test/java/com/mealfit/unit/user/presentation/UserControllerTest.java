@@ -13,6 +13,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
@@ -21,15 +22,26 @@ import static org.springframework.restdocs.request.RequestDocumentation.requestP
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.mealfit.common.factory.UserFactory;
 import com.mealfit.config.security.WithMockCustomUser;
 import com.mealfit.unit.ControllerTest;
+import com.mealfit.user.application.dto.request.ChangeFastingTimeRequestDto;
+import com.mealfit.user.application.dto.request.ChangeNutritionRequestDto;
+import com.mealfit.user.application.dto.request.ChangeUserInfoRequestDto;
+import com.mealfit.user.application.dto.request.ChangeUserPasswordRequestDto;
 import com.mealfit.user.application.dto.response.UserInfoResponseDto;
 import com.mealfit.user.domain.ProviderType;
 import com.mealfit.user.domain.UserStatus;
+import com.mealfit.user.presentation.dto.request.ChangeFastingTimeRequest;
+import com.mealfit.user.presentation.dto.request.ChangeNutritionRequest;
+import com.mealfit.user.presentation.dto.request.ChangeUserPasswordRequest;
+import com.mealfit.user.presentation.dto.request.PasswordFindRequest;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalTime;
 import org.junit.jupiter.api.DisplayName;
@@ -126,9 +138,10 @@ class UserControllerTest extends ControllerTest {
             MockMultipartFile image = new MockMultipartFile("profileImage", "profileTest.jpeg",
                   "image/jpeg", "<<image-data>>".getBytes(StandardCharsets.UTF_8));
 
-            given(userService.changeUserInfo(any())).willReturn(userInfoResponseDto);
+            given(userService.fillSocialUserInfo(any(ChangeUserInfoRequestDto.class)))
+                  .willReturn(userInfoResponseDto);
 
-            mockMvc.perform(multipart(COMMON_API_ADDRESS + "/info")
+            mockMvc.perform(multipart(COMMON_API_ADDRESS + "/social/signup")
                         .file(image)
                         .param("nickname", "new_Nickname")
                         .param("currentWeight", "80")
@@ -146,7 +159,7 @@ class UserControllerTest extends ControllerTest {
                   )
                   .andExpect(status().isOk())
                   .andDo(print())
-                  .andDo(document("user-changeInfo",
+                  .andDo(document("user-socialSignUp",
                         preprocessRequest(prettyPrint()),
                         requestHeaders(
                               headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
@@ -177,10 +190,10 @@ class UserControllerTest extends ControllerTest {
                         )));
 
             verify(userService, times(1))
-                  .changeUserInfo(any());
+                  .fillSocialUserInfo(any(ChangeUserInfoRequestDto.class));
         }
 
-        @DisplayName(value = "[GET] /user/info 요청 시 회원 정보를 반환한다.")
+        @DisplayName(value = "[GET] /user/userInfo 요청 시 회원 정보를 갸져온다.")
         @WithMockCustomUser
         @Test
         void userInfo_success() throws Exception {
@@ -226,6 +239,187 @@ class UserControllerTest extends ControllerTest {
 
             verify(userService, times(1))
                   .showUserInfo(anyString());
+        }
+
+        @DisplayName(value = "[PUT] /user/password 요청 시 비밀번호를 변경한다.")
+        @WithMockCustomUser
+        @Test
+        void changePassword_success() throws Exception {
+
+            //given
+            ChangeUserPasswordRequest request = new ChangeUserPasswordRequest(
+                  "password1", "changePassword1", "changePassword1");
+
+            given(userService.changePassword(any(ChangeUserPasswordRequestDto.class))).willReturn(
+                  userInfoResponseDto);
+
+            mockMvc.perform(put(COMMON_API_ADDRESS + "/password")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer access_token")
+                        .header("refresh_token", "Bearer refresh_token")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsBytes(request))
+                        .with(csrf().asHeader()))
+                  .andExpect(status().isOk())
+                  .andDo(print())
+                  .andDo(document("user-changePassword",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                              fieldWithPath("password").type(String.class)
+                                    .description("기존 패스워드"),
+                              fieldWithPath("changePassword").type(String.class)
+                                    .description("변경할 패스워드"),
+                              fieldWithPath("passwordCheck").type(String.class)
+                                    .description("변경할 패스워드 재확인")
+                        ),
+                        responseFields(
+                              fieldWithPath("userId").type(String.class)
+                                    .description("회원 아이디"),
+                              fieldWithPath("userProfile.nickname").type(String.class)
+                                    .description("닉네임"),
+                              fieldWithPath("userProfile.profileImage").type(String.class)
+                                    .description("프로필 사진"),
+                              fieldWithPath("userProfile.goalWeight").type(double.class)
+                                    .description("목표 무게"),
+                              fieldWithPath("userProfile.userStatus").type(String.class)
+                                    .description("현재 유저 상태 (미인증, 최초 로그인, 일반"),
+                              fieldWithPath("userProfile.providerType").type(String.class)
+                                    .description("로그인 정보 (로컬, KAKAO, NAVER, GOOGLE)"),
+                              fieldWithPath("fastingInfo.startFasting").type(LocalTime.class)
+                                    .description("단식 시작 시간"),
+                              fieldWithPath("fastingInfo.endFasting").type(LocalTime.class)
+                                    .description("단식 종료 시간"),
+                              fieldWithPath("nutritionGoal.kcal").type(double.class)
+                                    .description("목표 섭취 칼로리"),
+                              fieldWithPath("nutritionGoal.carbs").type(double.class)
+                                    .description("목표 섭취 탄수화물"),
+                              fieldWithPath("nutritionGoal.protein").type(double.class)
+                                    .description("목표 섭취 단백질"),
+                              fieldWithPath("nutritionGoal.fat").type(double.class)
+                                    .description("목표 섭취 지방")
+                        )));
+
+            verify(userService, times(1))
+                  .changePassword(any(ChangeUserPasswordRequestDto.class));
+        }
+
+        @DisplayName(value = "[PUT] /user/nutrition 요청 시 회원 목표 영양정보를 변경한다.")
+        @WithMockCustomUser
+        @Test
+        void changeNutrition_success() throws Exception {
+
+            //given
+            ChangeNutritionRequest request = new ChangeNutritionRequest(2000, 150,
+                  150, 80);
+
+            given(userService.changeNutrition(any(ChangeNutritionRequestDto.class)))
+                  .willReturn(userInfoResponseDto);
+
+            mockMvc.perform(put(COMMON_API_ADDRESS + "/nutrition")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer access_token")
+                        .header("refresh_token", "Bearer refresh_token")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsBytes(request))
+                        .with(csrf().asHeader()))
+                  .andExpect(status().isOk())
+                  .andDo(print())
+                  .andDo(document("user-changeNutrition",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                              fieldWithPath("kcal").type(LocalTime.class).description("칼로리"),
+                              fieldWithPath("carbs").type(LocalTime.class).description("탄수화물"),
+                              fieldWithPath("protein").type(LocalTime.class).description("단백질"),
+                              fieldWithPath("fat").type(LocalTime.class).description("지방")
+                        ),
+                        responseFields(
+                              fieldWithPath("userId").type(String.class)
+                                    .description("회원 아이디"),
+                              fieldWithPath("userProfile.nickname").type(String.class)
+                                    .description("닉네임"),
+                              fieldWithPath("userProfile.profileImage").type(String.class)
+                                    .description("프로필 사진"),
+                              fieldWithPath("userProfile.goalWeight").type(double.class)
+                                    .description("목표 무게"),
+                              fieldWithPath("userProfile.userStatus").type(String.class)
+                                    .description("현재 유저 상태 (미인증, 최초 로그인, 일반"),
+                              fieldWithPath("userProfile.providerType").type(String.class)
+                                    .description("로그인 정보 (로컬, KAKAO, NAVER, GOOGLE)"),
+                              fieldWithPath("fastingInfo.startFasting").type(LocalTime.class)
+                                    .description("단식 시작 시간"),
+                              fieldWithPath("fastingInfo.endFasting").type(LocalTime.class)
+                                    .description("단식 종료 시간"),
+                              fieldWithPath("nutritionGoal.kcal").type(double.class)
+                                    .description("목표 섭취 칼로리"),
+                              fieldWithPath("nutritionGoal.carbs").type(double.class)
+                                    .description("목표 섭취 탄수화물"),
+                              fieldWithPath("nutritionGoal.protein").type(double.class)
+                                    .description("목표 섭취 단백질"),
+                              fieldWithPath("nutritionGoal.fat").type(double.class)
+                                    .description("목표 섭취 지방")
+                        )));
+
+            verify(userService, times(1))
+                  .changeNutrition(any(ChangeNutritionRequestDto.class));
+        }
+
+        @DisplayName(value = "[PUT] /user/fastingTime 요청 시 회원 단식 목표시간을 변경한다.")
+        @WithMockCustomUser
+        @Test
+        void changeFastingTime_success() throws Exception {
+
+            //given
+            ChangeFastingTimeRequest request = new ChangeFastingTimeRequest(LocalTime.now(),
+                  LocalTime.now());
+            given(userService.changeFastingTime(any(ChangeFastingTimeRequestDto.class)))
+                  .willReturn(userInfoResponseDto);
+
+            mockMvc.perform(put(COMMON_API_ADDRESS + "/fastingTime")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer access_token")
+                        .header("refresh_token", "Bearer refresh_token")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsBytes(request))
+                        .with(csrf().asHeader()))
+                  .andExpect(status().isOk())
+                  .andDo(print())
+                  .andDo(document("user-changeFastingTime",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                              fieldWithPath("startFasting").type(LocalTime.class)
+                                    .description("단식 시작 시각"),
+                              fieldWithPath("endFasting").type(LocalTime.class)
+                                    .description("단식 종료 시각")
+                        ),
+                        responseFields(
+                              fieldWithPath("userId").type(String.class)
+                                    .description("회원 아이디"),
+                              fieldWithPath("userProfile.nickname").type(String.class)
+                                    .description("닉네임"),
+                              fieldWithPath("userProfile.profileImage").type(String.class)
+                                    .description("프로필 사진"),
+                              fieldWithPath("userProfile.goalWeight").type(double.class)
+                                    .description("목표 무게"),
+                              fieldWithPath("userProfile.userStatus").type(String.class)
+                                    .description("현재 유저 상태 (미인증, 최초 로그인, 일반"),
+                              fieldWithPath("userProfile.providerType").type(String.class)
+                                    .description("로그인 정보 (로컬, KAKAO, NAVER, GOOGLE)"),
+                              fieldWithPath("fastingInfo.startFasting").type(LocalTime.class)
+                                    .description("단식 시작 시간"),
+                              fieldWithPath("fastingInfo.endFasting").type(LocalTime.class)
+                                    .description("단식 종료 시간"),
+                              fieldWithPath("nutritionGoal.kcal").type(double.class)
+                                    .description("목표 섭취 칼로리"),
+                              fieldWithPath("nutritionGoal.carbs").type(double.class)
+                                    .description("목표 섭취 탄수화물"),
+                              fieldWithPath("nutritionGoal.protein").type(double.class)
+                                    .description("목표 섭취 단백질"),
+                              fieldWithPath("nutritionGoal.fat").type(double.class)
+                                    .description("목표 섭취 지방")
+                        )));
+
+            verify(userService, times(1))
+                  .changeFastingTime(any(ChangeFastingTimeRequestDto.class));
         }
     }
 
@@ -280,11 +474,13 @@ class UserControllerTest extends ControllerTest {
                               partWithName("profileImage").optional().description("프로필 사진")
                         )));
         }
+
         @DisplayName(value = "[GET] /user/{username}/{아이디} 요청 시 아이디 중복 확인을 시도한다.")
         @WithMockCustomUser
         @Test
         void validateUsername_success() throws Exception {
-            mockMvc.perform(get(COMMON_API_ADDRESS + "/{key}/{value}", "username", "test123@gmail.com"))
+            mockMvc.perform(
+                        get(COMMON_API_ADDRESS + "/{key}/{value}", "username", "test123@gmail.com"))
                   .andExpect(status().isOk())
                   .andDo(print())
                   .andDo(document("user-usernameValidation",
@@ -295,7 +491,8 @@ class UserControllerTest extends ControllerTest {
         @WithMockCustomUser
         @Test
         void validateEmail_success() throws Exception {
-            mockMvc.perform(get(COMMON_API_ADDRESS + "/{key}/{value}", "nickname", "test123@gmail.com"))
+            mockMvc.perform(
+                        get(COMMON_API_ADDRESS + "/{key}/{value}", "nickname", "test123@gmail.com"))
                   .andExpect(status().isOk())
                   .andDo(print())
                   .andDo(document("user-emailValidation",
@@ -311,6 +508,49 @@ class UserControllerTest extends ControllerTest {
                   .andDo(print())
                   .andDo(document("user-nicknameValidation",
                         preprocessRequest(prettyPrint())));
+        }
+
+        @DisplayName(value = "[POST] /user/find/username 요청 시 아이디를 이메일로 전송한다.")
+        @WithMockCustomUser
+        @Test
+        void findUsername_success() throws Exception {
+
+            // given
+            TextNode request = new TextNode("test@gmail.com");
+
+            mockMvc.perform(post(COMMON_API_ADDRESS + "/find/username")
+                        .content(objectMapper.writeValueAsBytes(request))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .with(csrf().asHeader()))
+                  .andExpect(status().isOk())
+                  .andDo(print())
+                  .andDo(document("user-findUsername",
+                        preprocessRequest(prettyPrint()),
+                        requestFields(
+                              fieldWithPath("email").type(TextNode.class).description("이메일")
+                        )));
+        }
+
+        @DisplayName(value = "[POST] /user/find/password 요청 시 임시 비밀번호를 이메일로 전송한다.")
+        @WithMockCustomUser
+        @Test
+        void findPassword_success() throws Exception {
+
+            PasswordFindRequest username = new PasswordFindRequest("test@gmail.com", "username");
+
+            mockMvc.perform(post(COMMON_API_ADDRESS + "/find/password")
+                        .content(objectMapper.writeValueAsBytes(username))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .with(csrf().asHeader()))
+                  .andExpect(status().isOk())
+                  .andDo(print())
+                  .andDo(document("user-findPassword",
+                        preprocessRequest(prettyPrint()),
+                        requestFields(
+                              fieldWithPath("email").type(String.class).description("이메일"),
+                              fieldWithPath("username").type(String.class).description("회원 아이디")
+                        )
+                  ));
         }
     }
 }

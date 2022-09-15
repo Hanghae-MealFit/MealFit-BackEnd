@@ -5,6 +5,7 @@ import com.mealfit.post.application.PostService;
 import com.mealfit.post.application.dto.PostServiceDtoFactory;
 import com.mealfit.post.application.dto.request.PostCreateRequestDto;
 import com.mealfit.post.application.dto.request.PostDeleteReqeustDto;
+import com.mealfit.post.application.dto.request.PostLikeRequestDto;
 import com.mealfit.post.application.dto.request.PostUpdateRequestDto;
 import com.mealfit.post.presentation.dto.request.PostRequest;
 import com.mealfit.post.presentation.dto.response.PostCUDResponse;
@@ -69,5 +70,14 @@ public class PostController {
               .body("수정 완료!");
     }
 
+    @PostMapping("/{postId}/likeIt")
+    public ResponseEntity<Boolean> addLike(@PathVariable Long postId,
+          @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
+        PostLikeRequestDto requestDto = PostServiceDtoFactory.postLikeRequestDto(postId,
+              userDetails.getUser());
+
+        return ResponseEntity.status(HttpStatus.OK)
+              .body(postService.saveLike(requestDto));
+    }
 }

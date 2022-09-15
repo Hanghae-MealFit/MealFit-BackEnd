@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -21,6 +22,7 @@ import com.mealfit.exception.user.UserNotFoundException;
 import com.mealfit.user.application.EmailEventHandler;
 import com.mealfit.user.application.UserService;
 import com.mealfit.user.application.dto.UserServiceDtoFactory;
+import com.mealfit.user.application.dto.request.ChangeFastingTimeRequestDto;
 import com.mealfit.user.application.dto.request.ChangeNutritionRequestDto;
 import com.mealfit.user.application.dto.request.ChangeUserInfoRequestDto;
 import com.mealfit.user.application.dto.request.ChangeUserPasswordRequestDto;
@@ -551,7 +553,6 @@ public class UserServiceTest {
 
                 // then
                 UserInfoResponseDto userInfoResponseDto = userService.changePassword(dto);
-                assertThat(userInfoResponseDto.getPassword()).isEqualTo(password);
 
                 verify(userRepository, times(1))
                       .findByUsername(anyString());
@@ -617,8 +618,6 @@ public class UserServiceTest {
                       .isInstanceOf(UserNotFoundException.class);
             }
         }
-
-
     }
 
     @DisplayName("showUserInfoList() 메서드는")
@@ -653,7 +652,8 @@ public class UserServiceTest {
                 // given
                 String correctEmail = "test@gmail.com";
 
-                FindUsernameRequestDto requestDto = UserServiceDtoFactory.findUsernameRequestDto(correctEmail);
+                FindUsernameRequestDto requestDto = UserServiceDtoFactory.findUsernameRequestDto(
+                      correctEmail);
 
                 SendEmailRequestDto dto = UserServiceDtoFactory.sendEmailRequestDto("username",
                       "redirect_url", correctEmail, EmailType.FIND_USERNAME);
@@ -705,16 +705,16 @@ public class UserServiceTest {
                 String username = "username";
                 String correctEmail = "test@gmail.com";
 
-                given(userRepository.findByUsername(username)).willReturn(
+                given(userRepository.findByUsername(anyString())).willReturn(
                       Optional.ofNullable(testUser));
 
                 // when
                 FindPasswordRequestDto requestDto = UserServiceDtoFactory
-                      .findPasswordRequestDto(new PasswordFindRequest(username, correctEmail));
+                      .findPasswordRequestDto(new PasswordFindRequest(correctEmail, username));
 
                 userService.findPassword(requestDto);
 
-                verify(userRepository, times(1)).findByUsername(username);
+                verify(userRepository, times(1)).findByUsername(anyString());
             }
         }
 
@@ -730,22 +730,36 @@ public class UserServiceTest {
                 String inCorrectEmail = "test1@gmail.com";
 
                 FindPasswordRequestDto requestDto = UserServiceDtoFactory
-                      .findPasswordRequestDto(new PasswordFindRequest(username, inCorrectEmail));
+                      .findPasswordRequestDto(new PasswordFindRequest(inCorrectEmail, username));
 
-                SendEmailRequestDto sendEmailRequestDto = UserServiceDtoFactory.sendEmailRequestDto(
-                      testUser.getLoginInfo().getUsername(),
-                      "redirect_url",
-                      inCorrectEmail,
-                      EmailType.FIND_PASSWORD);
-
-                given(userRepository.findByUsername(username)).willReturn(
+                given(userRepository.findByUsername(anyString())).willReturn(
                       Optional.ofNullable(testUser));
 
                 // when then
                 assertThatThrownBy(() -> userService.findPassword(requestDto))
-                      .isInstanceOf(IllegalArgumentException.class)
-                      .hasMessage("잘못된 이메일입니다.");
+                      .isInstanceOf(IllegalArgumentException.class);
             }
+        }
+    }
+
+    @DisplayName("changeFastingTime() 메서드는")
+    @Nested
+    class Testing_changeFastingTime {
+
+        @DisplayName("FastingTime 정보를 입력하면 수정이 완료됩니다.")
+        @Test
+        void changeFastingTime_success() {
+
+            ChangeFastingTimeRequestDto requestDto = new ChangeFastingTimeRequestDto(
+                  1L, LocalTime.of(10, 0), LocalTime.of(15, 0));
+
+            given(userRepository.findById(anyLong()))
+                  .willReturn(Optional.ofNullable(testUser));
+
+            UserInfoResponseDto responseDto = userService.changeFastingTime(requestDto);
+
+            assertEquals(responseDto.getStartFasting(), requestDto.getStartFasting());
+            assertEquals(responseDto.getEndFasting(), requestDto.getEndFasting());
         }
     }
 }

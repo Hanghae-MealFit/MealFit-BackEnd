@@ -6,11 +6,11 @@ import lombok.*;
 import javax.persistence.*;
 
 
-@Table(name="comment_like",
-        indexes = {
-                @Index(columnList = "userId"),
-                @Index(columnList = "commentId")
-        })
+@Table(name = "comment_like",
+      indexes = {
+            @Index(columnList = "userId"),
+            @Index(columnList = "commentId")
+      })
 @Setter
 @Getter
 @NoArgsConstructor
@@ -28,12 +28,4 @@ public class CommentLike extends BaseEntity {
 
     @Column(nullable = false)
     private Long commentId;
-
-    public CommentLike toEntity (){
-        CommentLike commentLike = new CommentLike(id,commentId,userId);
-        commentLike.setCommentId(commentId);
-        commentLike.setUserId(userId);
-
-        return commentLike;
-    }
 }

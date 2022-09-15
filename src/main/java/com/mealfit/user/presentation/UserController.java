@@ -173,7 +173,7 @@ public class UserController {
           @Valid @RequestBody ChangeFastingTimeRequest request,
           @AuthenticationPrincipal UserDetailsImpl userDetails) {
         ChangeFastingTimeRequestDto requestDto = UserServiceDtoFactory
-              .changeFastingTimeRequestDto(userDetails.getUsername(), request);
+              .changeFastingTimeRequestDto(userDetails.getUser(), request);
 
         UserInfoResponseDto responseDto = userService.changeFastingTime(requestDto);
         UserInfoResponse response = UserControllerDtoFactory.userInfoResponse(responseDto);

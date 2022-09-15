@@ -130,4 +130,16 @@ public class Post extends BaseEntity {
 
         return imageUrls;
     }
+
+    public void like() {
+        this.likeIt += 1;
+    }
+
+    public void unLike() {
+        this.likeIt -= 1;
+    }
+
+    public void plusView() {
+        this.view += 1;
+    }
 }

@@ -7,12 +7,16 @@ import com.mealfit.exception.post.NoPostImageException;
 import com.mealfit.exception.post.PostNotFoundException;
 import com.mealfit.post.application.dto.request.PostCreateRequestDto;
 import com.mealfit.post.application.dto.request.PostDeleteReqeustDto;
+import com.mealfit.post.application.dto.request.PostLikeRequestDto;
 import com.mealfit.post.application.dto.request.PostUpdateRequestDto;
 import com.mealfit.post.domain.Post;
 import com.mealfit.post.domain.PostImage;
+import com.mealfit.post.domain.PostLike;
+import com.mealfit.post.domain.PostLikeRepository;
 import com.mealfit.post.domain.PostRepository;
 import com.mealfit.post.presentation.dto.response.PostCUDResponse;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final PostLikeRepository postLikeRepository;
     private final StorageService storageService;
 
     public PostCUDResponse createPost(PostCreateRequestDto requestDto) {
@@ -113,6 +118,32 @@ public class PostService {
     private Post findByPostId(Long postId) {
         return postRepository.findById(postId)
               .orElseThrow(() -> new PostNotFoundException("해당 게시글이 없습니다."));
+    }
+
+    /**
+     * 좋아요 좋아요성공 true 좋아요취소 false
+     */
+    public boolean saveLike(PostLikeRequestDto dto) {
+        Optional<PostLike> findLike = postLikeRepository.findByPostIdAndUserId(dto.getPostId(),
+              dto.getUserId());
+
+        Post post = postRepository.findById(dto.getPostId())
+              .orElseThrow(() -> new PostNotFoundException("해당 게시글이 없습니다."));
+
+        if (findLike.isEmpty()) {
+            PostLike postLike = PostLike.builder()
+                  .postId(dto.getPostId())
+                  .userId(dto.getUserId())
+                  .build();
+            postLikeRepository.save(postLike);
+            post.like();
+
+            return true;
+        } else {
+            postLikeRepository.deleteByPostIdAndUserId(dto.getPostId(), dto.getUserId());
+            post.unLike();
+            return false;
+        }
     }
 }
 

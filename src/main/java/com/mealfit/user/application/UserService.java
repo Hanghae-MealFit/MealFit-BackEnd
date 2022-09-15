@@ -259,13 +259,18 @@ public class UserService {
 
     @Transactional
     public UserInfoResponseDto changeFastingTime(ChangeFastingTimeRequestDto dto) {
-        User user = findByUsername(dto.getUsername());
+        User user = findById(dto.getUserId());
 
         user.changeFastingTime(
               new FastingTime(dto.getStartFasting(), dto.getEndFasting())
         );
 
         return UserServiceDtoFactory.userInfoResponseDto(user);
+    }
+
+    private User findById(Long userId) {
+        return userRepository.findById(userId)
+              .orElseThrow(() -> new UserNotFoundException("없는 유저입니다."));
     }
 
 

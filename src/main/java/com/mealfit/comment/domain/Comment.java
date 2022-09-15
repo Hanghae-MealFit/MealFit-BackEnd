@@ -1,6 +1,7 @@
 package com.mealfit.comment.domain;
 
 import com.mealfit.common.baseEntity.BaseEntity;
+import com.mealfit.exception.comment.NoCommentContentException;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -52,6 +53,9 @@ public class Comment extends BaseEntity {
     }
 
     public void update(String comment) {
+        if (comment == null) {
+            throw new NoCommentContentException("댓글 내용이 비어있습니다.");
+        }
         this.content = comment;
     }
 

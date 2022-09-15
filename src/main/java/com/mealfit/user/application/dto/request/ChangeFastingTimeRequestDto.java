@@ -6,13 +6,13 @@ import lombok.Getter;
 @Getter
 public class ChangeFastingTimeRequestDto {
 
-    private String username;
+    private Long userId;
     private LocalTime startFasting;
     private LocalTime endFasting;
 
-    public ChangeFastingTimeRequestDto(String username, LocalTime startFasting,
+    public ChangeFastingTimeRequestDto(Long userId, LocalTime startFasting,
           LocalTime endFasting) {
-        this.username = username;
+        this.userId = userId;
         this.startFasting = startFasting;
         this.endFasting = endFasting;
     }
