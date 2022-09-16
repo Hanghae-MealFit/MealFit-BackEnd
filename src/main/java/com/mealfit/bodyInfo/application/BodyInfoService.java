@@ -6,6 +6,7 @@ import com.mealfit.bodyInfo.application.dto.request.BodyInfoSaveRequestDto;
 import com.mealfit.bodyInfo.application.dto.response.BodyInfoResponseDto;
 import com.mealfit.bodyInfo.domain.BodyInfo;
 import com.mealfit.bodyInfo.domain.BodyInfoRepository;
+import com.mealfit.bodyInfo.presentation.dto.request.BodyInfoDeleteRequestDto;
 import com.mealfit.exception.bodyInfo.BodyInfoNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,5 +51,12 @@ public class BodyInfoService {
               .orElseThrow(() -> new BodyInfoNotFoundException("존재하지 않는 체중기록입니다."));
 
         return new BodyInfoResponseDto(bodyInfo);
+    }
+
+    public void deleteBodyInfo(BodyInfoDeleteRequestDto dto) {
+        BodyInfo bodyInfo = bodyInfoRepository.findByIdAndUserId(dto.getBodyInfoId(), dto.getUserId())
+              .orElseThrow(() -> new BodyInfoNotFoundException("존재하지 않는 체중기록입니다."));
+
+        bodyInfoRepository.delete(bodyInfo);
     }
 }

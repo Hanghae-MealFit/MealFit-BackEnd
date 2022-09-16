@@ -1,0 +1,18 @@
+= 음식 정보 조회
+
+음식 정보 조회 API 내역 입니다.
+
+== 음식 정보 조회
+음식 정보 목록을 조회하는 API 입니다. 이름을 기준으로 검색을 실시합니다.
+
+=== 요청
+include::{snippets}/food-getFood/http-request.adoc[]
+
+=== 요청 헤더
+스크롤의 경우에는 무한 스크롤 페이지네이션 기능을 제공하고 있기 때문에 필요합니다.
+include::{snippets}/food-getFood/request-parameters.adoc[]
+
+=== 응답
+include::{snippets}/food-getFood/http-response.adoc[]
+
+include::{snippets}/food-getFood/response-fields.adoc[]

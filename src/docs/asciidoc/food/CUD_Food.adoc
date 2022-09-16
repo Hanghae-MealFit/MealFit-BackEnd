@@ -1,0 +1,16 @@
+= 음식 정보 등록 수정 및 삭제
+
+== 음식 정보 생성
+음식 정보를 생성하는 API 입니다.
+
+=== 요청
+include::{snippets}/food-saveFood/http-request.adoc[]
+
+=== 요청 헤더
+include::{snippets}/food-savefood/request-headers.adoc[]
+
+=== 요청 Fields
+include::{snippets}/food-savefood/request-fields.adoc[]
+
+=== 응답
+include::{snippets}/food-savefood/http-response.adoc[]

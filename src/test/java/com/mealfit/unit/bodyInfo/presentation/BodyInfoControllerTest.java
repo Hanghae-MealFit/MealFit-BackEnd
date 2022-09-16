@@ -192,7 +192,7 @@ public class BodyInfoControllerTest extends ControllerTest {
                   )
                   .andExpect(status().isOk())
                   .andDo(print())
-                  .andDo(document("bodyInfo-saveBodyInfo",
+                  .andDo(document("bodyInfo-showBodyInfo",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
@@ -261,7 +261,7 @@ public class BodyInfoControllerTest extends ControllerTest {
                   )
                   .andExpect(status().isOk())
                   .andDo(print())
-                  .andDo(document("post-saveBodyInfo",
+                  .andDo(document("bodyInfo-showBodyInfoList",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
@@ -294,6 +294,39 @@ public class BodyInfoControllerTest extends ControllerTest {
                   )
                   .andExpect(status().is3xxRedirection())
                   .andDo(print());
+        }
+    }
+
+    @DisplayName("[DELETE] /api/bodyInfo/{bodyInfoId} 인 deleteBodyInfo()는")
+    @Nested
+    class Testing_deleteBodyInfo {
+
+        @WithMockCustomUser
+        @DisplayName("본인이 입력한 기록일 때 성공한다.")
+        @Test
+        void saveBodyInfo_success() throws Exception {
+
+            // when then
+            mockMvc.perform(get(COMMON_API_ADDRESS + "/{bodyInfoId}", 1)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer access_token")
+                        .header("refresh_token", "Bearer refresh_token")
+                        .with(csrf().asHeader())
+                        .contentType(MediaType.APPLICATION_JSON)
+                  )
+                  .andExpect(status().isOk())
+                  .andDo(print())
+                  .andDo(document("bodyInfo-deleteBodyInfo",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                              headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
+                                    .attributes(key("constraints").value("Bearer 토큰.")),
+                              headerWithName("refresh_token").description("리프레시 토큰")
+                                    .attributes(key("constraints").value("Bearer 토큰."))
+                        ),
+                        pathParameters(
+                              parameterWithName("bodyInfoId").description("BodyInfo Id")
+                        )));
         }
     }
 }

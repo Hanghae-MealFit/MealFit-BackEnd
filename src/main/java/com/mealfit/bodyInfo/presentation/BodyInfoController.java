@@ -7,6 +7,7 @@ import com.mealfit.bodyInfo.application.dto.request.BodyInfoRequestDto;
 import com.mealfit.bodyInfo.application.dto.request.BodyInfoSaveRequestDto;
 import com.mealfit.bodyInfo.application.dto.response.BodyInfoResponseDto;
 import com.mealfit.bodyInfo.presentation.dto.request.BodyInfoChangeRequest;
+import com.mealfit.bodyInfo.presentation.dto.request.BodyInfoDeleteRequestDto;
 import com.mealfit.bodyInfo.presentation.dto.request.BodyInfoSaveRequest;
 import com.mealfit.common.wrapper.DataWrapper;
 import com.mealfit.config.security.details.UserDetailsImpl;
@@ -14,6 +15,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -84,5 +86,18 @@ public class BodyInfoController {
 
         return ResponseEntity.status(HttpStatus.OK)
               .body("수정 완료!");
+    }
+
+    @DeleteMapping("/{bodyInfoId}")
+    public ResponseEntity<String> removeBodyInfo(
+          @AuthenticationPrincipal UserDetailsImpl userDetails,
+          @PathVariable Long bodyInfoId) {
+        BodyInfoDeleteRequestDto requestDto = BodyInfoServiceDtoFactory
+              .bodyInfoDeleteRequestDto(bodyInfoId, userDetails.getUser().getId());
+
+        bodyInfoService.deleteBodyInfo(requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK)
+              .body("삭제완료!");
     }
 }

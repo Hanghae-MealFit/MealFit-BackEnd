@@ -1,0 +1,18 @@
+= 식단 조회
+
+식단 조회 관련 API 내역 입니다.
+
+== 식단 조회
+식단은 특정 날짜를 기준으로 조회합니다.
+
+=== 요청
+include::{snippets}/diet-showDiet/http-request.adoc[]
+
+=== 요청 Parameters
+include::{snippets}/diet-showDiet/request-parameters.adoc[]
+
+=== 응답
+include::{snippets}/diet-showDiet/http-response.adoc[]
+
+=== 응답 Fields
+include::{snippets}/diet-showDiet/response-fields.adoc[]

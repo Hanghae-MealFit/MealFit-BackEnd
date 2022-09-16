@@ -1,0 +1,43 @@
+= 몸무게 정보 등록 수정 및 삭제
+
+== 몸무게 정보 생성
+몸무게 정보를 생성하는 API 입니다.
+
+=== 요청
+include::{snippets}/bodyInfo-saveBodyInfo/http-request.adoc[]
+
+=== 요청 헤더
+include::{snippets}/bodyInfo-saveBodyInfo/request-headers.adoc[]
+
+=== 요청 Fields
+include::{snippets}/bodyInfo-saveBodyInfo/request-fields.adoc[]
+
+=== 응답
+include::{snippets}/bodyInfo-saveBodyInfo/http-response.adoc[]
+
+== 몸무게 정보 변경
+몸무게 정보를 전체적으로 변경하는 API 입니다.
+
+=== 요청
+include::{snippets}/bodyInfo-changeBodyInfo/http-request.adoc[]
+
+=== 요청 헤더
+include::{snippets}/bodyInfo-changeBodyInfo/request-headers.adoc[]
+
+=== 요청 파라미터
+include::{snippets}/bodyInfo-changeBodyInfo/request-fields.adoc[]
+
+=== 응답
+include::{snippets}/bodyInfo-changeBodyInfo/http-response.adoc[]
+
+== 몸무게 삭제
+몸무게 정보를 삭제하는 API 입니다.
+
+=== 요청
+include::{snippets}/bodyInfo-deleteBodyInfo/http-request.adoc[]
+
+=== 요청 헤더
+include::{snippets}/bodyInfo-deleteBodyInfo/request-headers.adoc[]
+
+=== 응답
+include::{snippets}/bodyInfo-deleteBodyInfo/http-response.adoc[]

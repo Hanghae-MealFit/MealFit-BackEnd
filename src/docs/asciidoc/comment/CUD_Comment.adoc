@@ -1,0 +1,57 @@
+= 댓글 등록 수정 및 삭제
+
+댓글 등록 수정 및 삭제 관련 API 내역 입니다.
+
+== 댓글 입력
+특정 게시글의 댓글을 입력하는 API입니다.
+
+=== 요청
+해당 예시는 1번 게시글의 댓글을 입력하고 있습니다.
+include::{snippets}/comment-createComment/http-request.adoc[]
+
+=== 요청 URI
+include::{snippets}/comment-createComment/path-parameters.adoc[]
+
+=== 요청 헤더
+include::{snippets}/comment-createComment/request-headers.adoc[]
+
+=== 요청 Fields
+include::{snippets}/comment-createComment/request-fields.adoc[]
+
+=== 응답
+include::{snippets}/comment-createComment/http-response.adoc[]
+
+
+== 댓글 삭제
+특정 게시글의 댓글을 삭제하는 API입니다.
+
+=== 요청
+include::{snippets}/comment-deleteComment/http-request.adoc[]
+
+=== 요청 URI
+include::{snippets}/comment-deleteComment/path-parameters.adoc[]
+
+=== 요청 헤더
+include::{snippets}/comment-deleteComment/request-headers.adoc[]
+
+=== 응답
+include::{snippets}/comment-deleteComment/http-response.adoc[]
+
+
+== 댓글 수정
+댓글을 수정하는 API입니다.
+
+=== 요청
+include::{snippets}/comment-updateComment/http-request.adoc[]
+
+=== 요청 URI
+include::{snippets}/comment-updateComment/path-parameters.adoc[]
+
+=== 요청 헤더
+include::{snippets}/comment-updateComment/request-headers.adoc[]
+
+=== 요청 Fields
+include::{snippets}/comment-updateComment/request-fields.adoc[]
+
+=== 응답
+include::{snippets}/comment-updateComment/http-response.adoc[]

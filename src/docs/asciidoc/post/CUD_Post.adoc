@@ -1,0 +1,55 @@
+= 게시글 정보 등록 수정 및 삭제
+
+== 게시글 정보 생성
+게시글 정보를 생성하는 API 입니다.
+
+=== 요청
+include::{snippets}/post-createPost/http-request.adoc[]
+
+=== 요청 헤더
+include::{snippets}/post-createPost/request-headers.adoc[]
+
+=== 요청 Parameters
+include::{snippets}/post-createPost/request-parameters.adoc[]
+
+=== 요청 Parts
+include::{snippets}/post-createPost/request-parts.adoc[]
+
+=== 응답
+include::{snippets}/post-createPost/http-response.adoc[]
+
+== 게시글 수정
+게시글을 수정하는 API 입니다.
+
+=== 요청
+include::{snippets}/post-updatePost/http-request.adoc[]
+
+=== 요청 URI
+include::{snippets}/post-updatePost/path-parameters.adoc[]
+
+=== 요청 헤더
+include::{snippets}/post-updatePost/request-headers.adoc[]
+
+=== 요청 Parameters
+include::{snippets}/post-createPost/request-parameters.adoc[]
+
+=== 요청 Parts
+include::{snippets}/post-createPost/request-parts.adoc[]
+
+=== 응답
+include::{snippets}/post-updatePost/http-response.adoc[]
+
+== 게시글 삭제
+게시글을 삭제하는 API 입니다.
+
+=== 요청
+include::{snippets}/post-deletepost/http-request.adoc[]
+
+=== 요청 URI
+include::{snippets}/post-updatePost/path-parameters.adoc[]
+
+=== 요청 헤더
+include::{snippets}/post-deletepost/request-headers.adoc[]
+
+=== 응답
+include::{snippets}/post-deletepost/http-response.adoc[]

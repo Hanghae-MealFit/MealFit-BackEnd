@@ -1,0 +1,18 @@
+== 회원 아이디 찾기
+
+=== 요청
+include::{snippets}/user-findUsername/http-request.adoc[]
+
+=== 응답
+include::{snippets}/user-findUsername/http-response.adoc[]
+
+== 회원 비밀번호 찾기
+
+=== 요청
+include::{snippets}/user-findPassword/http-request.adoc[]
+
+=== 요청 Fields
+include::{snippets}/user-findPassword/request-fields.adoc[]
+
+=== 응답
+include::{snippets}/user-findPassword/http-response.adoc[]

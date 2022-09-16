@@ -58,5 +58,4 @@ public class FoodController {
         return ResponseEntity.status(HttpStatus.CREATED)
               .body("음식 입력 완료");
     }
-
 }
