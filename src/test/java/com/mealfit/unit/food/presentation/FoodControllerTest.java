@@ -106,7 +106,7 @@ public class FoodControllerTest extends ControllerTest {
                   )
                   .andExpect(status().isCreated())
                   .andDo(print())
-                  .andDo(document("food-saveBodyInfo",
+                  .andDo(document("food-saveFood",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(

@@ -1,0 +1,13 @@
+== 회원 정보 요청
+
+=== 요청
+include::{snippets}/user-getInfo/http-request.adoc[]
+
+=== 요청 헤더
+include::{snippets}/user-getInfo/request-headers.adoc[]
+
+=== 응답
+include::{snippets}/user-getInfo/http-response.adoc[]
+
+=== 응답 Fields
+include::{snippets}/user-getInfo/response-fields.adoc[]
