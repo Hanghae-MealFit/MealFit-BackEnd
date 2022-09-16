@@ -186,7 +186,7 @@ public class DietControllerTest extends ControllerTest {
                   )
                   .andExpect(status().isOk())
                   .andDo(print())
-                  .andDo(document("diet-deleteDiet",
+                  .andDo(document("diet-showDiet",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(

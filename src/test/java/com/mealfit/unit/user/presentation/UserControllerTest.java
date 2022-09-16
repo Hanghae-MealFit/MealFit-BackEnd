@@ -27,7 +27,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.node.TextNode;
 import com.mealfit.common.factory.UserFactory;
 import com.mealfit.config.security.WithMockCustomUser;
 import com.mealfit.unit.ControllerTest;
@@ -209,7 +208,12 @@ class UserControllerTest extends ControllerTest {
                   .andExpect(status().isOk())
                   .andDo(print())
                   .andDo(document("user-getInfo",
+                        preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                              headerWithName("AUTHORIZATION").description("엑세스 토큰"),
+                              headerWithName("refresh_token").description("리프레시 토큰")
+                        ),
                         responseFields(
                               fieldWithPath("userId").type(String.class)
                                     .description("회원 아이디"),
@@ -272,6 +276,10 @@ class UserControllerTest extends ControllerTest {
                               fieldWithPath("passwordCheck").type(String.class)
                                     .description("변경할 패스워드 재확인")
                         ),
+                        requestHeaders(
+                              headerWithName("AUTHORIZATION").description("엑세스 토큰"),
+                              headerWithName("refresh_token").description("리프레시 토큰")
+                        ),
                         responseFields(
                               fieldWithPath("userId").type(String.class)
                                     .description("회원 아이디"),
@@ -332,6 +340,10 @@ class UserControllerTest extends ControllerTest {
                               fieldWithPath("protein").type(LocalTime.class).description("단백질"),
                               fieldWithPath("fat").type(LocalTime.class).description("지방")
                         ),
+                        requestHeaders(
+                              headerWithName("AUTHORIZATION").description("엑세스 토큰"),
+                              headerWithName("refresh_token").description("리프레시 토큰")
+                        ),
                         responseFields(
                               fieldWithPath("userId").type(String.class)
                                     .description("회원 아이디"),
@@ -390,6 +402,10 @@ class UserControllerTest extends ControllerTest {
                                     .description("단식 시작 시각"),
                               fieldWithPath("endFasting").type(LocalTime.class)
                                     .description("단식 종료 시각")
+                        ),
+                        requestHeaders(
+                              headerWithName("AUTHORIZATION").description("엑세스 토큰"),
+                              headerWithName("refresh_token").description("리프레시 토큰")
                         ),
                         responseFields(
                               fieldWithPath("userId").type(String.class)
@@ -492,7 +508,7 @@ class UserControllerTest extends ControllerTest {
         @Test
         void validateEmail_success() throws Exception {
             mockMvc.perform(
-                        get(COMMON_API_ADDRESS + "/{key}/{value}", "nickname", "test123@gmail.com"))
+                        get(COMMON_API_ADDRESS + "/{key}/{value}", "email", "test123@gmail.com"))
                   .andExpect(status().isOk())
                   .andDo(print())
                   .andDo(document("user-emailValidation",
@@ -510,26 +526,26 @@ class UserControllerTest extends ControllerTest {
                         preprocessRequest(prettyPrint())));
         }
 
-        @DisplayName(value = "[POST] /user/find/username 요청 시 아이디를 이메일로 전송한다.")
-        @WithMockCustomUser
-        @Test
-        void findUsername_success() throws Exception {
-
-            // given
-            TextNode request = new TextNode("test@gmail.com");
-
-            mockMvc.perform(post(COMMON_API_ADDRESS + "/find/username")
-                        .content(objectMapper.writeValueAsBytes(request))
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .with(csrf().asHeader()))
-                  .andExpect(status().isOk())
-                  .andDo(print())
-                  .andDo(document("user-findUsername",
-                        preprocessRequest(prettyPrint()),
-                        requestFields(
-                              fieldWithPath("email").type(TextNode.class).description("이메일")
-                        )));
-        }
+//        @DisplayName(value = "[POST] /user/find/username 요청 시 아이디를 이메일로 전송한다.")
+//        @WithMockCustomUser
+//        @Test
+//        void findUsername_success() throws Exception {
+//
+//            // given
+//            TextNode request = new TextNode("test@gmail.com");
+//
+//            mockMvc.perform(post(COMMON_API_ADDRESS + "/find/username")
+//                        .content(objectMapper.writeValueAsBytes(request))
+//                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+//                        .with(csrf().asHeader()))
+//                  .andExpect(status().isOk())
+//                  .andDo(print())
+//                  .andDo(document("user-findUsername",
+//                        preprocessRequest(prettyPrint()),
+//                        requestFields(
+//                              fieldWithPath("email").type(TextNode.class).description("이메일")
+//                        )));
+//        }
 
         @DisplayName(value = "[POST] /user/find/password 요청 시 임시 비밀번호를 이메일로 전송한다.")
         @WithMockCustomUser

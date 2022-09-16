@@ -252,7 +252,7 @@ public class PostControllerTest extends ControllerTest {
                   )
                   .andExpect(status().isOk())
                   .andDo(print())
-                  .andDo(document("post-createPost",
+                  .andDo(document("post-deletePost",
                         preprocessRequest(prettyPrint()),
                         pathParameters(
                               parameterWithName("postId").description("게시글 ID")),

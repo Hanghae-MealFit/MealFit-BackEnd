@@ -1,6 +1,10 @@
 == 회원 가입
 
 === 요청
-include::{snippets}/index/curl-request.adoc[]
+include::{snippets}/user-signup/http-request.adoc[]
+
+=== 요청 Fields
+include::{snippets}/user-signup/request-parameters.adoc[]
 
 === 응답
+include::{snippets}/user-signup/http-response.adoc[]
