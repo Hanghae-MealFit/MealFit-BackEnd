@@ -1,33 +1,36 @@
-= 몸무게 정보 조회
+= 게시글 정보 조회
 
-몸무게 정보 조회 API 내역 입니다.
+게시글 정보 조회 API 내역 입니다.
 
-== 단일 몸무게 정보 조회
-단일 몸무게 정보를 조회하는 API 입니다.
+== 게시글 상세 정보 조회
+게시글 상세정보를 조회하는 API 입니다.
 
 === 요청
-include::{snippets}/bodyInfo-showBodyInfo/http-request.adoc[]
+include::{snippets}/post-readOne/http-request.adoc[]
+
+=== 요청 URL
+include::{snippets}/post-readOne/path-parameters.adoc[]
 
 === 요청 헤더
-include::{snippets}/bodyInfo-showBodyInfo/request-headers.adoc[]
+include::{snippets}/post-readOne/request-headers.adoc[]
 
 === 응답
-include::{snippets}/bodyInfo-showBodyInfo/http-response.adoc[]
+include::{snippets}/post-readOne/http-response.adoc[]
 
 === 응답 Fields
-include::{snippets}/bodyInfo-showBodyInfo/response-fields.adoc[]
+include::{snippets}/post-readOne/response-fields.adoc[]
 
 
-== 몸무게 정보 목록 조회
-몸무게 정보 목록을 조회하는 API 입니다.
+== 게시글 목록 조회
+게시글 목록을 조회할 수 있는 API 입니다.
 
 === 요청
-include::{snippets}/bodyInfo-showBodyInfoList/http-request.adoc[]
+include::{snippets}/post-readAll/http-request.adoc[]
 
 === 요청 헤더
-include::{snippets}/bodyInfo-showBodyInfoList/request-headers.adoc[]
+include::{snippets}/post-readAll/request-headers.adoc[]
 
 === 응답
-include::{snippets}/bodyInfo-showBodyInfoList/http-response.adoc[]
+include::{snippets}/post-readAll/http-response.adoc[]
 
-include::{snippets}/bodyInfo-showBodyInfoList/response-fields.adoc[]
+include::{snippets}/post-readAll/response-fields.adoc[]

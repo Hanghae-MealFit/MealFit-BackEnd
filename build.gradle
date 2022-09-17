@@ -34,6 +34,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
 
     // SPRING-SECURITY
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
@@ -50,7 +51,6 @@ dependencies {
     implementation 'com.amazonaws:aws-java-sdk-s3'
 
     // DB
-    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.testng:testng:7.1.0'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'mysql:mysql-connector-java'
