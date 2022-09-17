@@ -27,9 +27,6 @@ public class S3StorageService implements StorageService{
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    @Value("${cloud.aws.s3.fullPath}")
-    private String s3FullPath;
-
     public S3StorageService(AmazonS3Client amazonS3Client) {
         this.amazonS3Client = amazonS3Client;
     }

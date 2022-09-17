@@ -1,0 +1,68 @@
+= 회원 정보 변경
+
+회원 정보를 변경 관련 API 내역 입니다.
+
+== 회원 전체 정보 변경
+회원 정보를 전체적으로 변경하는 API 입니다.
+
+=== 요청
+include::{snippets}/user-changeInfo/http-request.adoc[]
+
+=== 요청 헤더
+include::{snippets}/user-changeInfo/request-headers.adoc[]
+
+=== 요청 파라미터
+include::{snippets}/user-changeInfo/request-parameters.adoc[]
+
+=== 요청 파일
+include::{snippets}/user-changeInfo/request-parts.adoc[]
+
+=== 응답
+include::{snippets}/user-changeInfo/http-response.adoc[]
+
+
+== 회원 비밀번호 변경
+회원 비밀번호를 변경하는 API 입니다.
+
+=== 요청
+include::{snippets}/user-changePassword/http-request.adoc[]
+
+=== 요청 헤더
+include::{snippets}/user-changePassword/request-headers.adoc[]
+
+=== 요청 필드
+include::{snippets}/user-changePassword/request-fields.adoc[]
+
+=== 응답
+include::{snippets}/user-changePassword/http-response.adoc[]
+
+
+== 회원 목표 영양성분 변경
+회원 목표 영양성분을 변경하는 API 입니다.
+
+=== 요청
+include::{snippets}/user-changeNutrition/http-request.adoc[]
+
+=== 요청 헤더
+include::{snippets}/user-changeNutrition/request-headers.adoc[]
+
+=== 요청 필드
+include::{snippets}/user-changeNutrition/request-fields.adoc[]
+
+=== 응답
+include::{snippets}/user-changeNutrition/http-response.adoc[]
+
+== 회원 단식 시간 변경
+회원 목표 단식 시간을 변경하는 API 입니다.
+
+=== 요청
+include::{snippets}/user-changeFastingTime/http-request.adoc[]
+
+=== 요청 헤더
+include::{snippets}/user-changeFastingTime/request-headers.adoc[]
+
+=== 요청 필드
+include::{snippets}/user-changeFastingTime/request-fields.adoc[]
+
+=== 응답
+include::{snippets}/user-changeFastingTime/http-response.adoc[]
