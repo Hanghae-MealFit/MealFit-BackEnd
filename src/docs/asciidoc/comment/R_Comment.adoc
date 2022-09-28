@@ -1,0 +1,22 @@
+= 댓글 조회
+
+댓글 조회 관련 API 내역 입니다.
+
+== 해당 게시글 댓글 조회
+특정 게시글의 댓글들을 조회하는 API 입니다.
+
+=== 요청
+include::{snippets}/comment-listComment/http-request.adoc[]
+
+=== 요청 URI
+include::{snippets}/comment-listComment/path-parameters.adoc[]
+
+=== 요청 헤더
+include::{snippets}/comment-listComment/request-headers.adoc[]
+
+=== 응답
+1번 게시글의 댓글 목록을 불러옵니다.
+include::{snippets}/comment-listComment/http-response.adoc[]
+
+=== 응답 Fields
+include::{snippets}/comment-listComment/response-fields.adoc[]

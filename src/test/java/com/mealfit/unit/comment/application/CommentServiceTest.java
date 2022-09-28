@@ -56,6 +56,9 @@ public class CommentServiceTest {
     @Mock
     private CommentLikeRepository commentLikeRepository;
 
+    private final User testUser = UserFactory.basicUser(1L, "username");
+    private final User wrongUser = UserFactory.basicUser(2L, "username");
+
     @DisplayName("createComment() 메서드는")
     @Nested
     class Testing_createComment {
@@ -67,16 +70,18 @@ public class CommentServiceTest {
             CommentSaveRequestDto requestDto = new CommentSaveRequestDto("댓글입니다.",
                   1L, 1L);
 
+            User user = UserFactory.basicUser(1L, "username", "nickname",
+                  "https://github.com/profileImage1/jpeg");
+
             Comment comment = Comment.builder()
                   .id(1L)
                   .content("댓글입니다.")
-                  .userId(1L)
+                  .user(user)
                   .postId(1L)
                   .likeIt(0)
                   .build();
 
-            User user = UserFactory.basicUser(1L, "username", "nickname",
-                  "https://github.com/profileImage1/jpeg");
+
 
             given(postRepository.existsById(anyLong())).willReturn(true);
             given(commentRepository.save(any(Comment.class))).willReturn(comment);
@@ -156,7 +161,7 @@ public class CommentServiceTest {
             Comment wrongComment = Comment.builder()
                   .id(1L)
                   .postId(1L)
-                  .userId(2L)
+                  .user(wrongUser)
                   .content("댓글입니다.")
                   .build();
 
@@ -178,7 +183,7 @@ public class CommentServiceTest {
             Comment comment = Comment.builder()
                   .id(1L)
                   .postId(1L)
-                  .userId(1L)
+                  .user(testUser)
                   .content("댓글입니다.")
                   .build();
 
@@ -221,7 +226,7 @@ public class CommentServiceTest {
             Comment wrongComment = Comment.builder()
                   .id(1L)
                   .postId(1L)
-                  .userId(2L)
+                  .user(wrongUser)
                   .content("댓글입니다.")
                   .build();
 
@@ -242,7 +247,7 @@ public class CommentServiceTest {
             Comment comment = Comment.builder()
                   .id(1L)
                   .postId(1L)
-                  .userId(1L)
+                  .user(testUser)
                   .content("댓글입니다.")
                   .build();
 
@@ -271,14 +276,14 @@ public class CommentServiceTest {
             Comment comment1 = Comment.builder()
                   .id(1L)
                   .postId(1L)
-                  .userId(1L)
+                  .user(testUser)
                   .content("댓글입니다.")
                   .build();
 
             Comment comment2 = Comment.builder()
                   .id(1L)
                   .postId(1L)
-                  .userId(1L)
+                  .user(testUser)
                   .content("댓글입니다.")
                   .build();
 
@@ -315,7 +320,7 @@ public class CommentServiceTest {
                 Comment comment = Comment.builder()
                       .id(1L)
                       .content("댓글입니다.")
-                      .userId(1L)
+                      .user(testUser)
                       .postId(1L)
                       .likeIt(0)
                       .build();
@@ -363,7 +368,7 @@ public class CommentServiceTest {
                 Comment comment = Comment.builder()
                       .id(1L)
                       .content("댓글입니다.")
-                      .userId(1L)
+                      .user(testUser)
                       .postId(1L)
                       .likeIt(0)
                       .build();

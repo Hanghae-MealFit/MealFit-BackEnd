@@ -67,10 +67,11 @@ public class UserTest {
         void equals_different_object_fail(){
             User user1 = UserFactory.basicUser(1L, "aaa");
             User user2 = null;
-            Post post1 = PostFactory.simplePost(1L, 1L, "content");
+            Post post1 = PostFactory.simplePost(1L, null, "content");
 
             assertNotEquals(user1, post1);
             assertNotEquals(user1, null);
+            assertNotEquals(user1, user2);
         }
     }
 }

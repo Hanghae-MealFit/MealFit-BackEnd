@@ -137,7 +137,7 @@ class UserControllerTest extends ControllerTest {
             MockMultipartFile image = new MockMultipartFile("profileImage", "profileTest.jpeg",
                   "image/jpeg", "<<image-data>>".getBytes(StandardCharsets.UTF_8));
 
-            given(userService.fillSocialUserInfo(any(ChangeUserInfoRequestDto.class)))
+            given(userService.changeUserInfo(any(ChangeUserInfoRequestDto.class)))
                   .willReturn(userInfoResponseDto);
 
             mockMvc.perform(multipart(COMMON_API_ADDRESS + "/social/signup")
@@ -189,7 +189,7 @@ class UserControllerTest extends ControllerTest {
                         )));
 
             verify(userService, times(1))
-                  .fillSocialUserInfo(any(ChangeUserInfoRequestDto.class));
+                  .changeUserInfo(any(ChangeUserInfoRequestDto.class));
         }
 
         @DisplayName(value = "[GET] /user/userInfo 요청 시 회원 정보를 갸져온다.")

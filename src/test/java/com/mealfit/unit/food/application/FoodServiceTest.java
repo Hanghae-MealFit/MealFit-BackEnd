@@ -23,8 +23,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
@@ -70,17 +68,15 @@ public class FoodServiceTest {
                         270, 20, 1, 1, "전국")
             );
 
-            Page<Food> foodPage = new PageImpl<>(foods);
-
             given(foodRepository.findByIdLessThanAndFoodNameContaining(anyLong(), anyString(),
-                  any(Pageable.class))).willReturn(foodPage);
+                  any(Pageable.class))).willReturn(foods);
 
             // when
             List<FoodInfoResponse> result = foodService.getFood(requestDto);
 
             // then
             Assertions.assertThat(result).usingRecursiveComparison()
-                  .isEqualTo(foodPage.getContent().stream()
+                  .isEqualTo(foods.stream()
                         .map(FoodInfoResponse::new)
                         .collect(toList()));
 

@@ -67,7 +67,7 @@ public class UserController {
         ChangeUserInfoRequestDto dto = UserServiceDtoFactory.changeUserInfoRequestDto(
               userDetailsImpl.getUsername(), request);
 
-        userService.fillSocialUserInfo(dto);
+        userService.changeUserInfo(dto);
 
         return ResponseEntity.status(HttpStatus.OK)
               .body("수정 완료!");

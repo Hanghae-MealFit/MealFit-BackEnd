@@ -4,6 +4,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
@@ -14,6 +16,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -29,6 +32,7 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 public class PostReadControllerTest extends ControllerTest {
@@ -66,6 +70,8 @@ public class PostReadControllerTest extends ControllerTest {
 
             mockMvc.perform(get(COMMON_API_ADDRESS)
                         .queryParam("lastId", "10")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer access_token")
+                        .header("refresh_token", "Bearer refresh_token")
                         .with(csrf().asHeader())
                   )
                   .andExpect(status().isOk())
@@ -75,6 +81,12 @@ public class PostReadControllerTest extends ControllerTest {
                         preprocessResponse(prettyPrint()),
                         requestParameters(
                               parameterWithName("lastId").description("마지막 게시글 ID")
+                        ),
+                        requestHeaders(
+                              headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
+                                    .attributes(key("constraints").value("Bearer 토큰.")),
+                              headerWithName("refresh_token").description("리프레시 토큰")
+                                    .attributes(key("constraints").value("Bearer 토큰."))
                         ),
                         responseFields(
                               fieldWithPath("[].postId").type(JsonFieldType.NUMBER)
@@ -132,7 +144,9 @@ public class PostReadControllerTest extends ControllerTest {
             given(postReadService.getReadOne(any(PostDetailRequestDto.class))).willReturn(response);
 
             mockMvc.perform(get(COMMON_API_ADDRESS + "/{postId}", 1)
-                        .with(csrf().asHeader()))
+                        .with(csrf().asHeader())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer access_token")
+                        .header("refresh_token", "Bearer refresh_token"))
                   .andExpect(status().isOk())
                   .andDo(print())
                   .andDo(document("post-readOne",
@@ -140,6 +154,12 @@ public class PostReadControllerTest extends ControllerTest {
                         preprocessResponse(prettyPrint()),
                         pathParameters(
                               parameterWithName("postId").description("게시글 ID")
+                        ),
+                        requestHeaders(
+                              headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
+                                    .attributes(key("constraints").value("Bearer 토큰.")),
+                              headerWithName("refresh_token").description("리프레시 토큰")
+                                    .attributes(key("constraints").value("Bearer 토큰."))
                         ),
                         responseFields(
                               fieldWithPath("postId").type(JsonFieldType.NUMBER)

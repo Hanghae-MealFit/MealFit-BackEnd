@@ -2,6 +2,8 @@
 <!-- 배포 서버용 -->
 <Configuration>
   <Properties>
+    <Property name="debug-log">logs/debug/debug</Property>
+    <Property name="trace-log">logs/trace/trace</Property>
     <Property name="info-log">logs/info/info</Property>
     <Property name="warn-log">logs/warn/warn</Property>
     <Property name="error-log">logs/error/error</Property>
@@ -11,6 +13,47 @@
   </Properties>
 
   <Appenders>
+    <RollingFile name="TraceFileAppender" fileName="${trace-log}.log" filePattern="${trace-log}-${file-pattern}" immediateFlush="false">
+      <Filters>
+        <ThresholdFilter level="FATAL" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <ThresholdFilter level="WARN" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <ThresholdFilter level="INFO" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+        <ThresholdFilter level="TRACE" onMatch="ACCEPT" onMismatch="DENY"/>
+      </Filters>
+      <PatternLayout pattern="${log-pattern}"/>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="15MB"/>
+        <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+      </Policies>
+      <DefaultRolloverStrategy>
+        <Delete basePath="logs/trace" maxDepth="1">
+          <IfLastModified age="30d"/>
+        </Delete>
+      </DefaultRolloverStrategy>
+    </RollingFile>
+
+    <RollingFile name="DebugFileAppender" fileName="${debug-log}.log" filePattern="${debug-log}-${file-pattern}" immediateFlush="false">
+      <Filters>
+        <ThresholdFilter level="FATAL" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <ThresholdFilter level="WARN" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <ThresholdFilter level="INFO" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+      </Filters>
+      <PatternLayout pattern="${log-pattern}"/>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="15MB"/>
+        <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+      </Policies>
+      <DefaultRolloverStrategy>
+        <Delete basePath="logs/debug" maxDepth="1">
+          <IfLastModified age="30d"/>
+        </Delete>
+      </DefaultRolloverStrategy>
+    </RollingFile>
+
     <RollingFile name="InfoFileAppender" fileName="${info-log}.log" filePattern="${info-log}-${file-pattern}" immediateFlush="false">
       <Filters>
         <ThresholdFilter level="FATAL" onMatch="DENY" onMismatch="NEUTRAL"/>
@@ -91,6 +134,9 @@
     </AsyncLogger>
     <AsyncLogger name="org.hibernate.tool.hbm2ddl" level="debug" additivity="false" includeLocation="true">
       <appender-ref ref="DbFileAppender"/>
+    </AsyncLogger>
+    <AsyncLogger name="com.zaxxer.hikari" level="trace" additivity="false" includeLocation="true">
+      <appender-ref ref="TraceFileAppender"/>
     </AsyncLogger>
     <Root level="error">
       <AppenderRef ref="ErrorFileAppender"/>

@@ -35,7 +35,7 @@ public class PostController {
         PostCreateRequestDto requestDto = PostServiceDtoFactory.postCreateRequestDto(
               request, userDetailsImpl.getUser());
 
-        PostCUDResponse responseDto = postService.createPost(requestDto);
+        PostCUDResponse responseDto = postService.write(requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED)
               .body(responseDto);

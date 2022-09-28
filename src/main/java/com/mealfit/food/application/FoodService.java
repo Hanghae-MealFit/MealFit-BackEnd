@@ -10,7 +10,6 @@ import com.mealfit.food.presentation.dto.response.FoodInfoResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,14 +21,15 @@ public class FoodService {
     private final FoodRepository foodRepository;
 
     // 음식 검색
+    @Transactional(readOnly = true)
     public List<FoodInfoResponse> getFood(FoodRequestDto requestDto) {
 
-        Page<Food> foodPage = foodRepository.findByIdLessThanAndFoodNameContaining(
+        List<Food> foodPage = foodRepository.findByIdLessThanAndFoodNameContaining(
               requestDto.getLastId(),
               requestDto.getFoodName(),
               requestDto.getPageable());
 
-        return foodPage.getContent().stream()
+        return foodPage.stream()
               // 람다식 -> 메서드 참조 (method Reference)
               .map(FoodInfoResponse::new)        //(타입 -> 다른 타입으로 변경)
               .collect(toList());    // List에 담아주기

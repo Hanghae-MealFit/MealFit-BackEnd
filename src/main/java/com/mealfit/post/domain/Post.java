@@ -3,6 +3,7 @@ package com.mealfit.post.domain;
 
 import com.mealfit.common.baseEntity.BaseEntity;
 import com.mealfit.exception.user.UserNotFoundException;
+import com.mealfit.user.domain.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -13,6 +14,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -34,8 +37,9 @@ public class Post extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column
     private String content;
@@ -59,12 +63,12 @@ public class Post extends BaseEntity {
         this.view = 0;
     }
 
-    public void settingUserInfo(Long userId) {
-        if (userId == null) {
+    public void settingUserInfo(User user) {
+        if (user == null) {
             throw new UserNotFoundException("회원이 없습니다.");
         }
 
-        this.userId = userId;
+        this.user = user;
     }
 
     public void addPostImages(List<PostImage> images) {
@@ -111,10 +115,10 @@ public class Post extends BaseEntity {
     }
 
     @Builder
-    public Post(Long id, Long userId, String content, int view,
+    public Post(Long id, User user, String content, int view,
           int likeIt, List<PostImage> images) {
         this.id = id;
-        this.userId = userId;
+        this.user = user;
         this.content = content;
         this.view = view;
         this.likeIt = likeIt;

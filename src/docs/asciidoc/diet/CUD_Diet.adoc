@@ -1,0 +1,62 @@
+= 식단 등록 수정 및 삭제
+
+식단을 등록 수정 및 삭제 관련 API 내역 입니다.
+
+== 식단 생성
+음식의 정보를 통해 식단을 생성하는 API 입니다.
+
+=== 요청
+include::{snippets}/diet-saveDiet/http-request.adoc[]
+
+=== 요청 헤더
+include::{snippets}/diet-saveDiet/request-headers.adoc[]
+
+=== 요청 Fields
+include::{snippets}/diet-saveDiet/request-fields.adoc[]
+Status 목록은 다음과 같습니다.
+|===
+| Status | 설명
+| `BREAKFAST`
+| 아침
+
+| `LUNCH`
+| 점심
+
+| `DINNER`
+| 저녁
+|===
+
+=== 응답
+include::{snippets}/diet-saveDiet/http-response.adoc[]
+
+
+== 식단 변경
+식단 정보를 변경하는 API 입니다.
+
+=== 요청
+include::{snippets}/diet-updateDiet/http-request.adoc[]
+
+=== 요청 헤더
+include::{snippets}/diet-updateDiet/request-headers.adoc[]
+
+=== 요청 필드
+include::{snippets}/diet-updateDiet/request-fields.adoc[]
+
+=== 응답
+include::{snippets}/diet-updateDiet/http-response.adoc[]
+
+
+== 식단 삭제
+특정 식단을 삭제하는 API 입니다.
+
+=== 요청
+include::{snippets}/diet-deleteDiet/http-request.adoc[]
+
+=== 요청 URI
+include::{snippets}/diet-deleteDiet/path-parameters.adoc[]
+
+=== 요청 헤더
+include::{snippets}/diet-deleteDiet/request-headers.adoc[]
+
+=== 응답
+include::{snippets}/diet-deleteDiet/http-response.adoc[]

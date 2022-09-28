@@ -17,8 +17,6 @@ public class CommentSaveRequestDto {
     }
 
     public Comment toEntity() {
-        Comment comment = new Comment(content, postId);
-        comment.settingUserInfo(userId);
-        return comment;
+        return new Comment(content, postId);
     }
 }
