@@ -434,7 +434,7 @@ public class UserServiceTest {
                           List.of("https://github.com/testImage.jpg"));
 
                     // when
-                    UserInfoResponseDto responseDto = userService.fillSocialUserInfo(requestDto);
+                    UserInfoResponseDto responseDto = userService.changeUserInfo(requestDto);
 
                     // then
                     // 나중에 일치시킬 수 있다면 usingRecursiveComparison() 사용도 나쁘지 않다.

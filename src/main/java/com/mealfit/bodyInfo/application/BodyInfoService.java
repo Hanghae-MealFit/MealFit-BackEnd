@@ -1,12 +1,12 @@
 package com.mealfit.bodyInfo.application;
 
 import com.mealfit.bodyInfo.application.dto.request.BodyInfoChangeRequestDto;
+import com.mealfit.bodyInfo.application.dto.request.BodyInfoDeleteRequestDto;
 import com.mealfit.bodyInfo.application.dto.request.BodyInfoRequestDto;
 import com.mealfit.bodyInfo.application.dto.request.BodyInfoSaveRequestDto;
 import com.mealfit.bodyInfo.application.dto.response.BodyInfoResponseDto;
 import com.mealfit.bodyInfo.domain.BodyInfo;
 import com.mealfit.bodyInfo.domain.BodyInfoRepository;
-import com.mealfit.bodyInfo.presentation.dto.request.BodyInfoDeleteRequestDto;
 import com.mealfit.exception.bodyInfo.BodyInfoNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;

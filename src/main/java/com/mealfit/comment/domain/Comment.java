@@ -2,11 +2,15 @@ package com.mealfit.comment.domain;
 
 import com.mealfit.common.baseEntity.BaseEntity;
 import com.mealfit.exception.comment.NoCommentContentException;
+import com.mealfit.user.domain.User;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Generated;
@@ -29,8 +33,9 @@ public class Comment extends BaseEntity {
     @Column(nullable = false)
     private Long postId;
 
-    @Column(nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Comment(String content, Long postId) {
         this.content = content;
@@ -40,16 +45,16 @@ public class Comment extends BaseEntity {
 
     @Builder
     @Generated
-    public Comment(Long id, String content, int likeIt, Long postId, Long userId) {
+    public Comment(Long id, String content, int likeIt, Long postId, User user) {
         this.id = id;
         this.content = content;
         this.likeIt = likeIt;
         this.postId = postId;
-        this.userId = userId;
+        this.user = user;
     }
 
-    public void settingUserInfo(Long userId) {
-        this.userId = userId;
+    public void settingUserInfo(User user) {
+        this.user = user;
     }
 
     public void update(String comment) {

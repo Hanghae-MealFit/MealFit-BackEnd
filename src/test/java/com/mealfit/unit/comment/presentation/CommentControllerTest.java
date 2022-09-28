@@ -27,8 +27,10 @@ import com.mealfit.comment.domain.Comment;
 import com.mealfit.comment.presentation.dto.request.CommentSaveRequest;
 import com.mealfit.comment.presentation.dto.request.CommentUpdateRequest;
 import com.mealfit.comment.presentation.dto.response.CommentResponse;
+import com.mealfit.common.factory.UserFactory;
 import com.mealfit.config.security.WithMockCustomUser;
 import com.mealfit.unit.ControllerTest;
+import com.mealfit.user.domain.User;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -40,6 +42,9 @@ import org.springframework.http.MediaType;
 public class CommentControllerTest extends ControllerTest {
 
     private static final String COMMON_API_ADDRESS = "/api/post";
+
+    private final User testUser = UserFactory.basicUser(1L, "username");
+    private final User wrongUser = UserFactory.basicUser(2L, "username");
 
     @DisplayName("[POST] /{postId}/comment 인 createComment()는")
     @Nested
@@ -263,7 +268,7 @@ public class CommentControllerTest extends ControllerTest {
 
                 for (long i = 0; i < 5; i++) {
                     responseList.add(
-                          new CommentResponse(new Comment(1L, "내용", (int) i, 1L, 1L), "닉네임" + i,
+                          new CommentResponse(new Comment(1L, "내용", (int) i, 1L, testUser), "닉네임" + i,
                                 "profileImage" + i,
                                 true));
                 }
@@ -325,7 +330,7 @@ public class CommentControllerTest extends ControllerTest {
 
                 for (long i = 0; i < 5; i++) {
                     responseList.add(
-                          new CommentResponse(new Comment(1L, "내용", (int) i, 1L, 1L), "닉네임" + i,
+                          new CommentResponse(new Comment(1L, "내용", (int) i, 1L, testUser), "닉네임" + i,
                                 "profileImage" + i,
                                 false));
                 }

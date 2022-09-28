@@ -47,9 +47,10 @@ public class CommentService {
         User user = findUserById(dto.getUserId());
 
         Comment comment = dto.toEntity();
+        comment.settingUserInfo(user);
         Comment savedComment = commentRepository.save(comment);
 
-        return CommentControllerDtoFactory.commentResponse(user, savedComment, false);
+        return CommentControllerDtoFactory.commentResponse(savedComment, false);
     }
 
     private User findUserById(Long userId) {
@@ -61,7 +62,7 @@ public class CommentService {
     public void deleteComment(CommentDeleteRequestDto dto) {
         Comment comment = findByCommentId(dto.getCommentId());
 
-        validateUser(dto.getUserId(), comment.getUserId());
+        validateUser(dto.getUserId(), comment.getUser().getId());
 
         commentRepository.deleteById(dto.getCommentId());
     }
@@ -70,7 +71,7 @@ public class CommentService {
     public void updateComment(CommentUpdateRequestDto dto) {
         Comment comment = findByCommentId(dto.getCommentId());
 
-        validateUser(dto.getUserId(), comment.getUserId());
+        validateUser(dto.getUserId(), comment.getUser().getId());
 
         comment.update(dto.getContent());
     }
@@ -94,7 +95,7 @@ public class CommentService {
         return commentRepository.findByPostIdOrderByCreatedAt(postId)
               .stream()
               .map(comment -> {
-                  User user = findUserById(comment.getUserId());
+                  User user = findUserById(comment.getUser().getId());
                   return new CommentResponse(comment,
                         user.getUserProfile().getNickname(),
                         user.getUserProfile().getProfileImage(),

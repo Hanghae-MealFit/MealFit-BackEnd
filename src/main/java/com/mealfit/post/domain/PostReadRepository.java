@@ -1,17 +1,15 @@
 package com.mealfit.post.domain;
 
 
-import org.springframework.data.domain.Page;
+import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
-
 public interface PostReadRepository extends JpaRepository<Post, Long> {
 
-    Page<Post> findAllByIdLessThan(Long lastId, Pageable pageable);
+    List<Post> findAllByIdLessThan(Long lastId, Pageable pageable);
 
     List<Post> findAllByIdOrderByLikeItDescViewDesc(Long postId);
 

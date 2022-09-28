@@ -5,6 +5,7 @@ import com.mealfit.exception.authentication.UnAuthorizedUserException;
 import com.mealfit.exception.post.NoPostContentException;
 import com.mealfit.exception.post.NoPostImageException;
 import com.mealfit.exception.post.PostNotFoundException;
+import com.mealfit.exception.user.UserNotFoundException;
 import com.mealfit.post.application.dto.request.PostCreateRequestDto;
 import com.mealfit.post.application.dto.request.PostDeleteReqeustDto;
 import com.mealfit.post.application.dto.request.PostLikeRequestDto;
@@ -15,6 +16,8 @@ import com.mealfit.post.domain.PostLike;
 import com.mealfit.post.domain.PostLikeRepository;
 import com.mealfit.post.domain.PostRepository;
 import com.mealfit.post.presentation.dto.response.PostCUDResponse;
+import com.mealfit.user.domain.User;
+import com.mealfit.user.domain.UserRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,14 +33,29 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class PostService {
 
+    private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
     private final StorageService storageService;
 
-    public PostCUDResponse createPost(PostCreateRequestDto requestDto) {
+    public PostCUDResponse write(PostCreateRequestDto requestDto) {
         validateContent(requestDto.getContent());
 
+        Post postEntity = createPost(requestDto);
+
+        Post savedPost = postRepository.save(postEntity);
+
+        return new PostCUDResponse(savedPost);
+    }
+
+    private Post createPost(PostCreateRequestDto requestDto) {
         Post postEntity = requestDto.toEntity();
+
+        User user = userRepository.findById(requestDto.getUserId())
+              .orElseThrow(() -> new UserNotFoundException("없는 회원입니다."));
+
+        postEntity.settingUserInfo(user);
+
         List<MultipartFile> uploadImages = requestDto.getPostImageList();
 
         validateImages(uploadImages);
@@ -49,9 +67,7 @@ public class PostService {
 
         postEntity.addPostImages(postImages);
 
-        Post savedPost = postRepository.save(postEntity);
-
-        return new PostCUDResponse(savedPost);
+        return postEntity;
     }
 
     private static void validateImages(List<MultipartFile> uploadImages) {
@@ -78,7 +94,7 @@ public class PostService {
 
         Post post = findByPostId(requestDto.getPostId());
 
-        validateUser(requestDto.getUserId(), post.getUserId());
+        validateUser(requestDto.getUserId(), post.getUser().getId());
 
         // 사진 갈아끼우기
         List<MultipartFile> uploadImages = requestDto.getPostImageList();
@@ -108,7 +124,7 @@ public class PostService {
         Post post = findByPostId(dto.getPostId());
 
         //작성자 검사
-        validateUser(dto.getUserId(), post.getUserId());
+        validateUser(dto.getUserId(), post.getUser().getId());
 
         postRepository.deleteById(dto.getPostId());
 

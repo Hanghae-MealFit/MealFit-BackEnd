@@ -1,10 +1,10 @@
 package com.mealfit.bodyInfo.application.dto;
 
 import com.mealfit.bodyInfo.application.dto.request.BodyInfoChangeRequestDto;
+import com.mealfit.bodyInfo.application.dto.request.BodyInfoDeleteRequestDto;
 import com.mealfit.bodyInfo.application.dto.request.BodyInfoRequestDto;
 import com.mealfit.bodyInfo.application.dto.request.BodyInfoSaveRequestDto;
 import com.mealfit.bodyInfo.presentation.dto.request.BodyInfoChangeRequest;
-import com.mealfit.bodyInfo.presentation.dto.request.BodyInfoDeleteRequestDto;
 import com.mealfit.bodyInfo.presentation.dto.request.BodyInfoSaveRequest;
 
 public class BodyInfoServiceDtoFactory {

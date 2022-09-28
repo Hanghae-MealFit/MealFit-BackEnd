@@ -11,6 +11,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.mealfit.common.factory.PostFactory;
+import com.mealfit.common.factory.UserFactory;
 import com.mealfit.common.storageService.StorageService;
 import com.mealfit.exception.authentication.UnAuthorizedUserException;
 import com.mealfit.exception.post.NoPostContentException;
@@ -24,6 +25,8 @@ import com.mealfit.post.domain.Post;
 import com.mealfit.post.domain.PostImage;
 import com.mealfit.post.domain.PostRepository;
 import com.mealfit.post.presentation.dto.response.PostCUDResponse;
+import com.mealfit.user.domain.User;
+import com.mealfit.user.domain.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -47,9 +50,14 @@ public class PostServiceTest {
     private PostRepository postRepository;
 
     @Mock
+    private UserRepository userRepository;
+
+    @Mock
     private StorageService storageService;
 
-    @DisplayName("createPost() 메서드는")
+    private static final User testUser = UserFactory.basicUser(1L, "username");
+
+    @DisplayName("write() 메서드는")
     @Nested
     class Testing_createPost {
 
@@ -58,7 +66,7 @@ public class PostServiceTest {
         void success() {
 
             // given
-            Post post = PostFactory.imagePost(1L, 1L, "content",
+            Post post = PostFactory.imagePost(1L, testUser, "content",
                   List.of(
                         new PostImage("https://github.com/testImage1.jpeg"),
                         new PostImage("https://github.com/testImage2.jpeg")
@@ -75,6 +83,7 @@ public class PostServiceTest {
                   ))
                   .build();
 
+            given(userRepository.findById(anyLong())).willReturn(Optional.of(testUser));
             given(storageService.uploadMultipartFile(anyList(), anyString()))
                   .willReturn(List.of(
                         "https://github.com/testImage1.jpeg",
@@ -83,9 +92,9 @@ public class PostServiceTest {
             given(postRepository.save(any(Post.class))).willReturn(post);
 
             // when
-            PostCUDResponse responseDto = postService.createPost(requestDto);
+            PostCUDResponse responseDto = postService.write(requestDto);
 
-            assertThat(responseDto.getUserId()).isEqualTo(post.getUserId());
+            assertThat(responseDto.getUserId()).isEqualTo(post.getUser().getId());
             assertThat(responseDto.getContent()).isEqualTo(post.getContent());
             assertThat(responseDto.getImageUrls()).usingRecursiveComparison()
                   .isEqualTo(post.getImageUrls());
@@ -109,7 +118,7 @@ public class PostServiceTest {
                   ))
                   .build();
 
-            assertThatThrownBy(() -> postService.createPost(requestDto))
+            assertThatThrownBy(() -> postService.write(requestDto))
                   .isInstanceOf(NoPostContentException.class);
         }
 
@@ -117,15 +126,17 @@ public class PostServiceTest {
         @Test
         void postImageList_empty_fail() {
             // given
-            Post post = PostFactory.imagePost(1L, 1L, "content", new ArrayList<>());
+            Post post = PostFactory.imagePost(1L, testUser, "content", new ArrayList<>());
 
             PostCreateRequestDto requestDto = PostCreateRequestDto.builder()
                   .userId(1L)
                   .content("content")
                   .build();
 
-            // when
-            assertThatThrownBy(() -> postService.createPost(requestDto))
+            given(userRepository.findById(anyLong())).willReturn(Optional.of(testUser));
+
+            // when then
+            assertThatThrownBy(() -> postService.write(requestDto))
                   .isInstanceOf(NoPostImageException.class);
         }
     }
@@ -139,7 +150,7 @@ public class PostServiceTest {
         void success() {
 
             // given
-            Post post = PostFactory.imagePost(1L, 1L, "content",
+            Post post = PostFactory.imagePost(1L, testUser, "content",
                   new ArrayList<>());
 
             PostUpdateRequestDto requestDto = PostUpdateRequestDto.builder()
@@ -214,7 +225,7 @@ public class PostServiceTest {
         @Test
         void postImageList_empty_success() {
             // given
-            Post post = PostFactory.imagePost(1L, 1L, "content", new ArrayList<>());
+            Post post = PostFactory.imagePost(1L, testUser, "content", new ArrayList<>());
 
             PostUpdateRequestDto requestDto = PostUpdateRequestDto.builder()
                   .postId(1L)
@@ -272,7 +283,7 @@ public class PostServiceTest {
         @Test
         void success() {
             // given
-            Post post = PostFactory.imagePost(1L, 1L, "content", new ArrayList<>());
+            Post post = PostFactory.imagePost(1L, testUser, "content", new ArrayList<>());
 
             PostDeleteReqeustDto requestDto = new PostDeleteReqeustDto(1L, 1L);
 
@@ -310,7 +321,7 @@ public class PostServiceTest {
         @Test
         void not_writer_fail() {
             // given
-            Post post = PostFactory.imagePost(1L, 1L, "content", new ArrayList<>());
+            Post post = PostFactory.imagePost(1L, testUser, "content", new ArrayList<>());
 
             PostDeleteReqeustDto requestDto = new PostDeleteReqeustDto(1L, 2L);
 

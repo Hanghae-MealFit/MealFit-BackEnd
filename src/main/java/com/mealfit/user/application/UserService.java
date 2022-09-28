@@ -138,34 +138,8 @@ public class UserService {
         changeUser.changeGoalWeight(dto.getGoalWeight());
 
         changeUser.changeFastingTime(new FastingTime(
-              dto.getStartFasting(), dto.getEndFasting()));
-
-        changeUser.changeNutrition(
-              new Nutrition(dto.getKcal(),
-                    dto.getCarbs(),
-                    dto.getProtein(),
-                    dto.getFat()));
-
-        return UserServiceDtoFactory.userInfoResponseDto(changeUser);
-    }
-
-    @Transactional
-    public UserInfoResponseDto fillSocialUserInfo(ChangeUserInfoRequestDto dto) {
-        User changeUser = findByUsername(dto.getUsername());
-
-        String imageUrl = null;
-        if (dto.getProfileImage() != null) {
-            imageUrl = storageService.uploadMultipartFile(
-                  List.of(dto.getProfileImage()), "profile/").get(0);
-            changeUser.changeProfileImage(imageUrl);
-        }
-
-        changeUser.changeNickname(dto.getNickname());
-
-        changeUser.changeGoalWeight(dto.getGoalWeight());
-
-        changeUser.changeFastingTime(new FastingTime(
-              dto.getStartFasting(), dto.getEndFasting()));
+              dto.getStartFasting(),
+              dto.getEndFasting()));
 
         changeUser.changeNutrition(
               new Nutrition(dto.getKcal(),
@@ -272,6 +246,4 @@ public class UserService {
         return userRepository.findById(userId)
               .orElseThrow(() -> new UserNotFoundException("없는 유저입니다."));
     }
-
-
 }

@@ -19,7 +19,7 @@ public class PostCUDResponse implements Serializable {
 
     public PostCUDResponse(Post post) {
         this.postId = post.getId();
-        this.userId = post.getUserId();
+        this.userId = post.getUser().getId();
         this.content = post.getContent();
         this.imageUrls = post.getImageUrls();
     }

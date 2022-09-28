@@ -25,7 +25,6 @@ public class PostCreateRequestDto {
 
     public Post toEntity() {
         Post post = new Post(content);
-        post.settingUserInfo(userId);
         return post;
     }
 }

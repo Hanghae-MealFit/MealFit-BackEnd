@@ -1,14 +1,16 @@
 package com.mealfit.unit.post.domain;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.mealfit.common.factory.PostFactory;
+import com.mealfit.common.factory.UserFactory;
 import com.mealfit.exception.user.UserNotFoundException;
 import com.mealfit.post.domain.Post;
 import com.mealfit.post.domain.PostImage;
+import com.mealfit.user.domain.User;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,6 +18,8 @@ import org.junit.jupiter.api.Test;
 
 @DisplayName("PostTest - 게시글 도메인 테스트")
 public class PostTest {
+
+    private static final User testUser = UserFactory.basicUser(1L, "username");
 
     @DisplayName("settingUserInfo() 메서드는")
     @Nested
@@ -25,14 +29,14 @@ public class PostTest {
         @Test
         void settingUserInfo_success() {
             // given
-            Post testPost = PostFactory.simplePost(1, 0, "content");
+            Post testPost = PostFactory.simplePost(1, testUser, "content");
 
             // when
-            testPost.settingUserInfo(2L);
+            testPost.settingUserInfo(UserFactory.basicUser(2L, "username2"));
 
             // then
             assertEquals(1L, testPost.getId());
-            assertEquals(2L, testPost.getUserId());
+            assertEquals(2L, testPost.getUser().getId());
             assertEquals("content", testPost.getContent());
         }
 
@@ -40,7 +44,7 @@ public class PostTest {
         @Test
         void settingUserInfo_failed() {
             // given
-            Post testPost = PostFactory.simplePost(1, 0, "content");
+            Post testPost = PostFactory.simplePost(1, null, "content");
 
             // when then
             assertThrows(UserNotFoundException.class, () -> testPost.settingUserInfo(null));
@@ -55,7 +59,7 @@ public class PostTest {
         void addPostImages_success() {
 
             // given
-            Post testPost = PostFactory.simplePost(1, 0, "content");
+            Post testPost = PostFactory.simplePost(1, testUser, "content");
             PostImage postImage1 = new PostImage("https://github.com/testImage1.jpeg");
             PostImage postImage2 = new PostImage("https://github.com/testImage2.jpeg");
 
@@ -77,7 +81,7 @@ public class PostTest {
         void replacePostImages_empty_success() {
 
             // given
-            Post testPost = PostFactory.simplePost(1, 0, "content");
+            Post testPost = PostFactory.simplePost(1, testUser, "content");
             PostImage postImage1 = new PostImage("https://github.com/testImage.jpeg");
             PostImage postImage2 = new PostImage("https://github.com/testImage.jpeg");
 
@@ -93,7 +97,7 @@ public class PostTest {
         @Test
         void replacePostImages_replace_success() {
 
-            Post testPost = PostFactory.simplePost(1, 0, "content");
+            Post testPost = PostFactory.simplePost(1, testUser, "content");
             PostImage postImage1 = new PostImage("https://github.com/testImage1.jpeg");
             PostImage postImage2 = new PostImage("https://github.com/testImage2.jpeg");
 
@@ -117,7 +121,7 @@ public class PostTest {
         @Test
         void updateContent_success(){
             // given
-            Post testPost = PostFactory.simplePost(1, 0, "content");
+            Post testPost = PostFactory.simplePost(1, testUser, "content");
 
             // when
             String newContent = "new content";
@@ -139,7 +143,7 @@ public class PostTest {
         @Test
         void getImageUrls_success(){
             // given
-            Post testPost = PostFactory.simplePost(1, 0, "content");
+            Post testPost = PostFactory.simplePost(1, testUser, "content");
             PostImage postImage1 = new PostImage("https://github.com/testImage1.jpeg");
             PostImage postImage2 = new PostImage("https://github.com/testImage2.jpeg");
 
@@ -161,7 +165,7 @@ public class PostTest {
         @Test
         void same_instance_success(){
             // given
-            Post testPost = PostFactory.simplePost(1, 0, "content");
+            Post testPost = PostFactory.simplePost(1, testUser, "content");
             // when then
             assertEquals(testPost, testPost);
         }
@@ -170,9 +174,9 @@ public class PostTest {
         @Test
         void equals_postId_success(){
             // given
-            Post testPost = PostFactory.simplePost(1, 0, "content");
-            Post equalsPost = PostFactory.simplePost(1, 0, "content");
-            Post notEqualsPost = PostFactory.simplePost(2, 0, "content");
+            Post testPost = PostFactory.simplePost(1, testUser, "content");
+            Post equalsPost = PostFactory.simplePost(1, testUser, "content");
+            Post notEqualsPost = PostFactory.simplePost(2, testUser, "content");
 
             // when then
             assertEquals(testPost, equalsPost);
@@ -183,7 +187,7 @@ public class PostTest {
         @Test
         void null_or_not_instance_success(){
             // given
-            Post testPost = PostFactory.simplePost(1, 0, "content");
+            Post testPost = PostFactory.simplePost(1, testUser, "content");
             Post nullPost = null;
             String notPostInstance = "string_class";
 

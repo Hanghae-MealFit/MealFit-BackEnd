@@ -25,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.mealfit.common.factory.PostFactory;
+import com.mealfit.common.factory.UserFactory;
 import com.mealfit.config.security.WithMockCustomUser;
 import com.mealfit.post.application.dto.request.PostCreateRequestDto;
 import com.mealfit.post.application.dto.request.PostDeleteReqeustDto;
@@ -33,6 +34,7 @@ import com.mealfit.post.domain.Post;
 import com.mealfit.post.domain.PostImage;
 import com.mealfit.post.presentation.dto.response.PostCUDResponse;
 import com.mealfit.unit.ControllerTest;
+import com.mealfit.user.domain.User;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -45,6 +47,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 public class PostControllerTest extends ControllerTest {
 
     private static final String COMMON_API_ADDRESS = "/api/post";
+    private static final User testUser = UserFactory.basicUser(1L, "username");
 
     @DisplayName("[POST] /api/post 인 createPost()는")
     @Nested
@@ -74,11 +77,11 @@ public class PostControllerTest extends ControllerTest {
                   "<<imageFile>>".getBytes());
 
             Post savedPost = PostFactory.imagePost(1L,
-                  1L,
+                  testUser,
                   "새로운 게시글 내용입니다.",
                   List.of(new PostImage("http://github.com/newImage")));
 
-            given(postService.createPost(any(PostCreateRequestDto.class)))
+            given(postService.write(any(PostCreateRequestDto.class)))
                   .willReturn(new PostCUDResponse(savedPost));
 
             mockMvc.perform(multipart(COMMON_API_ADDRESS)
@@ -116,7 +119,7 @@ public class PostControllerTest extends ControllerTest {
                   ));
 
             verify(postService, times(1))
-                  .createPost(any());
+                  .write(any());
         }
 
         @DisplayName("컨텐츠가 입력되지 않는 경우 실패한다.")
@@ -184,7 +187,7 @@ public class PostControllerTest extends ControllerTest {
                   "<<imageFile>>".getBytes());
 
             Post savedPost = PostFactory.imagePost(1L,
-                  1L,
+                  testUser,
                   "새로운 게시글 내용입니다.",
                   List.of(new PostImage("http://github.com/newImage")));
 
