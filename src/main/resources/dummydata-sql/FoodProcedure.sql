@@ -1,4 +1,4 @@
-users# 더미 데이터 생성
+# 더미 데이터 생성
 DELIMITER $$
 DROP PROCEDURE IF EXISTS loopInsertFood$$
 

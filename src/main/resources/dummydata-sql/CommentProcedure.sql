@@ -1,6 +1,6 @@
 # comment 더미 데이터 생성
 DELIMITER $$
-DROP PROCEDURE IF EXISTS loopInsertFood$$
+DROP PROCEDURE IF EXISTS loopInsertComment$$
 
 CREATE PROCEDURE loopInsertComment()
 BEGIN
