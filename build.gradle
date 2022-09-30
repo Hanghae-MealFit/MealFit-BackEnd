@@ -129,8 +129,8 @@ jacocoTestReport {
                             '**/*Event*',
                             '**/*S3*',
                             '**/email',
-                            '**/exception/*',
-                            '**/config/*'
+//                            'com/mealfit/exception/*',
+//                            'com/mealfit/config/*'
                     ])
                 })
         )
@@ -177,8 +177,11 @@ jacocoTestCoverageVerification {
                     '**.*Storage*',
                     '**.*Email',
                     '**.*S3*',
-                    '**/exception/*',
-                    '**/config/*'
+                    '**.*Exception*',
+                    '**.*ErrorCode*',
+                    '**.*DataSource*',
+                    '**.*Config*',
+                    '**.*Configuration*',
             ]
         }
         rule {
