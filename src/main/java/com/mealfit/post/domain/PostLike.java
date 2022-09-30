@@ -27,14 +27,4 @@ public class PostLike extends BaseEntity {
 
     @Column(nullable = false)
     private Long postId;
-
-
-
-    public PostLike toEntity (){
-        PostLike postLike = new PostLike(id,postId,userId);
-        postLike.setPostId(postId);
-        postLike.setUserId(userId);
-
-        return postLike;
-    }
 }

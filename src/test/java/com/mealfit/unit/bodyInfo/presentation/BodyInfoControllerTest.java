@@ -5,6 +5,7 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
@@ -304,10 +305,10 @@ public class BodyInfoControllerTest extends ControllerTest {
         @WithMockCustomUser
         @DisplayName("본인이 입력한 기록일 때 성공한다.")
         @Test
-        void saveBodyInfo_success() throws Exception {
+        void deleteBodyInfo_success() throws Exception {
 
             // when then
-            mockMvc.perform(get(COMMON_API_ADDRESS + "/{bodyInfoId}", 1)
+            mockMvc.perform(delete(COMMON_API_ADDRESS + "/{bodyInfoId}", 1)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer access_token")
                         .header("refresh_token", "Bearer refresh_token")
                         .with(csrf().asHeader())

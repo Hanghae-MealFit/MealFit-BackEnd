@@ -125,11 +125,12 @@ jacocoTestReport {
                             '**/*Request*',
                             '**/*Response*',
                             '**/*Dto*',
-                            '**/*Exception*',
                             '**/*config*',
                             '**/*Event*',
+                            '**/*S3*',
                             '**/email',
-                            'config.*'
+                            '**/exception/*',
+                            '**/config/*'
                     ])
                 })
         )
@@ -172,11 +173,12 @@ jacocoTestCoverageVerification {
                     '**.*Request*',
                     '**.*Response*',
                     '**.*Dto*',
-                    '**.*Exception*',
                     '**.*logging*',
                     '**.*Storage*',
                     '**.*Email',
-                    'config.*'
+                    '**.*S3*',
+                    '**/exception/*',
+                    '**/config/*'
             ]
         }
         rule {

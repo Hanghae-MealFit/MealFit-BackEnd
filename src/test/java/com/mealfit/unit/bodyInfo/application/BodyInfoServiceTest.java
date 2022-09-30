@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 
 import com.mealfit.bodyInfo.application.BodyInfoService;
 import com.mealfit.bodyInfo.application.dto.request.BodyInfoChangeRequestDto;
+import com.mealfit.bodyInfo.application.dto.request.BodyInfoDeleteRequestDto;
 import com.mealfit.bodyInfo.application.dto.request.BodyInfoRequestDto;
 import com.mealfit.bodyInfo.application.dto.request.BodyInfoSaveRequestDto;
 import com.mealfit.bodyInfo.application.dto.response.BodyInfoResponseDto;
@@ -177,6 +178,45 @@ public class BodyInfoServiceTest {
 
             // when
             Assertions.assertThatThrownBy(() -> bodyInfoService.showBodyInfo(requestDto))
+                  .isInstanceOf(BodyInfoNotFoundException.class);
+        }
+    }
+
+    @DisplayName("deleteBodyInfo() 메서드는 ")
+    @Nested
+    class Testing_DeleteBodyInfo {
+
+        @DisplayName("UserId, BodyInfoId를 제공받으면 BodyInfo를 제공한다.")
+        @Test
+        void deleteBodyInfo_Success() {
+
+            // given
+            BodyInfo bodyInfo = BodyInfo.createBodyInfo(1L, 80.0, LocalDate.of(2022, 9, 1));
+            BodyInfoDeleteRequestDto requestDto = new BodyInfoDeleteRequestDto(1L, 1L);
+
+            given(bodyInfoRepository.findByIdAndUserId(anyLong(), anyLong()))
+                  .willReturn(Optional.of(bodyInfo));
+
+            // when
+            bodyInfoService.deleteBodyInfo(requestDto);
+
+            // then
+            verify(bodyInfoRepository, times(1))
+                  .findByIdAndUserId(anyLong(), anyLong());
+        }
+
+        @DisplayName("없는 값이라면 BodyInfoNOtFoundException를 발생시킨다..")
+        @Test
+        void deleteBodyInfo_Fail() {
+
+            // given
+            BodyInfoDeleteRequestDto requestDto = new BodyInfoDeleteRequestDto(1L, 1L);
+
+            given(bodyInfoRepository.findByIdAndUserId(anyLong(), anyLong()))
+                  .willReturn(Optional.empty());
+
+            // when
+            Assertions.assertThatThrownBy(() -> bodyInfoService.deleteBodyInfo(requestDto))
                   .isInstanceOf(BodyInfoNotFoundException.class);
         }
     }

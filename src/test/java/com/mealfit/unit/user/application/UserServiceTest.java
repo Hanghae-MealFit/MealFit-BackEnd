@@ -42,6 +42,7 @@ import com.mealfit.user.presentation.dto.request.UserSignUpRequest;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -760,6 +761,34 @@ public class UserServiceTest {
 
             assertEquals(responseDto.getStartFasting(), requestDto.getStartFasting());
             assertEquals(responseDto.getEndFasting(), requestDto.getEndFasting());
+        }
+
+        @DisplayName("없는 회원이면 UserNotFoundException이 발생한다..")
+        @Test
+        void no_user_fail() {
+
+            ChangeFastingTimeRequestDto requestDto = new ChangeFastingTimeRequestDto(
+                  1L, LocalTime.of(10, 0), LocalTime.of(15, 0));
+
+            given(userRepository.findById(anyLong()))
+                  .willReturn(Optional.empty());
+
+            Assertions.assertThatThrownBy(() -> userService.changeFastingTime(requestDto))
+                  .isInstanceOf(UserNotFoundException.class);
+        }
+    }
+
+    @DisplayName("checkDuplicateSignupInput() 메서드는")
+    @Nested
+    class Testing_checkDuplicateSignupInput {
+        @DisplayName("key가 username, email, nickname에 포함하지 않으면 IllegalArgumentException이 발생한다.")
+        @Test
+        void no_key_value_fail(){
+            CheckDuplicateSignupInputDto dto = new CheckDuplicateSignupInputDto(
+                  "not_valid_key", "test");
+
+            Assertions.assertThatThrownBy(() -> userService.checkDuplicateSignupInput(dto))
+                  .isInstanceOf(IllegalArgumentException.class);
         }
     }
 }

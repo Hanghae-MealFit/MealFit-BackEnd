@@ -22,6 +22,7 @@ import com.mealfit.common.factory.UserFactory;
 import com.mealfit.config.security.WithMockCustomUser;
 import com.mealfit.exception.authentication.UnAuthorizedUserException;
 import com.mealfit.exception.comment.CommentNotFoundException;
+import com.mealfit.exception.comment.NoCommentContentException;
 import com.mealfit.exception.post.PostNotFoundException;
 import com.mealfit.exception.user.UserNotFoundException;
 import com.mealfit.post.domain.PostRepository;
@@ -173,6 +174,28 @@ public class CommentServiceTest {
             // when then
             assertThatThrownBy(() -> commentService.updateComment(requestDto))
                   .isInstanceOf(UnAuthorizedUserException.class);
+        }
+
+        @DisplayName("내용이 비었을 경우 NoCommentContentException 이 발생한다.")
+        @Test
+        void updateComment_no_content_fail() {
+
+            // given
+            Comment comment = Comment.builder()
+                  .id(1L)
+                  .postId(1L)
+                  .user(testUser)
+                  .content("댓글입니다.")
+                  .build();
+
+            CommentUpdateRequestDto requestDto =
+                  new CommentUpdateRequestDto(null, 1L, 1L);
+
+            given(commentRepository.findById(anyLong())).willReturn(Optional.of(comment));
+
+            // when then
+            assertThatThrownBy(() -> commentService.updateComment(requestDto))
+                  .isInstanceOf(NoCommentContentException.class);
         }
 
         @DisplayName("작성자가 맞고 모든 내용이 잘 입력되었다면 성공적으로 수정된다.")
