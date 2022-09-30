@@ -128,9 +128,12 @@ jacocoTestReport {
                             '**/*config*',
                             '**/*Event*',
                             '**/*S3*',
-                            '**/email',
-//                            'com/mealfit/exception/*',
-//                            'com/mealfit/config/*'
+                            '**/*email',
+                            '**/*Exception*',
+                            '**/*ErrorCode*',
+                            '**/*DataSource*',
+                            '**/*Config*',
+                            '**/*Configuration*',
                     ])
                 })
         )
@@ -146,7 +149,7 @@ sonarqube {
         property "sonar.sourceEncoding", "UTF-8"
         property "sonar.java.binaries", "${buildDir}/classes"
         property "sonar.test.inclusions", "**/*Test.java"
-        property "sonar.exclusions", "**/resources/static/**, **/test/**"
+        property "sonar.exclusions", "**/resources/static/**, **/test/**, **/config/**, **/dto/**, **/exception/**, **/email/**"
         property "sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
     }
 }
@@ -182,15 +185,6 @@ jacocoTestCoverageVerification {
                     '**.*DataSource*',
                     '**.*Config*',
                     '**.*Configuration*',
-            ]
-        }
-        rule {
-            element = 'METHOD'
-            enabled = true
-
-            excludes = [
-                    'equals()',
-                    'hashCode()'
             ]
         }
     }
