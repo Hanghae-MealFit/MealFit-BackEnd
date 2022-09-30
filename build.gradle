@@ -129,8 +129,8 @@ jacocoTestReport {
                             '**/*Event*',
                             '**/*S3*',
                             '**/email',
-                            '**/exception/*',
-                            '**/config/*'
+                            '**/exception/**',
+                            '**/config/**'
                     ])
                 })
         )
@@ -177,8 +177,8 @@ jacocoTestCoverageVerification {
                     '**.*Storage*',
                     '**.*Email',
                     '**.*S3*',
-                    '**/exception/*',
-                    '**/config/*'
+                    '**/exception/**',
+                    '**/config/**'
             ]
         }
         rule {
